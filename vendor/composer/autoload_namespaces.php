@@ -17,6 +17,7 @@ return array(
     'Sensio\\Bundle\\DistributionBundle' => $vendorDir . '/sensio/distribution-bundle/',
     'Psr\\Log\\' => $vendorDir . '/psr/log/',
     'PhpOption\\' => $vendorDir . '/phpoption/phpoption/src/',
+    'Ornicar\\GravatarBundle\\' => $vendorDir . '/ornicar/gravatar-bundle/',
     'Monolog' => $vendorDir . '/monolog/monolog/src/',
     'Metadata\\' => $vendorDir . '/jms/metadata/src/',
     'JMS\\SecurityExtraBundle' => $vendorDir . '/jms/security-extra-bundle/',

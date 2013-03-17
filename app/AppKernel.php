@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new JMS\AopBundle\JMSAopBundle(),
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
+            new Ornicar\GravatarBundle\OrnicarGravatarBundle(),
             new Uvweb\UvBundle\UvwebUvBundle(),
         );
 
