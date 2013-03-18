@@ -1,5 +1,9 @@
 {% extends "UvwebUvBundle::layout.html.twig" %}
 
+{% block title %}
+	{{ uv.name | upper }} - {{ parent() }}
+{% endblock %}
+
 {% block style %}
 .date {
 	line-height:  40px;
