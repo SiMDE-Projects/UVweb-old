@@ -89,6 +89,19 @@ class Comment
      */
     private $pedagogy;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="passed", type="boolean")
+     */
+    private $passed;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\Uv")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $uv;
+
 
     /**
      * Get id
@@ -305,5 +318,51 @@ class Comment
     public function getPedagogy()
     {
         return $this->pedagogy;
+    }
+
+    /**
+     * Set passed
+     *
+     * @param boolean $passed
+     * @return Comment
+     */
+    public function setPassed($passed)
+    {
+        $this->passed = $passed;
+    
+        return $this;
+    }
+
+    /**
+     * Get passed
+     *
+     * @return boolean 
+     */
+    public function getPassed()
+    {
+        return $this->passed;
+    }
+
+    /**
+     * Set uv
+     *
+     * @param \Uvweb\UvBundle\Entity\Uv $uv
+     * @return Comment
+     */
+    public function setUv(\Uvweb\UvBundle\Entity\Uv $uv)
+    {
+        $this->uv = $uv;
+    
+        return $this;
+    }
+
+    /**
+     * Get uv
+     *
+     * @return \Uvweb\UvBundle\Entity\Uv 
+     */
+    public function getUv()
+    {
+        return $this->uv;
     }
 }

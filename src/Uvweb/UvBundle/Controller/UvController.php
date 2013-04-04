@@ -10,13 +10,7 @@ class UvController extends Controller
 {
 	public function detailAction($uvname)
 	{
-		//fake uv
-		$uv = array(
-			'name' => $uvname,
-			'fullname' => "Algèbre linéaire",
-			'averagerate' => 3.78
-		);
-
+		$manager = $this->getDoctrine()->getManager();
 
 /*		$comment = new Comment();
 		$comment->setAuthor("tkeunebr");
@@ -33,11 +27,16 @@ class UvController extends Controller
 		$em->persist($comment);
 		$em->flush();*/
 
-		$repository = $this->getDoctrine()
-		                   ->getManager()
-		                   ->getRepository('UvwebUvBundle:Comment');
-		 
-		$comments = $repository->findAll();
+
+		//hardcoded uv
+
+		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+		$uv = $uvRepository->find(1);
+
+
+
+		$commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+		$comments = $commentRepository->findAll();
 
 		return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
 			'uv' => $uv,
