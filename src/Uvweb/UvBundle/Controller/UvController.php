@@ -16,7 +16,9 @@ class UvController extends Controller
 		//hardcoded uv
 
 		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
-		$uv = $uvRepository->find(1);
+		$uv = $uvRepository->findOneByName($uvname);
+		if($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas");
+		
 
 		//to add a hardcoded comment, uncomment those few lines
 /*		$comment = new Comment();
@@ -29,14 +31,14 @@ class UvController extends Controller
 		$comment->setInterest("Très intéressant");
 		$comment->setPedagogy("Nul");
 		$comment->setPassed(true);
-		$comment->setUv($uv);
+		$comment->setUv($uv);*/
 
 		// On récupère l'EntityManager
-		$manager->persist($comment);
+/*		$manager->persist($comment);
 		$manager->flush();*/
 
 		$commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
-		$comments = $commentRepository->findAll();
+		$comments = $commentRepository->findByUv($uv->getId());
 
 		return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
 			'uv' => $uv,
