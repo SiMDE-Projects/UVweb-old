@@ -45,5 +45,40 @@ class UvController extends Controller
 			'comments' => $comments
 		));
 	}
+
+	public function uvTitleAction() {
+		$manager = $this->getDoctrine()->getManager();
+		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+		$uvs = $uvRepository->findBy(array('title' => ''),
+                                     array('name' => 'desc'),
+                                     100,
+                                     0);
+		include('uvtitlefetcher/simple_html_dom.php');
+		foreach ($uvs as $uv) {
+
+			// Include the library
+			
+			 
+			// Retrieve the DOM from a given URL
+			$html = file_get_html('http://cap.utc.fr/portail_UV/detailuv.php?uv='.$uv->getName().'&page=uv&lang=FR');
+
+
+			// Find the DIV tag with an id of "myId"
+			foreach($html->find('span#titre') as $e) {
+				$arr = split(" - ", $e->innertext);
+				$title = $arr[1];
+				$uv->setTitle(html_entity_decode($title));
+
+				$manager->persist($uv);
+				echo $uv->getName()." : ".$title;
+				echo "<br>";
+			}
+		}
+		$manager->flush();
+		$response = new Response;
+		$response->setContent("<body></body>");
+		return $response;
+
+	}
 }
 ?>

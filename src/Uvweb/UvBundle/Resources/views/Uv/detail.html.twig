@@ -18,7 +18,7 @@
 	<div class="page-header">
 		<div class="row-fluid">
 			<div class="span8">
-				<h1>{{ uv.name | upper }} <small>{{ uv.title }}</small></h1>
+				<h1>{{ uv.name | upper }} <small>{{ uv.title | capitalize }}</small></h1>
 			</div>
 			<div class="span4 text-right">
 				<h2><small>Note moyenne : </small>{{ 8.53 | number_format(2, ',', ' ') }}/10</h2>
