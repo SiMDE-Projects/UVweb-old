@@ -49,9 +49,9 @@ class Comment
     private $uv;
 
     /**
-     * @var boolean
+     * @var integer
      *
-     * @ORM\Column(name="note", type="boolean", nullable=true)
+     * @ORM\Column(name="note", type="integer", nullable=true)
      */
     private $globalRate;
 
