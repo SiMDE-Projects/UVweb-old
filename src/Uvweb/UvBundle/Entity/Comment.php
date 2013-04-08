@@ -7,100 +7,117 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Comment
  *
- * @ORM\Table()
+ * @ORM\Table(name="critiques")
  * @ORM\Entity(repositoryClass="Uvweb\UvBundle\Entity\CommentRepository")
  */
 class Comment
 {
     public function __construct()
     {
-      $this->date = new \Datetime();
+        $this->date = new \Datetime();
     }
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(name="id", type="smallint", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="author", type="string", length=50)
+     * @ORM\Column(name="obtenue", type="string", length=15, nullable=false)
      */
-    private $author;
+    private $passed;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="semester", type="string", length=3)
+     * @ORM\Column(name="interet", type="string", length=20, nullable=false)
      */
-    private $semester;
+    private $interest;
+
+    /**
+     * @var integer
+     * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\Uv")
+     * @ORM\Column(name="id_uv")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $uv;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="note", type="boolean", nullable=true)
+     */
+    private $globalRate;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="commentaire", type="string", length=10000, nullable=false)
+     */
+    private $comment;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="facile", type="string", length=30, nullable=false)
+     */
+    private $workAmount;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="utilite", type="string", length=20, nullable=false)
+     */
+    private $utility;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="date")
+     * @ORM\Column(name="date", type="date", nullable=false)
      */
     private $date;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="comment", type="text")
-     */
-    private $comment;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="globalrate", type="integer")
-     */
-    private $globalrate;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="utility", type="string", length=50)
-     */
-    private $utility;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="workamount", type="string", length=50)
-     */
-    private $workamount;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="interest", type="string", length=50)
-     */
-    private $interest;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="pedagogy", type="string", length=50)
+     * @ORM\Column(name="prof", type="string", length=20, nullable=false)
      */
     private $pedagogy;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="passed", type="boolean")
+     * @ORM\Column(name="semestre", type="string", length=3, nullable=false)
      */
-    private $passed;
+    private $semester;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\Uv")
-     * @ORM\JoinColumn(nullable=false)
+     * @var boolean
+     *
+     * @ORM\Column(name="modere", type="boolean", nullable=false)
      */
-    private $uv;
+    private $moderated;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id_auteur", type="smallint", nullable=false)
+     */
+    private $idAuteur;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id_moderateur", type="smallint", nullable=true)
+     */
+    private $idModerateur;
+
 
 
     /**
@@ -114,164 +131,26 @@ class Comment
     }
 
     /**
-     * Set author
+     * Set passed
      *
-     * @param string $author
+     * @param string $passed
      * @return Comment
      */
-    public function setAuthor($author)
+    public function setPassed($passed)
     {
-        $this->author = $author;
+        $this->passed = $passed;
     
         return $this;
     }
 
     /**
-     * Get author
+     * Get passed
      *
      * @return string 
      */
-    public function getAuthor()
+    public function getPassed()
     {
-        return $this->author;
-    }
-
-    /**
-     * Set semester
-     *
-     * @param string $semester
-     * @return Comment
-     */
-    public function setSemester($semester)
-    {
-        $this->semester = $semester;
-    
-        return $this;
-    }
-
-    /**
-     * Get semester
-     *
-     * @return string 
-     */
-    public function getSemester()
-    {
-        return $this->semester;
-    }
-
-    /**
-     * Set date
-     *
-     * @param \DateTime $date
-     * @return Comment
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-    
-        return $this;
-    }
-
-    /**
-     * Get date
-     *
-     * @return \DateTime 
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    /**
-     * Set comment
-     *
-     * @param string $comment
-     * @return Comment
-     */
-    public function setComment($comment)
-    {
-        $this->comment = $comment;
-    
-        return $this;
-    }
-
-    /**
-     * Get comment
-     *
-     * @return string 
-     */
-    public function getComment()
-    {
-        return $this->comment;
-    }
-
-    /**
-     * Set globalrate
-     *
-     * @param integer $globalrate
-     * @return Comment
-     */
-    public function setGlobalrate($globalrate)
-    {
-        $this->globalrate = $globalrate;
-    
-        return $this;
-    }
-
-    /**
-     * Get globalrate
-     *
-     * @return integer 
-     */
-    public function getGlobalrate()
-    {
-        return $this->globalrate;
-    }
-
-    /**
-     * Set utility
-     *
-     * @param string $utility
-     * @return Comment
-     */
-    public function setUtility($utility)
-    {
-        $this->utility = $utility;
-    
-        return $this;
-    }
-
-    /**
-     * Get utility
-     *
-     * @return string 
-     */
-    public function getUtility()
-    {
-        return $this->utility;
-    }
-
-    /**
-     * Set workamount
-     *
-     * @param string $workamount
-     * @return Comment
-     */
-    public function setWorkamount($workamount)
-    {
-        $this->workamount = $workamount;
-    
-        return $this;
-    }
-
-    /**
-     * Get workamount
-     *
-     * @return string 
-     */
-    public function getWorkamount()
-    {
-        return $this->workamount;
+        return $this->passed;
     }
 
     /**
@@ -298,6 +177,144 @@ class Comment
     }
 
     /**
+     * Set idUv
+     *
+     * @param integer $idUv
+     * @return Comment
+     */
+    public function setIdUv($idUv)
+    {
+        $this->idUv = $idUv;
+    
+        return $this;
+    }
+
+    /**
+     * Get idUv
+     *
+     * @return integer 
+     */
+    public function getIdUv()
+    {
+        return $this->idUv;
+    }
+
+    /**
+     * Set globalRate
+     *
+     * @param boolean $globalRate
+     * @return Comment
+     */
+    public function setGlobalRate($globalRate)
+    {
+        $this->globalRate = $globalRate;
+    
+        return $this;
+    }
+
+    /**
+     * Get globalRate
+     *
+     * @return boolean 
+     */
+    public function getGlobalRate()
+    {
+        return $this->globalRate;
+    }
+
+    /**
+     * Set comment
+     *
+     * @param string $comment
+     * @return Comment
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+    
+        return $this;
+    }
+
+    /**
+     * Get comment
+     *
+     * @return string 
+     */
+    public function getComment()
+    {
+        return html_entity_decode($this->comment);
+    }
+
+    /**
+     * Set workAmount
+     *
+     * @param string $workAmount
+     * @return Comment
+     */
+    public function setWorkAmount($workAmount)
+    {
+        $this->workAmount = $workAmount;
+    
+        return $this;
+    }
+
+    /**
+     * Get workAmount
+     *
+     * @return string 
+     */
+    public function getWorkAmount()
+    {
+        return $this->workAmount;
+    }
+
+    /**
+     * Set utility
+     *
+     * @param string $utility
+     * @return Comment
+     */
+    public function setUtility($utility)
+    {
+        $this->utility = $utility;
+    
+        return $this;
+    }
+
+    /**
+     * Get utility
+     *
+     * @return string 
+     */
+    public function getUtility()
+    {
+        return $this->utility;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     * @return Comment
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+    
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime 
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
      * Set pedagogy
      *
      * @param string $pedagogy
@@ -321,26 +338,95 @@ class Comment
     }
 
     /**
-     * Set passed
+     * Set semester
      *
-     * @param boolean $passed
+     * @param string $semester
      * @return Comment
      */
-    public function setPassed($passed)
+    public function setSemester($semester)
     {
-        $this->passed = $passed;
+        $this->semester = $semester;
     
         return $this;
     }
 
     /**
-     * Get passed
+     * Get semester
+     *
+     * @return string 
+     */
+    public function getSemester()
+    {
+        return $this->semester;
+    }
+
+    /**
+     * Set moderated
+     *
+     * @param boolean $moderated
+     * @return Comment
+     */
+    public function setModerated($moderated)
+    {
+        $this->moderated = $moderated;
+    
+        return $this;
+    }
+
+    /**
+     * Get moderated
      *
      * @return boolean 
      */
-    public function getPassed()
+    public function getModerated()
     {
-        return $this->passed;
+        return $this->moderated;
+    }
+
+    /**
+     * Set idAuteur
+     *
+     * @param integer $idAuteur
+     * @return Comment
+     */
+    public function setIdAuteur($idAuteur)
+    {
+        $this->idAuteur = $idAuteur;
+    
+        return $this;
+    }
+
+    /**
+     * Get idAuteur
+     *
+     * @return integer 
+     */
+    public function getIdAuteur()
+    {
+        return $this->idAuteur;
+    }
+
+    /**
+     * Set idModerateur
+     *
+     * @param integer $idModerateur
+     * @return Comment
+     */
+    public function setIdModerateur($idModerateur)
+    {
+        $this->idModerateur = $idModerateur;
+    
+        return $this;
+    }
+
+    /**
+     * Get idModerateur
+     *
+     * @return integer 
+     */
+    public function getIdModerateur()
+    {
+        return $this->idModerateur;
     }
 
     /**

@@ -31,11 +31,11 @@
 				<div class="span8">
 					<div class="span2">
 						<a href="" class="thumbnail">
-					    	<img src="{{ gravatar('alexandre.masciulli@etu.utc.fr', 60) }}" alt="{{ comment.author }}'s gravatar"/>
+					    	<img src="{{ gravatar('alexandre.masciulli@etu.utc.fr', 60) }}" alt="amasciul's gravatar"/>
 					    </a>
 					</div>
 					<div class="span6">
-						<h3>l'avis de <a href="">{{ comment.author }}</a> pour {{ comment.semester }}</h3>
+						<h3>l'avis de <a href="">amasciul</a> pour {{ comment.semester }}</h3>
 					</div>
 				</div>
 				<div class="span4 date text-right">
@@ -44,7 +44,7 @@
 			</div>
 			<div class="row-fluid">
 				<div class="span8 comment">
-					<p> {{ comment.comment }} </p>
+					<p> {{ comment.comment|e }} </p>
 				</div>
 				<div class="span4 well well-small">
 					<dl class="dl-horizontal">
