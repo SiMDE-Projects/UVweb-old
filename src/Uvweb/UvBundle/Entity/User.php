@@ -8,8 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
  * User
  *
  * @ORM\Table(name="utilisateurs")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Uvweb\UvBundle\Entity\UserRepository")
  */
+
 class User
 {
     /**
