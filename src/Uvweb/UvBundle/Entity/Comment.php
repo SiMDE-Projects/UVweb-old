@@ -109,14 +109,14 @@ class Comment
      *
      * @ORM\Column(name="id_auteur", type="smallint", nullable=false)
      */
-    private $idAuteur;
+    private $author;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="id_moderateur", type="smallint", nullable=true)
      */
-    private $idModerateur;
+    private $moderator;
 
 
 
@@ -384,52 +384,6 @@ class Comment
     }
 
     /**
-     * Set idAuteur
-     *
-     * @param integer $idAuteur
-     * @return Comment
-     */
-    public function setIdAuteur($idAuteur)
-    {
-        $this->idAuteur = $idAuteur;
-    
-        return $this;
-    }
-
-    /**
-     * Get idAuteur
-     *
-     * @return integer 
-     */
-    public function getIdAuteur()
-    {
-        return $this->idAuteur;
-    }
-
-    /**
-     * Set idModerateur
-     *
-     * @param integer $idModerateur
-     * @return Comment
-     */
-    public function setIdModerateur($idModerateur)
-    {
-        $this->idModerateur = $idModerateur;
-    
-        return $this;
-    }
-
-    /**
-     * Get idModerateur
-     *
-     * @return integer 
-     */
-    public function getIdModerateur()
-    {
-        return $this->idModerateur;
-    }
-
-    /**
      * Set uv
      *
      * @param \Uvweb\UvBundle\Entity\Uv $uv
@@ -450,5 +404,51 @@ class Comment
     public function getUv()
     {
         return $this->uv;
+    }
+
+    /**
+     * Set author
+     *
+     * @param integer $author
+     * @return Comment
+     */
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+    
+        return $this;
+    }
+
+    /**
+     * Get author
+     *
+     * @return integer 
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    /**
+     * Set moderator
+     *
+     * @param integer $moderator
+     * @return Comment
+     */
+    public function setModerator($moderator)
+    {
+        $this->moderator = $moderator;
+    
+        return $this;
+    }
+
+    /**
+     * Get moderator
+     *
+     * @return integer 
+     */
+    public function getModerator()
+    {
+        return $this->moderator;
     }
 }
