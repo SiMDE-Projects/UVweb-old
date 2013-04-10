@@ -41,9 +41,7 @@ class Comment
     private $interest;
 
     /**
-     * @var integer
      * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\Uv")
-     * @ORM\Column(name="id_uv")
      * @ORM\JoinColumn(nullable=false)
      */
     private $uv;
@@ -107,7 +105,6 @@ class Comment
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\User")
-     * @ORM\Column(name="id_auteur")
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;
@@ -115,7 +112,6 @@ class Comment
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\User")
-     * @ORM\Column(name="id_moderateur")
      * @ORM\JoinColumn(nullable=true)
      */
     private $moderator;
