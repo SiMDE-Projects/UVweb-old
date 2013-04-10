@@ -122,6 +122,8 @@ class Comment
 
 
 
+
+
     /**
      * Get id
      *
@@ -384,4 +386,51 @@ class Comment
     {
         return $this->uv;
     }
+
+    /**
+     * Set author
+     *
+     * @param \Uvweb\UvBundle\Entity\User $author
+     * @return Comment
+     */
+    public function setAuthor(\Uvweb\UvBundle\Entity\User $author)
+    {
+        $this->author = $author;
+    
+        return $this;
+    }
+
+    /**
+     * Get author
+     *
+     * @return \Uvweb\UvBundle\Entity\User 
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    /**
+     * Set moderator
+     *
+     * @param \Uvweb\UvBundle\Entity\User $moderator
+     * @return Comment
+     */
+    public function setModerator(\Uvweb\UvBundle\Entity\User $moderator)
+    {
+        $this->moderator = $moderator;
+    
+        return $this;
+    }
+
+    /**
+     * Get moderator
+     *
+     * @return \Uvweb\UvBundle\Entity\User 
+     */
+    public function getModerator()
+    {
+        return $this->moderator;
+    }
+
 }
