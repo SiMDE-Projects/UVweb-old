@@ -1,6 +1,6 @@
 <?php
 
-
+namespace Uvweb\UvBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -121,4 +121,336 @@ class User
     private $identity;
 
 
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set login
+     *
+     * @param string $login
+     * @return User
+     */
+    public function setLogin($login)
+    {
+        $this->login = $login;
+    
+        return $this;
+    }
+
+    /**
+     * Get login
+     *
+     * @return string 
+     */
+    public function getLogin()
+    {
+        return $this->login;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     * @return User
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    
+        return $this;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string 
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return User
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string 
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set firstSemester
+     *
+     * @param string $firstSemester
+     * @return User
+     */
+    public function setFirstSemester($firstSemester)
+    {
+        $this->firstSemester = $firstSemester;
+    
+        return $this;
+    }
+
+    /**
+     * Get firstSemester
+     *
+     * @return string 
+     */
+    public function getFirstSemester()
+    {
+        return $this->firstSemester;
+    }
+
+    /**
+     * Set firstYear
+     *
+     * @param string $firstYear
+     * @return User
+     */
+    public function setFirstYear($firstYear)
+    {
+        $this->firstYear = $firstYear;
+    
+        return $this;
+    }
+
+    /**
+     * Get firstYear
+     *
+     * @return string 
+     */
+    public function getFirstYear()
+    {
+        return $this->firstYear;
+    }
+
+    /**
+     * Set isadmin
+     *
+     * @param boolean $isadmin
+     * @return User
+     */
+    public function setIsadmin($isadmin)
+    {
+        $this->isadmin = $isadmin;
+    
+        return $this;
+    }
+
+    /**
+     * Get isadmin
+     *
+     * @return boolean 
+     */
+    public function getIsadmin()
+    {
+        return $this->isadmin;
+    }
+
+    /**
+     * Set origin
+     *
+     * @param string $origin
+     * @return User
+     */
+    public function setOrigin($origin)
+    {
+        $this->origin = $origin;
+    
+        return $this;
+    }
+
+    /**
+     * Get origin
+     *
+     * @return string 
+     */
+    public function getOrigin()
+    {
+        return $this->origin;
+    }
+
+    /**
+     * Set originDetails
+     *
+     * @param string $originDetails
+     * @return User
+     */
+    public function setOriginDetails($originDetails)
+    {
+        $this->originDetails = $originDetails;
+    
+        return $this;
+    }
+
+    /**
+     * Get originDetails
+     *
+     * @return string 
+     */
+    public function getOriginDetails()
+    {
+        return $this->originDetails;
+    }
+
+    /**
+     * Set last
+     *
+     * @param \DateTime $last
+     * @return User
+     */
+    public function setLast($last)
+    {
+        $this->last = $last;
+    
+        return $this;
+    }
+
+    /**
+     * Get last
+     *
+     * @return \DateTime 
+     */
+    public function getLast()
+    {
+        return $this->last;
+    }
+
+    /**
+     * Set connections
+     *
+     * @param integer $connections
+     * @return User
+     */
+    public function setConnections($connections)
+    {
+        $this->connections = $connections;
+    
+        return $this;
+    }
+
+    /**
+     * Get connections
+     *
+     * @return integer 
+     */
+    public function getConnections()
+    {
+        return $this->connections;
+    }
+
+    /**
+     * Set branch
+     *
+     * @param string $branch
+     * @return User
+     */
+    public function setBranch($branch)
+    {
+        $this->branch = $branch;
+    
+        return $this;
+    }
+
+    /**
+     * Get branch
+     *
+     * @return string 
+     */
+    public function getBranch()
+    {
+        return $this->branch;
+    }
+
+    /**
+     * Set filiere
+     *
+     * @param string $filiere
+     * @return User
+     */
+    public function setFiliere($filiere)
+    {
+        $this->filiere = $filiere;
+    
+        return $this;
+    }
+
+    /**
+     * Get filiere
+     *
+     * @return string 
+     */
+    public function getFiliere()
+    {
+        return $this->filiere;
+    }
+
+    /**
+     * Set message
+     *
+     * @param boolean $message
+     * @return User
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    
+        return $this;
+    }
+
+    /**
+     * Get message
+     *
+     * @return boolean 
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * Set identity
+     *
+     * @param string $identity
+     * @return User
+     */
+    public function setIdentity($identity)
+    {
+        $this->identity = $identity;
+    
+        return $this;
+    }
+
+    /**
+     * Get identity
+     *
+     * @return string 
+     */
+    public function getIdentity()
+    {
+        return $this->identity;
+    }
 }
