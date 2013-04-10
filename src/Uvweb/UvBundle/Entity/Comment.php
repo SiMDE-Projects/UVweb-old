@@ -106,15 +106,17 @@ class Comment
 
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id_auteur", type="smallint", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\User")
+     * @ORM\Column(name="id_auteur")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $author;
 
     /**
      * @var integer
-     *
-     * @ORM\Column(name="id_moderateur", type="smallint", nullable=true)
+     * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\User")
+     * @ORM\Column(name="id_moderateur")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $moderator;
 
@@ -404,51 +406,5 @@ class Comment
     public function getUv()
     {
         return $this->uv;
-    }
-
-    /**
-     * Set author
-     *
-     * @param integer $author
-     * @return Comment
-     */
-    public function setAuthor($author)
-    {
-        $this->author = $author;
-    
-        return $this;
-    }
-
-    /**
-     * Get author
-     *
-     * @return integer 
-     */
-    public function getAuthor()
-    {
-        return $this->author;
-    }
-
-    /**
-     * Set moderator
-     *
-     * @param integer $moderator
-     * @return Comment
-     */
-    public function setModerator($moderator)
-    {
-        $this->moderator = $moderator;
-    
-        return $this;
-    }
-
-    /**
-     * Get moderator
-     *
-     * @return integer 
-     */
-    public function getModerator()
-    {
-        return $this->moderator;
     }
 }
