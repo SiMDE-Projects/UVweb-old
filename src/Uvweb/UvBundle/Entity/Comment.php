@@ -179,29 +179,6 @@ class Comment
     }
 
     /**
-     * Set idUv
-     *
-     * @param integer $idUv
-     * @return Comment
-     */
-    public function setIdUv($idUv)
-    {
-        $this->idUv = $idUv;
-    
-        return $this;
-    }
-
-    /**
-     * Get idUv
-     *
-     * @return integer 
-     */
-    public function getIdUv()
-    {
-        return $this->idUv;
-    }
-
-    /**
      * Set globalRate
      *
      * @param boolean $globalRate
