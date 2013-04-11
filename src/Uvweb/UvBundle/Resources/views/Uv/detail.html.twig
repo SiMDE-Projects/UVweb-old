@@ -19,9 +19,15 @@
 		<div class="row-fluid">
 			<div class="span8">
 				<h1>{{ uv.name | upper }} <small>{{ uv.title | capitalize }}</small></h1>
+				<h2><small>Note moyenne : </small>{{ 8.53 | number_format(2, ',', ' ') }}/10</h2>
 			</div>
 			<div class="span4 text-right">
-				<h2><small>Note moyenne : </small>{{ 8.53 | number_format(2, ',', ' ') }}/10</h2>
+				<h2><small>Taux de réussite : </small> {{ firstPoll.semester }} : {{ firstPoll.successRate  | number_format(1, ',', ' ')}}%</h2>
+				<ul class="unstyled">
+					{% for poll in polls %}
+						<li>{{ poll.semester }} : {{poll.successRate| number_format(1, ',', ' ')}}%</li>
+					{% endfor %}
+				</ul>
 			</div>
 		</div>
 	</div>
