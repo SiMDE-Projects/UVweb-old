@@ -62,5 +62,32 @@ class UvController extends Controller
 		return $response;
 
 	}
+
+	public function uvNametoUvIdAction() {
+		$manager = $this->getDoctrine()->getManager();
+		
+		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+		$pollRepository = $manager->getRepository("UvwebUvBundle:Poll");
+
+		$polls = $pollRepository->findAll();
+		foreach ($polls as $poll) {
+
+			if($poll->getUv()!=null) continue;
+
+			$uv = $uvRepository->findOneByName($poll->getUvName());
+
+			if($uv!=null) {
+				echo "uv found : ".$uv->getName()."<br>";
+				$poll->setUv($uv);
+			} else {
+				echo "uv not found : ".$poll->getUvName()."<br>";
+			}
+
+		}
+		$manager->flush();
+
+		return new Response;
+
+	}
 }
 ?>
