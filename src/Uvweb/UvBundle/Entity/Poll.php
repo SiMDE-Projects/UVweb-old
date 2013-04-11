@@ -19,6 +19,12 @@ class Poll
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
+    private $uvName;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\Uv")
+     * @ORM\JoinColumn(nullable=false)
+     */
     private $uv;
 
     /**
@@ -372,31 +378,6 @@ class Poll
      * @ORM\Column(name="q9_4", type="float", nullable=true)
      */
     private $q94;
-
-
-
-    /**
-     * Set uv
-     *
-     * @param string $uv
-     * @return Poll
-     */
-    public function setUv($uv)
-    {
-        $this->uv = $uv;
-    
-        return $this;
-    }
-
-    /**
-     * Get uv
-     *
-     * @return string 
-     */
-    public function getUv()
-    {
-        return $this->uv;
-    }
 
     /**
      * Set semestre
@@ -1546,5 +1527,51 @@ class Poll
     public function getQ94()
     {
         return $this->q94;
+    }
+
+    /**
+     * Set uvName
+     *
+     * @param string $uvName
+     * @return Poll
+     */
+    public function setUvName($uvName)
+    {
+        $this->uvName = $uvName;
+    
+        return $this;
+    }
+
+    /**
+     * Get uvName
+     *
+     * @return string 
+     */
+    public function getUvName()
+    {
+        return $this->uvName;
+    }
+
+    /**
+     * Set uv
+     *
+     * @param \Uvweb\UvBundle\Entity\Uv $uv
+     * @return Poll
+     */
+    public function setUv(\Uvweb\UvBundle\Entity\Uv $uv)
+    {
+        $this->uv = $uv;
+    
+        return $this;
+    }
+
+    /**
+     * Get uv
+     *
+     * @return \Uvweb\UvBundle\Entity\Uv 
+     */
+    public function getUv()
+    {
+        return $this->uv;
     }
 }
