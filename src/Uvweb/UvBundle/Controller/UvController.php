@@ -13,18 +13,29 @@ class UvController extends Controller
 		$manager = $this->getDoctrine()->getManager();
 		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
 		$commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+		$pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
 
 		$uv = $uvRepository->findOneByName($uvname);
 		if($uv == null || $uv->getArchived()) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 		
-		$comments = $commentRepository->findBy(array('uv' => $uv, 'moderated' => true),
-												array('date' => 'desc'),
-												20,
-												0);
+		$comments = $commentRepository->findBy(
+			array('uv' => $uv, 'moderated' => true),
+			array('date' => 'desc'),
+			20,
+			0);
+
+		$polls = $pollRepository->findBy(
+			array('uv' => $uv),
+			array('semester' => 'desc'),
+			4,
+			0
+			);
 
 		return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
 			'uv' => $uv,
-			'comments' => $comments
+			'comments' => $comments,
+			'polls' => $polls,
+			'firstPoll' => $polls[1]
 		));
 	}
 
