@@ -219,7 +219,7 @@ class Comment
      */
     public function getComment()
     {
-        return html_entity_decode($this->comment);
+        return stripslashes(strip_tags(html_entity_decode($this->comment), '<br />'));
     }
 
     /**
