@@ -11,12 +11,12 @@ class UvController extends Controller
 	public function detailAction($uvname)
 	{
 		$manager = $this->getDoctrine()->getManager();
-
 		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+		$commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+
 		$uv = $uvRepository->findOneByName($uvname);
 		if($uv == null || $uv->getArchived()) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 		
-		$commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
 		$comments = $commentRepository->findBy(array('uv' => $uv, 'moderated' => true),
 												array('date' => 'desc'),
 												20,
