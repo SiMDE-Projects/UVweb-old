@@ -40,6 +40,12 @@ class UvController extends Controller
 		$commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
 		$comments = $commentRepository->findByUv($uv->getId());
 
+
+		$comments = $commentRepository->findBy(array('uv' => $uv),
+												array('date' => 'desc'),
+												10,
+												0);
+		
 		return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
 			'uv' => $uv,
 			'comments' => $comments
