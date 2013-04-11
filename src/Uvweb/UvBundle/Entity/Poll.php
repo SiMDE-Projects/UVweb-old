@@ -34,21 +34,21 @@ class Poll
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $semestre;
+    private $semester;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="inscrits", type="smallint", nullable=true)
      */
-    private $inscrits;
+    private $enrolled;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="reponses", type="smallint", nullable=true)
      */
-    private $reponses;
+    private $answers;
 
     /**
      * @var float
@@ -62,7 +62,7 @@ class Poll
      *
      * @ORM\Column(name="reussite", type="float", nullable=true)
      */
-    private $reussite;
+    private $successRate;
 
     /**
      * @var float
@@ -380,75 +380,6 @@ class Poll
     private $q94;
 
     /**
-     * Set semestre
-     *
-     * @param string $semestre
-     * @return Poll
-     */
-    public function setSemestre($semestre)
-    {
-        $this->semestre = $semestre;
-    
-        return $this;
-    }
-
-    /**
-     * Get semestre
-     *
-     * @return string 
-     */
-    public function getSemestre()
-    {
-        return $this->semestre;
-    }
-
-    /**
-     * Set inscrits
-     *
-     * @param integer $inscrits
-     * @return Poll
-     */
-    public function setInscrits($inscrits)
-    {
-        $this->inscrits = $inscrits;
-    
-        return $this;
-    }
-
-    /**
-     * Get inscrits
-     *
-     * @return integer 
-     */
-    public function getInscrits()
-    {
-        return $this->inscrits;
-    }
-
-    /**
-     * Set reponses
-     *
-     * @param integer $reponses
-     * @return Poll
-     */
-    public function setReponses($reponses)
-    {
-        $this->reponses = $reponses;
-    
-        return $this;
-    }
-
-    /**
-     * Get reponses
-     *
-     * @return integer 
-     */
-    public function getReponses()
-    {
-        return $this->reponses;
-    }
-
-    /**
      * Set pReponses
      *
      * @param float $pReponses
@@ -469,29 +400,6 @@ class Poll
     public function getPReponses()
     {
         return $this->pReponses;
-    }
-
-    /**
-     * Set reussite
-     *
-     * @param float $reussite
-     * @return Poll
-     */
-    public function setReussite($reussite)
-    {
-        $this->reussite = $reussite;
-    
-        return $this;
-    }
-
-    /**
-     * Get reussite
-     *
-     * @return float 
-     */
-    public function getReussite()
-    {
-        return $this->reussite;
     }
 
     /**
@@ -1573,5 +1481,97 @@ class Poll
     public function getUv()
     {
         return $this->uv;
+    }
+
+    /**
+     * Set semester
+     *
+     * @param string $semester
+     * @return Poll
+     */
+    public function setSemester($semester)
+    {
+        $this->semester = $semester;
+    
+        return $this;
+    }
+
+    /**
+     * Get semester
+     *
+     * @return string 
+     */
+    public function getSemester()
+    {
+        return $this->semester;
+    }
+
+    /**
+     * Set enrolled
+     *
+     * @param integer $enrolled
+     * @return Poll
+     */
+    public function setEnrolled($enrolled)
+    {
+        $this->enrolled = $enrolled;
+    
+        return $this;
+    }
+
+    /**
+     * Get enrolled
+     *
+     * @return integer 
+     */
+    public function getEnrolled()
+    {
+        return $this->enrolled;
+    }
+
+    /**
+     * Set answers
+     *
+     * @param integer $answers
+     * @return Poll
+     */
+    public function setAnswers($answers)
+    {
+        $this->answers = $answers;
+    
+        return $this;
+    }
+
+    /**
+     * Get answers
+     *
+     * @return integer 
+     */
+    public function getAnswers()
+    {
+        return $this->answers;
+    }
+
+    /**
+     * Set successRate
+     *
+     * @param float $successRate
+     * @return Poll
+     */
+    public function setSuccessRate($successRate)
+    {
+        $this->successRate = $successRate;
+    
+        return $this;
+    }
+
+    /**
+     * Get successRate
+     *
+     * @return float 
+     */
+    public function getSuccessRate()
+    {
+        return $this->successRate;
     }
 }
