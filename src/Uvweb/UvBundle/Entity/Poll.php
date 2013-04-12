@@ -32,9 +32,25 @@ class Poll
      *
      * @ORM\Column(name="semestre", type="string", length=3, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $semester;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="season", type="string", length=10)
+     *
+     */
+
+    private $season;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="year", type="integer")
+        *
+     */
+    private $year;
 
     /**
      * @var integer
@@ -1573,5 +1589,51 @@ class Poll
     public function getSuccessRate()
     {
         return $this->successRate;
+    }
+
+    /**
+     * Set season
+     *
+     * @param string $season
+     * @return Poll
+     */
+    public function setSeason($season)
+    {
+        $this->season = $season;
+    
+        return $this;
+    }
+
+    /**
+     * Get season
+     *
+     * @return string 
+     */
+    public function getSeason()
+    {
+        return $this->season;
+    }
+
+    /**
+     * Set year
+     *
+     * @param integer $year
+     * @return Poll
+     */
+    public function setYear($year)
+    {
+        $this->year = $year;
+    
+        return $this;
+    }
+
+    /**
+     * Get year
+     *
+     * @return integer 
+     */
+    public function getYear()
+    {
+        return $this->year;
     }
 }

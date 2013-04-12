@@ -99,8 +99,50 @@ class UvController extends Controller
 
 	}
 
+	public function pollSemesterToYearAction() {
+		$manager = $this->getDoctrine()->getManager();
+		$pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
+
+		$polls = $pollRepository->findAll();
+
+		$i=0;
+
+		foreach ($polls as $poll) {
+			if($i >= 500) break;
+			$semester = $poll->getSemester();
+
+			if($poll->getSeason() != "Automne" && $poll->getSeason() != "Printemps") {
+
+				echo $poll->getSemester()." ";
+				if(strtoupper(substr($semester, 0,1)) == 'P') {
+					echo "printemps ";
+					$poll->setSeason("Printemps");
+				} else if (strtoupper(substr($semester, 0,1)) == 'A'){
+					echo "automne ";
+					$poll->setSeason("Automne");
+				} else {
+					echo "ERROR ";
+				}
+				echo "<br>";
+
+				$i++;
+
+			}
+
+			if($poll->getYear() == 0) {
+				echo "annnee 20".substr($semester, 1,3).'<br>';
+				$poll->setYear('20'.substr($semester, 1,3));
+				$i++;
+			}
+		}
+
+		$manager->flush();
+		
+		return new Response;
+	}
+
 	public function testAction() {
-        return new Response;
+		return new Response;
 	}
 }
 ?>
