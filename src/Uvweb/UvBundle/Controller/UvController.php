@@ -103,5 +103,9 @@ class UvController extends Controller
 		return new Response;
 
 	}
+
+	public function testAction() {
+        return new Response;
+	}
 }
 ?>

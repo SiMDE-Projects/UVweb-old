@@ -9,3 +9,6 @@ uvweb_uv_uvtitlefetcher:
 uvweb_uv_uvnametoid:
     path: /uvnametoid
     defaults:  { _controller: UvwebUvBundle:Uv:uvNametoUvId}
+uvweb_uv_test:
+    path: /test
+    defaults:  { _controller: UvwebUvBundle:Uv:test}
