@@ -77,6 +77,26 @@ class Uv
     }
 
     /**
+     * Get letter code
+     *
+     * @return string 
+     */
+    public function getLetterCode()
+    {
+        return substr($this->name, 0, 2);
+    }
+
+    /**
+     * Get number code
+     *
+     * @return string 
+     */
+    public function getNumberCode()
+    {
+        return substr($this->name, 2, 4);
+    }
+
+    /**
      * Set title
      *
      * @param string $title
