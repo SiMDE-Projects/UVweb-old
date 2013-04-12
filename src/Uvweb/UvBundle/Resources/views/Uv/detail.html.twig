@@ -12,13 +12,19 @@
 .comment {
 	text-align: justify;
 }
+.uvname {
+	font-size:52px;
+}
+.uvnumbercode {
+	color : #72bbaa;
+}
 {% endblock %}
 
 {% block body %}
 	<div class="page-header">
 		<div class="row-fluid">
 			<div class="span8">
-				<h1>{{ uv.name | upper }} <small>{{ uv.title | capitalize }}</small></h1>
+				<h1 class="uvname">{{ uv.letterCode | upper }}<span class="uvnumbercode">{{ uv.numberCode }}</span> <small>{{ uv.title | capitalize }}</small></h1>
 				<h2><small>Note moyenne : </small>{{ 8.53 | number_format(2, ',', ' ') }}/10</h2>
 			</div>
 			<div class="span4 text-right">
