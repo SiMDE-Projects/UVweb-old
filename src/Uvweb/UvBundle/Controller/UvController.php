@@ -148,5 +148,16 @@ class UvController extends Controller
 	public function testAction() {
 		return new Response;
 	}
+
+	public function searchAction($searchtext) {
+
+		if(preg_match("/^[a-zA-Z]{2}+[0-9]{2}$/", $searchtext)) {
+			return $this->redirect( $this->generateUrl('uvweb_uv_detail', array('uvname' => $searchtext)) );
+		}
+		else {
+			return $this->render('UvwebUvBundle:Uv:search.html.twig');
+			echo 'not ok '.$searchtext.'<br>';
+		}
+	}
 }
 ?>

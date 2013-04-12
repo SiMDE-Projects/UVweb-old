@@ -12,6 +12,9 @@ uvweb_uv_uvnametoid:
 uvweb_uv_pollsemestertoyear:
     path: /pollsemestertoyear
     defaults:  { _controller: UvwebUvBundle:Uv:pollSemesterToYear}
+uvweb_uv_search:
+    path: /search/{searchtext}
+    defaults:  { _controller: UvwebUvBundle:Uv:search}
 uvweb_uv_test:
     path: /test
     defaults:  { _controller: UvwebUvBundle:Uv:test}
