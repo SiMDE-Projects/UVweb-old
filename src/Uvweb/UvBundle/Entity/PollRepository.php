@@ -12,12 +12,4 @@ use Doctrine\ORM\EntityRepository;
  */
 class PollRepository extends EntityRepository
 {
-	public function findOrderedPollsByUv(Uv $uv) {
-		$qb = $this->createQueryBuilder('p');
-
-		$qb->where('p.uv = :uv')->setParameter('uv', $uv);
-		$qb->setMaxResults(4);
-		$qb->orderBy('p.semester', 'DESC');
-		return $qb->getQuery()->getResult();
-	}
 }
