@@ -24,12 +24,7 @@ class UvController extends Controller
 			20,
 			0);
 
-		$polls = $pollRepository->findBy(
-			array('uv' => $uv),
-			array('semester' => 'desc'),
-			4,
-			0
-			);
+		$polls = $pollRepository->findOrderedPollsByUv($uv);
 
 		$averageRate = $commentRepository->averageRate($uv);
 
