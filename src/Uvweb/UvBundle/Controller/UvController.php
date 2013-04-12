@@ -31,11 +31,14 @@ class UvController extends Controller
 			0
 			);
 
+		$averageRate = $commentRepository->averageRate($uv);
+
 		return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
 			'uv' => $uv,
 			'comments' => $comments,
 			'polls' => $polls,
-			'firstPoll' => $polls[1]
+			'firstPoll' => $polls[0],
+			'averageRate' => $averageRate
 		));
 	}
 
