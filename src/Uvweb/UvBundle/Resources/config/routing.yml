@@ -6,6 +6,6 @@ uvweb_uv_detail:
 uvweb_uv_uvtitlefetcher:
     path: /titlefetcher
     defaults:  { _controller: UvwebUvBundle:Uv:uvTitle}
-uvweb_uv_test:
-    path: /test
+uvweb_uv_uvnametoid:
+    path: /uvnametoid
     defaults:  { _controller: UvwebUvBundle:Uv:uvNametoUvId}
