@@ -12,4 +12,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class CommentRepository extends EntityRepository
 {
+	public function averageRate(Uv $uv) {
+
+		$qb = $this->createQueryBuilder('c');
+
+		$qb->select('AVG(c.globalRate) as globalRate');
+
+		$qb->where('c.uv = :uv')->setParameter('uv', $uv);
+
+		return $qb->getQuery()->getSingleScalarResult();
+
+	}
 }
