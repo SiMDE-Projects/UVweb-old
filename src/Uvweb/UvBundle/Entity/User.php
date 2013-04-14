@@ -202,6 +202,16 @@ class User
     }
 
     /**
+     * Get UTC login
+     *
+     * @return string 
+     */
+    public function getUtcLogin()
+    {
+        return split("@", $this->email)[0];
+    }
+
+    /**
      * Set firstSemester
      *
      * @param string $firstSemester
