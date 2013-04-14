@@ -16,7 +16,7 @@ class UvController extends Controller
 		$pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
 
 		$uv = $uvRepository->findOneByName($uvname);
-		if($uv == null || $uv->getArchived()) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
+		if($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 		
 		$comments = $commentRepository->findBy(
 			array('uv' => $uv, 'moderated' => true),
