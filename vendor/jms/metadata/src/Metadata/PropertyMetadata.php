@@ -42,7 +42,9 @@ class PropertyMetadata implements \Serializable
     }
 
     /**
-     * @param Tests\Fixtures\TestObject $obj
+     * @param object $obj
+     *
+     * @return mixed
      */
     public function getValue($obj)
     {
@@ -50,8 +52,8 @@ class PropertyMetadata implements \Serializable
     }
 
     /**
-     * @param Tests\Fixtures\TestObject $obj
-     * @param string                    $value
+     * @param object $obj
+     * @param string $value
      */
     public function setValue($obj, $value)
     {

@@ -93,6 +93,11 @@ final class LazyOption extends Option
         return $this->option()->orElse($else);
     }
 
+    public function ifDefined($callable)
+    {
+        $this->option()->ifDefined($callable);
+    }
+
     public function map($callable)
     {
         return $this->option()->map($callable);

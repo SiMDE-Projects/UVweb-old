@@ -31,10 +31,19 @@
 <body>
 <?php
 
-require_once('../lib/SqlFormatter.php');
+require_once(__DIR__.'/../lib/SqlFormatter.php');
 
 // Example statements for formatting and highlighting
 $statements = array(
+    "SELECT DATE_FORMAT(b.t_create, '%Y-%c-%d') dateID, b.title memo 
+    FROM (SELECT id FROM orc_scheme_detail d WHERE d.business=208 
+    AND d.type IN (29,30,31,321,33,34,3542,361,327,38,39,40,41,42,431,4422,415,4546,47,48,'a',
+    29,30,31,321,33,34,3542,361,327,38,39,40,41,42,431,4422,415,4546,47,48,'a') 
+    AND d.title IS NOT NULL AND t_create >= 
+    DATE_FORMAT((DATE_SUB(NOW(),INTERVAL 1 DAY)),'%Y-%c-%d') AND t_create 
+    < DATE_FORMAT(NOW(), '%Y-%c-%d') ORDER BY d.id LIMIT 2,10) a, 
+    orc_scheme_detail b WHERE a.id = b.id",
+
     "SELECT * FROM MyTable WHERE id = 46",
 
     "SELECT count(*),`Column1`,`Testing`, `Testing Three` FROM `Table1`
@@ -74,6 +83,20 @@ $split_statements = array(
         abc\";
     SELECT a,b #comment;
     FROM test;",
+    
+    "
+    -- Drop the table first if it exists
+    DROP TABLE IF EXISTS MyTable;
+
+    -- Create the table
+    CREATE TABLE MyTable ( id int );
+
+    -- Insert values
+    INSERT INTO MyTable (id)
+        VALUES
+        (1),(2),(3),(4);
+
+    -- Done",
 );
 
 // Example statements for removing comments

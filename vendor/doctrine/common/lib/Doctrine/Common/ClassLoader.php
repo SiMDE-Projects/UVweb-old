@@ -150,7 +150,6 @@ class ClassLoader
      * Loads the given class or interface.
      *
      * @param string $className The name of the class to load.
-
      * @return boolean TRUE if the class has been successfully loaded, FALSE otherwise.
      */
     public function loadClass($className)
@@ -182,7 +181,7 @@ class ClassLoader
         $file = str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className) . $this->fileExtension;
 
         if ($this->includePath !== null) {
-            return file_exists($this->includePath . DIRECTORY_SEPARATOR . $file);
+            return is_file($this->includePath . DIRECTORY_SEPARATOR . $file);
         }
 
         return (false !== stream_resolve_include_path($file));
@@ -235,9 +234,13 @@ class ClassLoader
             } else if (is_string($loader) && $loader($className)) { // "MyClass::loadClass"
                 return true;
             }
+
+            if (class_exists($className, false) || interface_exists($className, false)) {
+                return true;
+            }
         }
 
-        return class_exists($className, false) || interface_exists($className, false);
+        return false;
     }
 
     /**

@@ -31,17 +31,16 @@ class DoctrineCacheAdapter implements CacheInterface
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public function loadClassMetadataFromCache(\ReflectionClass $class)
     {
-        if ($this->cache->contains($this->prefix . $class->name)) {
-            return $this->cache->fetch($this->prefix . $class->name);
-        }
+        $cache = $this->cache->fetch($this->prefix . $class->name);
+        return false === $cache ? null : $cache;
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public function putClassMetadataInCache(ClassMetadata $metadata)
     {
@@ -49,7 +48,7 @@ class DoctrineCacheAdapter implements CacheInterface
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public function evictClassMetadataFromCache(\ReflectionClass $class)
     {

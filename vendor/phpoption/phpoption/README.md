@@ -7,7 +7,7 @@ The Option type is intended for cases where you sometimes might return a value
 depending on arguments, or other runtime factors.
 
 Often times, you forget to handle the case where no value is returned. Not intentionally
-of course, but maybe you did not account for all possible states of the sytem; or maybe you
+of course, but maybe you did not account for all possible states of the system; or maybe you
 indeed covered all cases, then time goes on, code is refactored, some of these your checks 
 might become invalid, or incomplete. Suddenly, without noticing, the no value case is not
 handled anymore. As a result, you might sometimes get fatal PHP errors telling you that 
@@ -171,7 +171,7 @@ to retrieve the value from the wrapper.
 * Average Overhead per Invocation (none case/null returned): 0.000000368s (that is 368 nano seconds)
 
 The benchmark was run under Ubuntu precise with PHP 5.4.6. As you can see the
-overhead is suprisingly low, almost negligble. 
+overhead is surprisingly low, almost negligible.
 
 So in conclusion, unless you plan to call a method thousands of times during a
 request, there is no reason to stick to the ``object|null`` return value; better give
