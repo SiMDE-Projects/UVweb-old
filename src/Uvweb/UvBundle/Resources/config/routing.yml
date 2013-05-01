@@ -15,6 +15,9 @@ uvweb_uv_pollsemestertoyear:
 uvweb_uv_search:
     path: /search/{searchtext}
     defaults:  { _controller: UvwebUvBundle:Uv:search}
+uvweb_uv_applist:
+    path: /app/list
+    defaults:  { _controller: UvwebUvBundle:Uv:appList}
 uvweb_uv_test:
     path: /test
     defaults:  { _controller: UvwebUvBundle:Uv:test}

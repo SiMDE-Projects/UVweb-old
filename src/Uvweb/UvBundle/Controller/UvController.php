@@ -6,6 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Uvweb\UvBundle\Entity\Comment;
 
+
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 class UvController extends Controller
 {
 	public function detailAction($uvname)
@@ -158,6 +163,25 @@ class UvController extends Controller
 			return $this->render('UvwebUvBundle:Uv:search.html.twig');
 			echo 'not ok '.$searchtext.'<br>';
 		}
+	}
+
+	public function appListAction() {
+
+		$manager = $this->getDoctrine()->getManager();
+		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+
+		$encoders = array(new XmlEncoder(), new JsonEncoder());
+		$normalizers = array(new GetSetMethodNormalizer());
+
+		$serializer = new Serializer($normalizers, $encoders);
+
+		$uvs = $uvRepository->findAll();
+
+		echo $serializer->serialize($uvs, 'json');
+
+		$response = new Response;
+		$response->setContent("<body></body>");
+		return $response;
 	}
 }
 ?>
