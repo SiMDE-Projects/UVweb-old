@@ -150,19 +150,19 @@ class UvController extends Controller
 		return new Response;
 	}
 
-	public function testAction() {
+	public function appDetailAction($uvname) {
 
 		$manager = $this->getDoctrine()->getManager();
 		$commentRepository = $manager->getRepository("UvwebUvBundle:Comment");
 		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
 
-		$uv = $uvRepository->findOneByName('MT23');
+		$uv = $uvRepository->findOneByName($uvname);
 		if($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 
 		$comments = $commentRepository->findBy(
 			array('uv' => $uv, 'moderated' => true),
 			array('date' => 'desc'),
-			1,
+			20,
 			0);
 
 		$encoders = array(new XmlEncoder(), new JsonEncoder());
