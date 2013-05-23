@@ -407,6 +407,18 @@ class Comment
     }
 
     /**
+     * Get authorName
+     *
+     * @return \Uvweb\UvBundle\Entity\String 
+     */
+    public function getAuthorName()
+    {
+        return $this->author->getLogin();
+    }
+
+
+
+    /**
      * Set moderator
      *
      * @param \Uvweb\UvBundle\Entity\User $moderator

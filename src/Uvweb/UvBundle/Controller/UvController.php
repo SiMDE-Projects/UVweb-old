@@ -168,7 +168,7 @@ class UvController extends Controller
 		$encoders = array(new XmlEncoder(), new JsonEncoder());
 
 		$normalizer = new GetSetMethodNormalizer();
-		$normalizer->setIgnoredAttributes(array('moderator', 'date', 'last', 'utcLogin','password','email','id','moderated','uv','isadmin'));
+		$normalizer->setIgnoredAttributes(array('moderator', 'date', 'last', 'utcLogin','password','email','id','moderated','uv','isadmin', 'author'));
 
 		$normalizers = array($normalizer);
 
