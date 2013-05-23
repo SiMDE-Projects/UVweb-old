@@ -1,7 +1,7 @@
 <?php
- 
+
 namespace Uvweb\UvBundle\Controller;
- 
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Uvweb\UvBundle\Entity\Comment;
@@ -43,22 +43,22 @@ class UvController extends Controller
 			'polls' => $polls,
 			'firstPoll' => $polls[0],
 			'averageRate' => $averageRate
-		));
+			));
 	}
 
 	public function uvTitleAction() {
 		$manager = $this->getDoctrine()->getManager();
 		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
 		$uvs = $uvRepository->findBy(array('title' => ''),
-                                     array('name' => 'desc'),
-                                     100,
-                                     0);
+			array('name' => 'desc'),
+			100,
+			0);
 		include('uvtitlefetcher/simple_html_dom.php');
 		foreach ($uvs as $uv) {
 
 			// Include the library
 			
-			 
+
 			// Retrieve the DOM from a given URL
 			$html = file_get_html('http://cap.utc.fr/portail_UV/detailuv.php?uv='.$uv->getName().'&page=uv&lang=FR');
 
@@ -151,7 +151,35 @@ class UvController extends Controller
 	}
 
 	public function testAction() {
-		return new Response;
+
+		$manager = $this->getDoctrine()->getManager();
+		$commentRepository = $manager->getRepository("UvwebUvBundle:Comment");
+		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+
+		$uv = $uvRepository->findOneByName('MT23');
+		if($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
+
+		$comments = $commentRepository->findBy(
+			array('uv' => $uv, 'moderated' => true),
+			array('date' => 'desc'),
+			1,
+			0);
+
+		$encoders = array(new XmlEncoder(), new JsonEncoder());
+
+		$normalizer = new GetSetMethodNormalizer();
+		$normalizer->setIgnoredAttributes(array('moderator', 'date', 'last', 'utcLogin','password','email','id','moderated','uv','isadmin'));
+
+		$normalizers = array($normalizer);
+
+		$serializer = new Serializer($normalizers, $encoders);
+
+		$json = $serializer->serialize($comments, 'json');
+
+		$response = new Response;
+		$response->setContent($json);
+
+		return $response;
 	}
 
 	public function searchAction($searchtext) {
