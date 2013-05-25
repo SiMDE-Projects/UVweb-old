@@ -1,3 +1,0 @@
-uvweb_home_homepage:
-    pattern:  /
-    defaults: { _controller: UvwebHomeBundle:Home:index }

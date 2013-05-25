@@ -20,8 +20,7 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Ornicar\GravatarBundle\OrnicarGravatarBundle(),
-            new Uvweb\UvBundle\UvwebUvBundle(),
-            new Uvweb\HomeBundle\UvwebHomeBundle(),
+            new Uvweb\UvBundle\UvwebUvBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

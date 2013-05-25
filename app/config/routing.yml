@@ -1,8 +1,4 @@
-uvweb_home:
-    resource: "@UvwebHomeBundle/Resources/config/routing.yml"
-    prefix:   /
-
 uvweb_uv:
     resource: "@UvwebUvBundle/Resources/config/routing.yml"
-    prefix:   /uv
+    prefix:   /
 

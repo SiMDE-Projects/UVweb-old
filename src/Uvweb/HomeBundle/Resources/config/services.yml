@@ -1,7 +1,0 @@
-parameters:
-#    uvweb_home.example.class: Uvweb\HomeBundle\Example
-
-services:
-#    uvweb_home.example:
-#        class: %uvweb_home.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]

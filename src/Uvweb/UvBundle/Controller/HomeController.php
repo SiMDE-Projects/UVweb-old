@@ -1,6 +1,6 @@
 <?php
  
-namespace Uvweb\HomeBundle\Controller;
+namespace Uvweb\UvBundle\Controller;
  
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +16,7 @@ class HomeController extends Controller
 			array('date' => 'desc'),
 			20,
 			0);
-		return $this->render('UvwebHomeBundle:Home:index.html.twig', array('comments' => $comments ));
+		return $this->render('UvwebUvBundle:Home:index.html.twig', array('comments' => $comments ));
 	}
 }
 ?>
