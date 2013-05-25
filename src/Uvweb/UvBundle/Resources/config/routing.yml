@@ -2,7 +2,7 @@ uvweb_uv_detail:
     path: /uv/{uvname}
     defaults:  { _controller: UvwebUvBundle:Detail:detail}
     requirements:
-        uvname:  ^[a-zA-Z]{2}+[0-9]{2}$
+        uvname:  ^[a-zA-Z0-9]{4}$
 uvweb_uv_uvtitlefetcher:
     path: /uv/titlefetcher
     defaults:  { _controller: UvwebUvBundle:Detail:uvTitle}
