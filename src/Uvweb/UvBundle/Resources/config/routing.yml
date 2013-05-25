@@ -1,26 +1,26 @@
 uvweb_uv_detail:
     path: /uv/{uvname}
-    defaults:  { _controller: UvwebUvBundle:Uv:detail}
+    defaults:  { _controller: UvwebUvBundle:Detail:detail}
     requirements:
         uvname:  ^[a-zA-Z]{2}+[0-9]{2}$
 uvweb_uv_uvtitlefetcher:
     path: /uv/titlefetcher
-    defaults:  { _controller: UvwebUvBundle:Uv:uvTitle}
+    defaults:  { _controller: UvwebUvBundle:Detail:uvTitle}
 uvweb_uv_uvnametoid:
     path: /uv/uvnametoid
-    defaults:  { _controller: UvwebUvBundle:Uv:uvNametoUvId}
+    defaults:  { _controller: UvwebUvBundle:Detail:uvNametoUvId}
 uvweb_uv_pollsemestertoyear:
     path: /uv/pollsemestertoyear
-    defaults:  { _controller: UvwebUvBundle:Uv:pollSemesterToYear}
+    defaults:  { _controller: UvwebUvBundle:Detail:pollSemesterToYear}
 uvweb_uv_search:
     path: /uv/search/{searchtext}
-    defaults:  { _controller: UvwebUvBundle:Uv:search}
+    defaults:  { _controller: UvwebUvBundle:Detail:search}
 uvweb_uv_applist:
     path: /uv/app/list
-    defaults:  { _controller: UvwebUvBundle:Uv:appList}
+    defaults:  { _controller: UvwebUvBundle:Detail:appList}
 uvweb_uv_appdetail:
     path: /uv/app/{uvname}
-    defaults:  { _controller: UvwebUvBundle:Uv:appDetail}
+    defaults:  { _controller: UvwebUvBundle:Detail:appDetail}
     requirements:
         uvname:  ^[a-zA-Z]{2}+[0-9]{2}$
 uvweb_uv_homepage:
