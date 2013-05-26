@@ -22,7 +22,7 @@ class BaseController extends Controller{
     protected function initSearchBar() {
         // $search = new SearchStatement;
         $formBuilder = $this->createFormBuilder();
-        $formBuilder->add('statement', 'text');
+        $formBuilder->add('statement', 'text', array('required' => false));
         $this->searchBarForm = $formBuilder->getForm();
 
         $request = $this->get('request');
