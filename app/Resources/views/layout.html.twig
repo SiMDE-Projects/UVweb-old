@@ -71,10 +71,9 @@
               <li><a href="#">Déconnexion</a></li>
             </ul>
           </div>
-          <form class="navbar-search pull-right" method='POST' {{ form_enctype(form) }}>
-              {% form_theme form 'UvwebUvBundle::searchbar.html.twig' %}
-            {#<input type="text" class="search-query" name="text" placeholder="Rechercher une UV">#}
-              {{ form_widget(form) }}
+          <form class="navbar-search pull-right" method='POST' {{ form_enctype(searchbar) }}>
+              {% form_theme searchbar 'UvwebUvBundle::searchbar.html.twig' %}
+              {{ form_widget(searchbar) }}
             <span class="icon-search">
 <!--               <button type="submit" class="icon nav-search" tabindex="-1">
                 <span class="visuallyhidden">

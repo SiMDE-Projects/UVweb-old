@@ -1,4 +1,8 @@
-{% block text_widget %}
-        {% set type = type|default('text') %}
-    <input type="{{ type }}" {{ block('widget_attributes') }} value="{{ value }}" class="search-query" />
-{% endblock %}
+{% block form_row %}
+    {% spaceless %}
+        <div>
+            {{ form_errors(form) }}
+            {{ form_widget(form, { 'attr': {'class': 'search-query'} }) }}
+        </div>
+    {% endspaceless %}
+{% endblock form_row %}

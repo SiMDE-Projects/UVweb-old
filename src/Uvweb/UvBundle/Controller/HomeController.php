@@ -28,7 +28,7 @@ class HomeController extends BaseController
 		return $this->render('UvwebUvBundle:Home:index.html.twig', array(
             'comments' => $comments,
             'news' => $news,
-            'form' => $this->searchBarForm->createView()
+            'searchbar' => $this->searchBarForm->createView()
         ));
 	}
 }

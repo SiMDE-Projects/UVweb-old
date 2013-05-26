@@ -45,7 +45,7 @@ class DetailController extends BaseController
 			'polls' => $polls,
 			'firstPoll' => $polls[0],
 			'averageRate' => $averageRate,
-            'form' => $this->searchBarForm->createView()
+            'searchbar' => $this->searchBarForm->createView()
 			));
 	}
 
