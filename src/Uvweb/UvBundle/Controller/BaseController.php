@@ -10,7 +10,6 @@
 namespace Uvweb\UvBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Uvweb\UvBundle\Forms\SearchStatement;
 
 
 class BaseController extends Controller{
@@ -21,8 +20,8 @@ class BaseController extends Controller{
      * that method allows us to generate search bar form from anywhere
      */
     protected function initSearchBar() {
-        $search = new SearchStatement;
-        $formBuilder = $this->createFormBuilder($search);
+        // $search = new SearchStatement;
+        $formBuilder = $this->createFormBuilder();
         $formBuilder->add('statement', 'text');
         $this->searchBarForm = $formBuilder->getForm();
 
@@ -31,7 +30,7 @@ class BaseController extends Controller{
         if ($request->getMethod() == 'POST') {
             $this->searchBarForm->bind($request);
             if ($this->searchBarForm->isValid()) {
-                return $this->redirect($this->generateUrl('uvweb_uv_detail', array('uvname' => $search->getStatement())));
+                return $this->redirect($this->generateUrl('uvweb_uv_detail', array('uvname' => $this->searchBarForm->getData()['statement'])));
             }
         }
     }
