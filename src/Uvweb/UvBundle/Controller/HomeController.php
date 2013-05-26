@@ -4,7 +4,6 @@ namespace Uvweb\UvBundle\Controller;
  
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Uvweb\UvBundle\Entity\News;
 
 class HomeController extends Controller
 {
