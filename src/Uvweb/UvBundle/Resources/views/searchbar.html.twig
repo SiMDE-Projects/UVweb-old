@@ -1,0 +1,4 @@
+{% block text_widget %}
+        {% set type = type|default('text') %}
+    <input type="{{ type }}" {{ block('widget_attributes') }} value="{{ value }}" class="search-query" />
+{% endblock %}
