@@ -1,21 +1,16 @@
 <?php
  
 namespace Uvweb\UvBundle\Controller;
- 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
-use Uvweb\UvBundle\Forms\SearchStatement;
 
-class HomeController extends Controller
+use Symfony\Component\HttpFoundation\Response;
+
+class HomeController extends BaseController
 {
 	public function indexAction() {
-
-        $search = new SearchStatement;
-        $formBuilder = $this->createFormBuilder($search);
-        $formBuilder->add('statement', 'text');
-        $form = $formBuilder->getForm();
-
-
+        /** those lines allow redirection after submitting search bar form */
+        if( $redirect = $this->initSearchBar()) {
+            return $redirect;
+        }
 
 		$manager = $this->getDoctrine()->getManager();
 		$commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
@@ -33,7 +28,7 @@ class HomeController extends Controller
 		return $this->render('UvwebUvBundle:Home:index.html.twig', array(
             'comments' => $comments,
             'news' => $news,
-            'form' => $form->createView()
+            'form' => $this->searchBarForm->createView()
         ));
 	}
 }

@@ -71,7 +71,7 @@
               <li><a href="#">Déconnexion</a></li>
             </ul>
           </div>
-          <form class="navbar-search pull-right" method='GET' {{ form_enctype(form) }}>
+          <form class="navbar-search pull-right" method='POST' {{ form_enctype(form) }}>
             {#<input type="text" class="search-query" name="text" placeholder="Rechercher une UV">#}
               {{ form_widget(form) }}
             <span class="icon-search">

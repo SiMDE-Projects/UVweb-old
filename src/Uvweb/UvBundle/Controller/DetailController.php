@@ -2,17 +2,21 @@
 
 namespace Uvweb\UvBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
-class DetailController extends Controller
+class DetailController extends BaseController
 {
 	public function detailAction($uvname)
 	{
+        /** those lines allow redirection after submitting search bar form */
+        if( $redirect = $this->initSearchBar()) {
+            return $redirect;
+        }
+
 		$manager = $this->getDoctrine()->getManager();
 		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
 		$commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
@@ -40,7 +44,8 @@ class DetailController extends Controller
 			'comments' => $comments,
 			'polls' => $polls,
 			'firstPoll' => $polls[0],
-			'averageRate' => $averageRate
+			'averageRate' => $averageRate,
+            'form' => $this->searchBarForm->createView()
 			));
 	}
 
