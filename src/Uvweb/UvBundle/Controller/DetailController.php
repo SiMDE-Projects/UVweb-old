@@ -41,7 +41,6 @@ class DetailController extends BaseController
         $averageRate = $commentRepository->averageRate($uv);
 
         $comment = new Comment();
-
         $form = $this->createFormBuilder($comment)
             ->add('comment', 'textarea')
             ->add('interest', 'choice', array(
@@ -78,7 +77,16 @@ class DetailController extends BaseController
 
             if ($form->isValid()) {
                 // perform some action, such as saving the task to the database
-                return $this->redirect($this->generateUrl('task_success'));
+                $comment->setDate(new \DateTime());
+                return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
+                    'uv' => $uv,
+                    'comments' => $comments,
+                    'polls' => $polls,
+                    'firstPoll' => $polls[0],
+                    'averageRate' => $averageRate,
+                    'searchbar' => $this->searchBarForm->createView(),
+                    'add_comment_form' => $form->createView()
+                ));
             }
         }
 
@@ -202,7 +210,6 @@ class DetailController extends BaseController
 
     public function appDetailAction($uvname)
     {
-
         $manager = $this->getDoctrine()->getManager();
         $commentRepository = $manager->getRepository("UvwebUvBundle:Comment");
         $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
@@ -235,7 +242,6 @@ class DetailController extends BaseController
 
     public function searchAction($searchtext)
     {
-
         if (preg_match("/^[a-zA-Z]{2}+[0-9]{2}$/", $searchtext)) {
             return $this->redirect($this->generateUrl('uvweb_uv_detail', array('uvname' => $searchtext)));
         } else {
@@ -246,7 +252,6 @@ class DetailController extends BaseController
 
     public function appListAction()
     {
-
         $manager = $this->getDoctrine()->getManager();
         $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
 
@@ -257,10 +262,8 @@ class DetailController extends BaseController
 
         $uvs = $uvRepository->findAll();
 
-        echo $serializer->serialize($uvs, 'json');
-
-        $response = new Response;
-        $response->setContent("<body></body>");
+        $response = new Response();
+        $response->setContent($serializer->serialize($uvs, 'json'));
         return $response;
     }
 }
