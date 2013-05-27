@@ -7,6 +7,7 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Uvweb\UvBundle\Entity\Comment;
 
 class DetailController extends BaseController
 {
@@ -24,7 +25,7 @@ class DetailController extends BaseController
 
 		$uv = $uvRepository->findOneByName($uvname);
 		if($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
-		
+
 		$comments = $commentRepository->findBy(
 			array('uv' => $uv, 'moderated' => true),
 			array('date' => 'desc'),
@@ -39,13 +40,56 @@ class DetailController extends BaseController
 
 		$averageRate = $commentRepository->averageRate($uv);
 
+        $comment = new Comment();
+
+        $form = $this->createFormBuilder($comment)
+            ->add('comment', 'textarea')
+            ->add('interest', 'choice', array(
+                'choices' => array('a' => 'Passionnant', 'b' => 'Très intéressant',
+                'c' => 'Intéressant', 'd' => 'Peu intéressant', 'e' => 'Bof', 'f' => 'Nul'),
+            ))
+            ->add('pedagogy', 'choice', array(
+                'choices' => array('a' => 'Passionnant', 'b' => 'Très intéressant',
+                    'c' => 'Intéressant', 'd' => 'Peu intéressant', 'e' => 'Bof', 'f' => 'Nul'),
+            ))
+            ->add('utility', 'choice', array(
+                'choices' => array('a' => 'Indispensable', 'b' => 'Très importante',
+                    'c' => 'Utile', 'd' => 'Pas très utile', 'e' => 'Très peu utile', 'f' => 'Inutile'),
+            ))
+            ->add('workamount', 'choice', array(
+                'choices' => array('a' => 'Symbolique', 'b' => 'Faible',
+                    'c' => 'Moyenne', 'd' => 'Importante', 'e' => 'Très importante'),
+            ))
+            ->add('passed', 'choice', array(
+                'choices' => array('a' => 'Obtenue', 'b' => 'Ratée', 'c' => 'En cours')
+            ))
+            ->add('semester', 'choice', array(
+                'choices' => array('a' => 'P13', 'b' => 'A12')
+            ))
+            ->add('globalRate', 'choice', array(
+                'choices' => array('a' => '10', 'b' => '9', 'b' => '8', 'c' => '7', 'd' => '6'
+                , 'e' => '5', 'f' => '4', 'g' => '3', 'h' => '2', 'i' => '1', 'j' => '0')
+            ))
+            ->getForm();
+
+        $request = $this->getRequest();
+        if ($request->isMethod('POST')) {
+            $form->bind($request);
+
+            if ($form->isValid()) {
+                // perform some action, such as saving the task to the database
+                return $this->redirect($this->generateUrl('task_success'));
+            }
+        }
+
 		return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
 			'uv' => $uv,
 			'comments' => $comments,
 			'polls' => $polls,
 			'firstPoll' => $polls[0],
 			'averageRate' => $averageRate,
-            'searchbar' => $this->searchBarForm->createView()
+            'searchbar' => $this->searchBarForm->createView(),
+            'add_comment_form' => $form->createView()
 			));
 	}
 
@@ -60,7 +104,7 @@ class DetailController extends BaseController
 		foreach ($uvs as $uv) {
 
 			// Include the library
-			
+
 
 			// Retrieve the DOM from a given URL
 			$html = file_get_html('http://cap.utc.fr/portail_UV/detailuv.php?uv='.$uv->getName().'&page=uv&lang=FR');
@@ -86,7 +130,7 @@ class DetailController extends BaseController
 
 	public function uvNametoUvIdAction() {
 		$manager = $this->getDoctrine()->getManager();
-		
+
 		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
 		$pollRepository = $manager->getRepository("UvwebUvBundle:Poll");
 
@@ -149,7 +193,7 @@ class DetailController extends BaseController
 		}
 
 		$manager->flush();
-		
+
 		return new Response;
 	}
 

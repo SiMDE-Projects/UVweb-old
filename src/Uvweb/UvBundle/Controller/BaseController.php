@@ -20,12 +20,11 @@ class BaseController extends Controller{
      * that method allows us to generate search bar form from anywhere
      */
     protected function initSearchBar() {
-        // $search = new SearchStatement;
         $formBuilder = $this->createFormBuilder();
         $formBuilder->add('statement', 'text', array('required' => false));
         $this->searchBarForm = $formBuilder->getForm();
 
-        $request = $this->get('request');
+        $request = $this->getRequest();
 
         if ($request->getMethod() == 'POST') {
             $this->searchBarForm->bind($request);

@@ -37,6 +37,12 @@
 			</div>
 		</div>
 	</div>
+    <div class="well">
+        <form method="post" {{ form_enctype(add_comment_form) }}>
+            {{ form_widget(add_comment_form) }}
+            <input type="submit" class="btn btn-primary" />
+        </form>
+    </div>
 	{% for comment in comments %}
 		<div class="span12">
 			<div class="row-fluid">
