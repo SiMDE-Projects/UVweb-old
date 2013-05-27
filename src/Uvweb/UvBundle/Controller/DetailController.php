@@ -3,14 +3,20 @@
 namespace Uvweb\UvBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Uvweb\UvBundle\Entity\Comment;
 
 class DetailController extends BaseController
 {
+    private $encoders;
+
+    public function __construct()
+    {
+        $this->encoders = array(new JsonEncoder());
+    }
+
     public function detailAction($uvname)
     {
         /** those lines allow redirection after submitting search bar form */
@@ -221,21 +227,16 @@ class DetailController extends BaseController
             array('uv' => $uv, 'moderated' => true),
             array('date' => 'desc'),
             20,
-            0);
-
-        $encoders = array(new XmlEncoder(), new JsonEncoder());
+            0
+        );
 
         $normalizer = new GetSetMethodNormalizer();
         $normalizer->setIgnoredAttributes(array('moderator', 'date', 'last', 'utcLogin', 'password', 'email', 'id', 'moderated', 'uv', 'isadmin', 'author'));
 
-        $normalizers = array($normalizer);
+        $serializer = new Serializer(array($normalizer), $this->encoders);
 
-        $serializer = new Serializer($normalizers, $encoders);
-
-        $json = $serializer->serialize($comments, 'json');
-
-        $response = new Response;
-        $response->setContent($json);
+        $response = new Response();
+        $response->setContent($serializer->serialize($comments, 'json'));
 
         return $response;
     }
@@ -246,7 +247,6 @@ class DetailController extends BaseController
             return $this->redirect($this->generateUrl('uvweb_uv_detail', array('uvname' => $searchtext)));
         } else {
             return $this->render('UvwebUvBundle:Uv:search.html.twig');
-            echo 'not ok ' . $searchtext . '<br>';
         }
     }
 
@@ -255,10 +255,8 @@ class DetailController extends BaseController
         $manager = $this->getDoctrine()->getManager();
         $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
 
-        $encoders = array(new XmlEncoder(), new JsonEncoder());
         $normalizers = array(new GetSetMethodNormalizer());
-
-        $serializer = new Serializer($normalizers, $encoders);
+        $serializer = new Serializer($normalizers, $this->encoders);
 
         $uvs = $uvRepository->findAll();
 
