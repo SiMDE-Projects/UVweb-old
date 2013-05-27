@@ -11,34 +11,34 @@ use Uvweb\UvBundle\Entity\Comment;
 
 class DetailController extends BaseController
 {
-	public function detailAction($uvname)
-	{
+    public function detailAction($uvname)
+    {
         /** those lines allow redirection after submitting search bar form */
-        if( $redirect = $this->initSearchBar()) {
+        if ($redirect = $this->initSearchBar()) {
             return $redirect;
         }
 
-		$manager = $this->getDoctrine()->getManager();
-		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
-		$commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
-		$pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
+        $manager = $this->getDoctrine()->getManager();
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+        $pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
 
-		$uv = $uvRepository->findOneByName($uvname);
-		if($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
+        $uv = $uvRepository->findOneByName($uvname);
+        if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 
-		$comments = $commentRepository->findBy(
-			array('uv' => $uv, 'moderated' => true),
-			array('date' => 'desc'),
-			20,
-			0);
+        $comments = $commentRepository->findBy(
+            array('uv' => $uv, 'moderated' => true),
+            array('date' => 'desc'),
+            20,
+            0);
 
-		$polls = $pollRepository->findBy(
-			array('uv' => $uv),
-			array('year' => 'desc'),
-			4,
-			0);
+        $polls = $pollRepository->findBy(
+            array('uv' => $uv),
+            array('year' => 'desc'),
+            4,
+            0);
 
-		$averageRate = $commentRepository->averageRate($uv);
+        $averageRate = $commentRepository->averageRate($uv);
 
         $comment = new Comment();
 
@@ -46,7 +46,7 @@ class DetailController extends BaseController
             ->add('comment', 'textarea')
             ->add('interest', 'choice', array(
                 'choices' => array('a' => 'Passionnant', 'b' => 'Très intéressant',
-                'c' => 'Intéressant', 'd' => 'Peu intéressant', 'e' => 'Bof', 'f' => 'Nul'),
+                    'c' => 'Intéressant', 'd' => 'Peu intéressant', 'e' => 'Bof', 'f' => 'Nul'),
             ))
             ->add('pedagogy', 'choice', array(
                 'choices' => array('a' => 'Passionnant', 'b' => 'Très intéressant',
@@ -82,181 +82,187 @@ class DetailController extends BaseController
             }
         }
 
-		return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
-			'uv' => $uv,
-			'comments' => $comments,
-			'polls' => $polls,
-			'firstPoll' => $polls[0],
-			'averageRate' => $averageRate,
+        return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
+            'uv' => $uv,
+            'comments' => $comments,
+            'polls' => $polls,
+            'firstPoll' => $polls[0],
+            'averageRate' => $averageRate,
             'searchbar' => $this->searchBarForm->createView(),
             'add_comment_form' => $form->createView()
-			));
-	}
+        ));
+    }
 
-	public function uvTitleAction() {
-		$manager = $this->getDoctrine()->getManager();
-		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
-		$uvs = $uvRepository->findBy(array('title' => ''),
-			array('name' => 'desc'),
-			100,
-			0);
-		include('uvtitlefetcher/simple_html_dom.php');
-		foreach ($uvs as $uv) {
+    public function uvTitleAction()
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+        $uvs = $uvRepository->findBy(array('title' => ''),
+            array('name' => 'desc'),
+            100,
+            0);
+        include('uvtitlefetcher/simple_html_dom.php');
+        foreach ($uvs as $uv) {
 
-			// Include the library
-
-
-			// Retrieve the DOM from a given URL
-			$html = file_get_html('http://cap.utc.fr/portail_UV/detailuv.php?uv='.$uv->getName().'&page=uv&lang=FR');
+            // Include the library
 
 
-			// Find the DIV tag with an id of "myId"
-			foreach($html->find('span#titre') as $e) {
-				$arr = split(" - ", $e->innertext);
-				$title = $arr[1];
-				$uv->setTitle(html_entity_decode($title));
+            // Retrieve the DOM from a given URL
+            $html = file_get_html('http://cap.utc.fr/portail_UV/detailuv.php?uv=' . $uv->getName() . '&page=uv&lang=FR');
 
-				$manager->persist($uv);
-				echo $uv->getName()." : ".$title;
-				echo "<br>";
-			}
-		}
-		$manager->flush();
-		$response = new Response;
-		$response->setContent("<body></body>");
-		return $response;
 
-	}
+            // Find the DIV tag with an id of "myId"
+            foreach ($html->find('span#titre') as $e) {
+                $arr = split(" - ", $e->innertext);
+                $title = $arr[1];
+                $uv->setTitle(html_entity_decode($title));
 
-	public function uvNametoUvIdAction() {
-		$manager = $this->getDoctrine()->getManager();
+                $manager->persist($uv);
+                echo $uv->getName() . " : " . $title;
+                echo "<br>";
+            }
+        }
+        $manager->flush();
+        $response = new Response;
+        $response->setContent("<body></body>");
+        return $response;
 
-		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
-		$pollRepository = $manager->getRepository("UvwebUvBundle:Poll");
+    }
 
-		$polls = $pollRepository->findAll();
-		foreach ($polls as $poll) {
+    public function uvNametoUvIdAction()
+    {
+        $manager = $this->getDoctrine()->getManager();
 
-			if($poll->getUv()!=null) continue;
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+        $pollRepository = $manager->getRepository("UvwebUvBundle:Poll");
 
-			$uv = $uvRepository->findOneByName($poll->getUvName());
+        $polls = $pollRepository->findAll();
+        foreach ($polls as $poll) {
 
-			if($uv!=null) {
-				echo "uv found : ".$uv->getName()."<br>";
-				$poll->setUv($uv);
-			} else {
-				echo "uv not found : ".$poll->getUvName()."<br>";
-			}
+            if ($poll->getUv() != null) continue;
 
-		}
-		$manager->flush();
+            $uv = $uvRepository->findOneByName($poll->getUvName());
 
-		return new Response;
+            if ($uv != null) {
+                echo "uv found : " . $uv->getName() . "<br>";
+                $poll->setUv($uv);
+            } else {
+                echo "uv not found : " . $poll->getUvName() . "<br>";
+            }
 
-	}
+        }
+        $manager->flush();
 
-	public function pollSemesterToYearAction() {
-		$manager = $this->getDoctrine()->getManager();
-		$pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
+        return new Response;
 
-		$polls = $pollRepository->findAll();
+    }
 
-		$i=0;
+    public function pollSemesterToYearAction()
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
 
-		foreach ($polls as $poll) {
-			if($i >= 500) break;
-			$semester = $poll->getSemester();
+        $polls = $pollRepository->findAll();
 
-			if($poll->getSeason() != "Automne" && $poll->getSeason() != "Printemps") {
+        $i = 0;
 
-				echo $poll->getSemester()." ";
-				if(strtoupper(substr($semester, 0,1)) == 'P') {
-					echo "printemps ";
-					$poll->setSeason("Printemps");
-				} else if (strtoupper(substr($semester, 0,1)) == 'A'){
-					echo "automne ";
-					$poll->setSeason("Automne");
-				} else {
-					echo "ERROR ";
-				}
-				echo "<br>";
+        foreach ($polls as $poll) {
+            if ($i >= 500) break;
+            $semester = $poll->getSemester();
 
-				$i++;
+            if ($poll->getSeason() != "Automne" && $poll->getSeason() != "Printemps") {
 
-			}
+                echo $poll->getSemester() . " ";
+                if (strtoupper(substr($semester, 0, 1)) == 'P') {
+                    echo "printemps ";
+                    $poll->setSeason("Printemps");
+                } else if (strtoupper(substr($semester, 0, 1)) == 'A') {
+                    echo "automne ";
+                    $poll->setSeason("Automne");
+                } else {
+                    echo "ERROR ";
+                }
+                echo "<br>";
 
-			if($poll->getYear() == 0) {
-				echo "annnee 20".substr($semester, 1,3).'<br>';
-				$poll->setYear('20'.substr($semester, 1,3));
-				$i++;
-			}
-		}
+                $i++;
 
-		$manager->flush();
+            }
 
-		return new Response;
-	}
+            if ($poll->getYear() == 0) {
+                echo "annnee 20" . substr($semester, 1, 3) . '<br>';
+                $poll->setYear('20' . substr($semester, 1, 3));
+                $i++;
+            }
+        }
 
-	public function appDetailAction($uvname) {
+        $manager->flush();
 
-		$manager = $this->getDoctrine()->getManager();
-		$commentRepository = $manager->getRepository("UvwebUvBundle:Comment");
-		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+        return new Response;
+    }
 
-		$uv = $uvRepository->findOneByName($uvname);
-		if($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
+    public function appDetailAction($uvname)
+    {
 
-		$comments = $commentRepository->findBy(
-			array('uv' => $uv, 'moderated' => true),
-			array('date' => 'desc'),
-			20,
-			0);
+        $manager = $this->getDoctrine()->getManager();
+        $commentRepository = $manager->getRepository("UvwebUvBundle:Comment");
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
 
-		$encoders = array(new XmlEncoder(), new JsonEncoder());
+        $uv = $uvRepository->findOneByName($uvname);
+        if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 
-		$normalizer = new GetSetMethodNormalizer();
-		$normalizer->setIgnoredAttributes(array('moderator', 'date', 'last', 'utcLogin','password','email','id','moderated','uv','isadmin', 'author'));
+        $comments = $commentRepository->findBy(
+            array('uv' => $uv, 'moderated' => true),
+            array('date' => 'desc'),
+            20,
+            0);
 
-		$normalizers = array($normalizer);
+        $encoders = array(new XmlEncoder(), new JsonEncoder());
 
-		$serializer = new Serializer($normalizers, $encoders);
+        $normalizer = new GetSetMethodNormalizer();
+        $normalizer->setIgnoredAttributes(array('moderator', 'date', 'last', 'utcLogin', 'password', 'email', 'id', 'moderated', 'uv', 'isadmin', 'author'));
 
-		$json = $serializer->serialize($comments, 'json');
+        $normalizers = array($normalizer);
 
-		$response = new Response;
-		$response->setContent($json);
+        $serializer = new Serializer($normalizers, $encoders);
 
-		return $response;
-	}
+        $json = $serializer->serialize($comments, 'json');
 
-	public function searchAction($searchtext) {
+        $response = new Response;
+        $response->setContent($json);
 
-		if(preg_match("/^[a-zA-Z]{2}+[0-9]{2}$/", $searchtext)) {
-			return $this->redirect( $this->generateUrl('uvweb_uv_detail', array('uvname' => $searchtext)) );
-		}
-		else {
-			return $this->render('UvwebUvBundle:Uv:search.html.twig');
-			echo 'not ok '.$searchtext.'<br>';
-		}
-	}
+        return $response;
+    }
 
-	public function appListAction() {
+    public function searchAction($searchtext)
+    {
 
-		$manager = $this->getDoctrine()->getManager();
-		$uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+        if (preg_match("/^[a-zA-Z]{2}+[0-9]{2}$/", $searchtext)) {
+            return $this->redirect($this->generateUrl('uvweb_uv_detail', array('uvname' => $searchtext)));
+        } else {
+            return $this->render('UvwebUvBundle:Uv:search.html.twig');
+            echo 'not ok ' . $searchtext . '<br>';
+        }
+    }
 
-		$encoders = array(new XmlEncoder(), new JsonEncoder());
-		$normalizers = array(new GetSetMethodNormalizer());
+    public function appListAction()
+    {
 
-		$serializer = new Serializer($normalizers, $encoders);
+        $manager = $this->getDoctrine()->getManager();
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
 
-		$uvs = $uvRepository->findAll();
+        $encoders = array(new XmlEncoder(), new JsonEncoder());
+        $normalizers = array(new GetSetMethodNormalizer());
 
-		echo $serializer->serialize($uvs, 'json');
+        $serializer = new Serializer($normalizers, $encoders);
 
-		$response = new Response;
-		$response->setContent("<body></body>");
-		return $response;
-	}
+        $uvs = $uvRepository->findAll();
+
+        echo $serializer->serialize($uvs, 'json');
+
+        $response = new Response;
+        $response->setContent("<body></body>");
+        return $response;
+    }
 }
+
 ?>
