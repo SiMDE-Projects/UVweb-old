@@ -22,7 +22,7 @@
       {% for comment in comments %}
       <div class="row-fluid">
         <div class="span3">
-          <a href="" class="thumbnail">
+          <a href="{{ path('uvweb_uv_profile', { 'userid' : comment.author.id }) }}" class="thumbnail">
             <img src="{{ gravatar('alexandre.masciulli@etu.utc.fr', 80) }}" alt="hello's gravatar"/>
           </a>
         </div>
