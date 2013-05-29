@@ -9,24 +9,58 @@
   {% endblock %}
 
   {% block body %}
-      <div class="span12">
-          <div class="page-header">
-              <div class="row-fluid">
-                  <h1>amasciul</h1>
-              </div>
+      <div class="page-header">
+          <div class="row-fluid">
+              <h1>amasciul</h1>
           </div>
-          <div class="media">
-              <a class="pull-left" href="mailto:alexandre.masciulli@gmail.com">
-                  <img class="media-object img-polaroid" src="{{ gravatar('alexandre.masciulli@etu.utc.fr', 120) }}">
-              </a>
-              <div class="media-body">
-                  <ul class="unstyled">
-                      <li>Vient de <strong>TC</strong></li>
-                      <li>Branche : <strong>GI</strong></li>
-                      <li>Filière : <strong>ICSI</strong></li>
-                  </ul>
-              </div>
+      </div>
+      <div class="media">
+          <a class="pull-left" href="mailto:alexandre.masciulli@gmail.com">
+              <img class="media-object img-polaroid" src="{{ gravatar('alexandre.masciulli@etu.utc.fr', 120) }}">
+          </a>
 
+          <div class="media-body">
+              <ul class="unstyled">
+                  <li>Vient de <strong>TC</strong></li>
+                  <li>Entrée à l'UTC : <strong>Automne 2009</strong></li>
+                  <li>Branche : <strong>GI</strong></li>
+                  <li>Filière : <strong>ICSI</strong></li>
+              </ul>
           </div>
+      </div>
+      <div class="page-header">
+          <div class="row-fluid">
+              <h3>Derniers commentaires</h3>
+          </div>
+      </div>
+      <div class="span12">
+          <div class="row-fluid">
+              <div class="span8">
+                      <h2><a href="{{ path('uvweb_uv_detail', { 'uvname':'mt23' }) }}">MT23</a> <small>(obtenue en A11)</small></h2>
+              </div>
+              <div class="span4 date text-right">
+                  <h4>le 13/05/1992</h4>
+              </div>
+          </div>
+          <div class="row-fluid">
+              <div class="span8 comment">
+                  <p> Bacon ipsum dolor sit amet magna ham fugiat beef ribs salami pig deserunt proident sunt anim. In nulla meatball ullamco. Beef ribs bacon beef corned beef, eiusmod elit kielbasa pariatur filet mignon commodo velit flank sirloin. Consectetur culpa ham pariatur tenderloin et exercitation. Prosciutto aliqua salami, jerky pig elit officia. In short ribs strip steak ex nostrud. Tenderloin proident bresaola, eiusmod duis laborum rump ground round esse elit aute irure cupidatat consequat. Cillum sirloin tempor sed beef ham hock proident in nisi fatback do turducken duis anim. Anim proident laboris sausage excepteur, est exercitation sunt veniam ex beef ribs do. Consectetur nulla hamburger excepteur cow. Chuck venison cow ullamco prosciutto, pancetta deserunt jerky nulla officia pig tri-tip ground round tail ut. Magna dolor consequat t-bone turkey, commodo deserunt ground round pig fatback esse est strip steak kielbasa shankle. </p>
+              </div>
+              <div class="span4 well well-small">
+                  <dl class="dl-horizontal">
+                      <dt>Utilité</dt>
+                      <dd>Bof</dd>
+                      <dt>Dose de travail</dt>
+                      <dd>Bof</dd>
+                      <dt>Intérêt</dt>
+                      <dd>Bof</dd>
+                      <dt>Pédagogie</dt>
+                      <dd>Bof</dd>
+                      <dt>Note</dt>
+                      <dd>5/10</dd>
+                  </dl>
+              </div>
+          </div>
+          <hr>
       </div>
   {% endblock %}
