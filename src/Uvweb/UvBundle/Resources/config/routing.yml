@@ -26,3 +26,8 @@ uvweb_uv_appdetail:
 uvweb_uv_homepage:
     pattern:  /
     defaults: { _controller: UvwebUvBundle:Home:index }
+uvweb_uv_profile:
+    pattern: /user/{userid}
+    defaults: { _controller: UvwebUvBundle:Profile:display}
+    requirements:
+            userid:  ^[0-9]+$
