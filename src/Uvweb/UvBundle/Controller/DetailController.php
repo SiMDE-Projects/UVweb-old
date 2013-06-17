@@ -12,7 +12,7 @@ class DetailController extends BaseController
 {
     public function __construct()
     {
-        parent::_construct();
+        parent::__construct();
     }
 
     public function detailAction($uvname)

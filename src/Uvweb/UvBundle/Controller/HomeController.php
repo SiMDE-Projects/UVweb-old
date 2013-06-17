@@ -8,6 +8,11 @@ use Symfony\Component\Serializer\Serializer;
 
 class HomeController extends BaseController
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
 	public function indexAction() {
         /** those lines allow redirection after submitting search bar form */
         if( $redirect = $this->initSearchBar()) {

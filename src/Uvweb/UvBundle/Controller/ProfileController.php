@@ -4,8 +4,15 @@ namespace Uvweb\UvBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class ProfileController extends BaseController{
-    public function displayAction($userid) {
+class ProfileController extends BaseController
+{
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function displayAction($userid)
+    {
         /** those lines allow redirection after submitting search bar form */
         if ($redirect = $this->initSearchBar()) {
             return $redirect;
