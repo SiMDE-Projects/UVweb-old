@@ -9,17 +9,26 @@
 
 namespace Uvweb\UvBundle\Controller;
 
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
-
-class BaseController extends Controller{
+class BaseController extends Controller
+{
 
     protected $searchBarForm;
+    protected $encoders;
+
+    public function __construct()
+    {
+        $this->encoders = array(new JsonEncoder());
+    }
 
     /**
      * that method allows us to generate search bar form from anywhere
      */
-    protected function initSearchBar() {
+    protected function initSearchBar()
+    {
         $formBuilder = $this->createFormBuilder();
         $formBuilder->add('statement', 'text', array('required' => false));
         $this->searchBarForm = $formBuilder->getForm();

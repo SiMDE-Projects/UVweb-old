@@ -10,11 +10,9 @@ use Uvweb\UvBundle\Entity\Comment;
 
 class DetailController extends BaseController
 {
-    private $encoders;
-
     public function __construct()
     {
-        $this->encoders = array(new JsonEncoder());
+        parent::_construct();
     }
 
     public function detailAction($uvname)
