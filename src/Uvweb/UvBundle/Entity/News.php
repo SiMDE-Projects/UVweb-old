@@ -113,7 +113,7 @@ class News
      */
     public function getText()
     {
-        return $this->text;
+        return stripslashes(strip_tags(html_entity_decode($this->text), '<br />'));
     }
 
     /**
@@ -129,7 +129,7 @@ class News
      */
     public function getTitle()
     {
-        return $this->title;
+        return stripslashes(strip_tags(html_entity_decode($this->title), '<br />'));
     }
 
 
