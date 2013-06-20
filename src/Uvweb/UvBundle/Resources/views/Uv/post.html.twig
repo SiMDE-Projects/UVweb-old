@@ -1,7 +1,7 @@
 {% extends "UvwebUvBundle::layout.html.twig" %}
 
 {% block title %}
-    Avis posté - {{ parent() }}
+    Ton avis sur {{ uv.name }} - {{ parent() }}
 {% endblock %}
 
 {% block style %}
@@ -9,8 +9,11 @@
 
 {% block body %}
     <div class="page-header">
-        <h2>Nouvel avis sur {{ uv.name }}</h2>
+        <h1><small>Ton avis sur </small>{{ uv.name }}</h1>
     </div>
+    <p class="text-error">
+        <em>N'oublie pas que les propos injurieux sont proscrits sur UVweb.</em>
+    </p>
     <div class="well">
         <form method="post" {{ form_enctype(add_comment_form) }}>
             {{ form_widget(add_comment_form) }}
