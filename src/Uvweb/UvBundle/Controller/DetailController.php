@@ -2,6 +2,7 @@
 
 namespace Uvweb\UvBundle\Controller;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
@@ -35,6 +36,16 @@ class DetailController extends BaseController
             array('date' => 'desc'),
             20,
             0);
+
+        foreach ($comments as $comment) {
+            try {
+                $author = $comment->getAuthor()->getLogin();
+            } catch (EntityNotFoundException $e) {
+                $userRepository = $manager->getRepository("UvwebUvBundle:User");
+                $author = $userRepository->find(2543);
+                $comment->setAuthor($author);
+            }
+        }
 
         $polls = $pollRepository->findBy(
             array('uv' => $uv),
