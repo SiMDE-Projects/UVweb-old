@@ -3,6 +3,11 @@ uvweb_uv_detail:
     defaults:  { _controller: UvwebUvBundle:Detail:detail}
     requirements:
         uvname:  ^[a-zA-Z0-9]{4}$
+uvweb_uv_newpost:
+    path: /post/{uvname}
+    defaults:  { _controller: UvwebUvBundle:Detail:post}
+    requirements:
+        uvname:  ^[a-zA-Z0-9]{4}$
 uvweb_uv_uvtitlefetcher:
     path: /uv/titlefetcher
     defaults:  { _controller: UvwebUvBundle:Detail:uvTitle}

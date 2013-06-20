@@ -26,6 +26,9 @@
 			<div class="span8">
 				<h1 class="uvname">{{ uv.letterCode | upper }}<span class="uvnumbercode">{{ uv.numberCode }}</span> <small>{{ uv.title | capitalize }}</small></h1>
 				<h2><small>Note moyenne : </small>{{ averageRate | number_format(2, ',', ' ') }}/10</h2>
+                <p>
+                    <a class="btn btn-primary btn-large" href="{{ path('uvweb_uv_newpost', { 'uvname':uv.name }) }}">Donne ton avis sur {{ uv.name }}</a>
+                </p>
 			</div>
 			<div class="span4 text-right">
 				<h2><small>Taux de réussite : </small> {{ firstPoll.semester }} : {{ firstPoll.successRate  | number_format(1, ',', ' ')}}%</h2>
@@ -37,12 +40,9 @@
 			</div>
 		</div>
 	</div>
-    <div class="well">
-        <form method="post" {{ form_enctype(add_comment_form) }}>
-            {{ form_widget(add_comment_form) }}
-            <input type="submit" class="btn btn-primary" />
-        </form>
-    </div>
+    <p>
+
+    </p>
 	{% for comment in comments %}
 		<div class="span12">
 			<div class="row-fluid">

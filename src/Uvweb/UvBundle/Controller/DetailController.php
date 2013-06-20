@@ -44,7 +44,28 @@ class DetailController extends BaseController
 
         $averageRate = $commentRepository->averageRate($uv);
 
+
+        return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
+            'uv' => $uv,
+            'comments' => $comments,
+            'polls' => $polls,
+            'firstPoll' => $polls[0],
+            'averageRate' => $averageRate,
+            'searchbar' => $this->searchBarForm->createView(),
+        ));
+    }
+
+    public function postAction($uvname) {
+
+        $manager = $this->getDoctrine()->getManager();
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+
+        $uv = $uvRepository->findOneByName($uvname);
+        if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
+
+
         $comment = new Comment();
+        $comment->setUv($uv);
         $form = $this->createFormBuilder($comment)
             ->add('comment', 'textarea')
             ->add('interest', 'choice', array(
@@ -80,27 +101,16 @@ class DetailController extends BaseController
             $form->bind($request);
 
             if ($form->isValid()) {
-                // perform some action, such as saving the task to the database
+                // TODO perform some action, such as saving the task to the database
                 $comment->setDate(new \DateTime());
-                return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
-                    'uv' => $uv,
-                    'comments' => $comments,
-                    'polls' => $polls,
-                    'firstPoll' => $polls[0],
-                    'averageRate' => $averageRate,
-                    'searchbar' => $this->searchBarForm->createView(),
-                    'add_comment_form' => $form->createView()
+                return $this->render('UvwebUvBundle:Uv:posted.html.twig', array(
+                    'uv' => $uv
                 ));
             }
         }
 
-        return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
+        return $this->render('UvwebUvBundle:Uv:post.html.twig', array(
             'uv' => $uv,
-            'comments' => $comments,
-            'polls' => $polls,
-            'firstPoll' => $polls[0],
-            'averageRate' => $averageRate,
-            'searchbar' => $this->searchBarForm->createView(),
             'add_comment_form' => $form->createView()
         ));
     }
