@@ -16,6 +16,7 @@ class NewsRepository extends EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('n');
         $queryBuilder->setMaxResults(20);
+        $queryBuilder->orderBy('n.date', 'desc');
         return $queryBuilder->getQuery()->getResult();
     }
 }
