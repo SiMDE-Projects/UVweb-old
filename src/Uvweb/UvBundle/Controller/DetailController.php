@@ -266,6 +266,17 @@ class DetailController extends BaseController
             0
         );
 
+        foreach ($comments as $comment) {
+            try {
+                $author = $comment->getAuthor()->getLogin();
+            } catch (EntityNotFoundException $e) {
+                $userRepository = $manager->getRepository("UvwebUvBundle:User");
+                $author = $userRepository->find(2543);
+                $comment->setAuthor($author);
+            }
+        }
+
+
         $normalizer = new GetSetMethodNormalizer();
         $normalizer->setIgnoredAttributes(array('moderator', 'date', 'last', 'utcLogin', 'password', 'email', 'id', 'moderated', 'uv', 'isadmin', 'author'));
 
