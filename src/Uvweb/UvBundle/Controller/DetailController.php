@@ -67,32 +67,41 @@ class DetailController extends BaseController
         $comment = new Comment();
         $comment->setUv($uv);
         $form = $this->createFormBuilder($comment)
-            ->add('comment', 'textarea')
+            ->add('comment', 'textarea', array(
+                'label' => 'Ton commentaire'
+            ))
             ->add('interest', 'choice', array(
                 'choices' => array('a' => 'Passionnant', 'b' => 'Très intéressant',
                     'c' => 'Intéressant', 'd' => 'Peu intéressant', 'e' => 'Bof', 'f' => 'Nul'),
+                'label' => 'Intérêt'
             ))
             ->add('pedagogy', 'choice', array(
                 'choices' => array('a' => 'Passionnant', 'b' => 'Très intéressant',
                     'c' => 'Intéressant', 'd' => 'Peu intéressant', 'e' => 'Bof', 'f' => 'Nul'),
+                'label' => 'Qualité de la pédagogie'
             ))
             ->add('utility', 'choice', array(
                 'choices' => array('a' => 'Indispensable', 'b' => 'Très importante',
                     'c' => 'Utile', 'd' => 'Pas très utile', 'e' => 'Très peu utile', 'f' => 'Inutile'),
+                'label' => 'Utilité'
             ))
             ->add('workamount', 'choice', array(
                 'choices' => array('a' => 'Symbolique', 'b' => 'Faible',
                     'c' => 'Moyenne', 'd' => 'Importante', 'e' => 'Très importante'),
+                'label' => 'Quantité de travail'
             ))
             ->add('passed', 'choice', array(
-                'choices' => array('a' => 'Obtenue', 'b' => 'Ratée', 'c' => 'En cours')
+                'choices' => array('a' => 'Obtenue', 'b' => 'Ratée', 'c' => 'En cours'),
+                'label' => 'As-tu obtenu '.$uv->getName().' ?'
             ))
             ->add('semester', 'choice', array(
-                'choices' => array('a' => 'P13', 'b' => 'A12')
+                'choices' => array('a' => 'P13', 'b' => 'A12'),
+                'label' => 'Semestre lors duquel l\'a effectuée '
             ))
             ->add('globalRate', 'choice', array(
                 'choices' => array('a' => '10', 'b' => '9', 'b' => '8', 'c' => '7', 'd' => '6'
-                , 'e' => '5', 'f' => '4', 'g' => '3', 'h' => '2', 'i' => '1', 'j' => '0')
+                , 'e' => '5', 'f' => '4', 'g' => '3', 'h' => '2', 'i' => '1', 'j' => '0'),
+                'label' => 'Ta note pour '.$uv->getName()
             ))
             ->getForm();
 
