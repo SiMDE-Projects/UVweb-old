@@ -59,6 +59,7 @@ class DetailController extends BaseController
 
         $manager = $this->getDoctrine()->getManager();
         $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+        $userRepository = $manager->getRepository("UvwebUvBundle:User");
 
         $uv = $uvRepository->findOneByName($uvname);
         if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
@@ -110,8 +111,15 @@ class DetailController extends BaseController
             $form->bind($request);
 
             if ($form->isValid()) {
-                // TODO perform some action, such as saving the task to the database
+
+                $author = $userRepository->find(2543);
                 $comment->setDate(new \DateTime());
+                $comment->setModerated(true);
+                $comment->setAuthor($author);
+
+                $manager->persist($comment);
+                $manager->flush();
+
                 return $this->render('UvwebUvBundle:Uv:posted.html.twig', array(
                     'uv' => $uv
                 ));
