@@ -72,36 +72,36 @@ class DetailController extends BaseController
                 'label' => 'Ton commentaire'
             ))
             ->add('interest', 'choice', array(
-                'choices' => array('a' => 'Passionnant', 'b' => 'Très intéressant',
-                    'c' => 'Intéressant', 'd' => 'Peu intéressant', 'e' => 'Bof', 'f' => 'Nul'),
+                'choices' => array('Passionnant' => 'Passionnant', 'Très intéressant' => 'Très intéressant',
+                    'Intéressant' => 'Intéressant', 'Peu intéressant' => 'Peu intéressant', 'Bof' => 'Bof', 'Nul' => 'Nul'),
                 'label' => 'Intérêt'
             ))
             ->add('pedagogy', 'choice', array(
-                'choices' => array('a' => 'Passionnant', 'b' => 'Très intéressant',
-                    'c' => 'Intéressant', 'd' => 'Peu intéressant', 'e' => 'Bof', 'f' => 'Nul'),
+                'choices' => array('Passionnant' => 'Passionnant', 'Très intéressant' => 'Très intéressant',
+                    'Intéressant' => 'Intéressant', 'Peu intéressant' => 'Peu intéressant', 'Bof' => 'Bof', 'Nul' => 'Nul'),
                 'label' => 'Qualité de la pédagogie'
             ))
             ->add('utility', 'choice', array(
-                'choices' => array('a' => 'Indispensable', 'b' => 'Très importante',
-                    'c' => 'Utile', 'd' => 'Pas très utile', 'e' => 'Très peu utile', 'f' => 'Inutile'),
+                'choices' => array('Indispensable' => 'Indispensable', 'Très importante' => 'Très importante',
+                    'Utile' => 'Utile', 'Pas très utile' => 'Pas très utile', 'Très peu utile' => 'Très peu utile', 'Inutile' => 'Inutile'),
                 'label' => 'Utilité'
             ))
             ->add('workamount', 'choice', array(
-                'choices' => array('a' => 'Symbolique', 'b' => 'Faible',
-                    'c' => 'Moyenne', 'd' => 'Importante', 'e' => 'Très importante'),
+                'choices' => array('Symbolique' => 'Symbolique', 'Faible' => 'Faible',
+                    'Moyenne' => 'Moyenne', 'Importante' => 'Importante', 'Très importante' => 'Très importante'),
                 'label' => 'Quantité de travail'
             ))
             ->add('passed', 'choice', array(
-                'choices' => array('a' => 'Obtenue', 'b' => 'Ratée', 'c' => 'En cours'),
+                'choices' => array('obtenue' => 'Obtenue', 'ratée' => 'Ratée', 'en cours' => 'En cours'),
                 'label' => 'As-tu obtenu '.$uv->getName().' ?'
             ))
             ->add('semester', 'choice', array(
-                'choices' => array('a' => 'P13', 'b' => 'A12'),
+                'choices' => array('P13' => 'P13', 'A12' => 'A12', 'P12' => 'P12'),
                 'label' => 'Semestre lors duquel l\'a effectuée '
             ))
             ->add('globalRate', 'choice', array(
-                'choices' => array('a' => '10', 'b' => '9', 'b' => '8', 'c' => '7', 'd' => '6'
-                , 'e' => '5', 'f' => '4', 'g' => '3', 'h' => '2', 'i' => '1', 'j' => '0'),
+                'choices' => array('10' => '10', '9' => '9', '8' => '8', '7' => '7', '6' => '6'
+                , '5' => '5', '4' => '4', '3' => '3', '2' => '2', '1' => '1', '0' => '0'),
                 'label' => 'Ta note pour '.$uv->getName()
             ))
             ->getForm();
