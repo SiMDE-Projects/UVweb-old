@@ -108,7 +108,7 @@ class DetailController extends BaseController
             ))
             ->add('semester', 'choice', array(
                 'choices' => array('P13' => 'P13', 'A12' => 'A12', 'P12' => 'P12'),
-                'label' => 'Semestre lors duquel l\'a effectuée '
+                'label' => 'Semestre lors duquel tu l\'as effectuée '
             ))
             ->add('globalRate', 'choice', array(
                 'choices' => array('10' => '10', '9' => '9', '8' => '8', '7' => '7', '6' => '6'
