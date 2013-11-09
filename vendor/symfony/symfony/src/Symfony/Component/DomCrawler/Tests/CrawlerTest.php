@@ -207,6 +207,10 @@ EOF
         $crawler = new Crawler();
         $crawler->addContent('foo bar', 'text/plain');
         $this->assertCount(0, $crawler, '->addContent() does nothing if the type is not (x|ht)ml');
+
+        $crawler = new Crawler();
+        $crawler->addContent('<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><span>中文</span></html>');
+        $this->assertEquals('中文', $crawler->filterXPath('//span')->text(), '->addContent() guess wrong charset');
     }
 
     /**
@@ -535,6 +539,14 @@ EOF
             $this->fail('->children() throws an \InvalidArgumentException if the node list is empty');
         } catch (\InvalidArgumentException $e) {
             $this->assertTrue(true, '->children() throws an \InvalidArgumentException if the node list is empty');
+        }
+
+        try {
+            $crawler = new Crawler('<p></p>');
+            $crawler->filter('p')->children();
+            $this->assertTrue(true, '->children() does not trigger a notice if the node has no children');
+        } catch (\PHPUnit_Framework_Error_Notice $e) {
+            $this->fail('->children() does not trigger a notice if the node has no children');
         }
     }
 

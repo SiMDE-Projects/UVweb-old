@@ -106,6 +106,15 @@ class ArgvInputTest extends \PHPUnit_Framework_TestCase
         }
 
         try {
+            $input = new ArgvInput(array('cli.php', '--foo=bar'));
+            $input->bind(new InputDefinition(array(new InputOption('foo', 'f', InputOption::VALUE_NONE))));
+            $this->fail('->parse() throws a \RuntimeException if a value is passed to an option which does not take one');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('\RuntimeException', $e, '->parse() throws a \RuntimeException if a value is passed to an option which does not take one');
+            $this->assertEquals('The "--foo" option does not accept a value.', $e->getMessage(), '->parse() throws a \RuntimeException if a value is passed to an option which does not take one');
+        }
+
+        try {
             $input = new ArgvInput(array('cli.php', 'foo', 'bar'));
             $input->bind(new InputDefinition());
             $this->fail('->parse() throws a \RuntimeException if too many arguments are passed');
@@ -162,7 +171,22 @@ class ArgvInputTest extends \PHPUnit_Framework_TestCase
 
         $input = new ArgvInput(array('cli.php', '--name=foo', '--name=bar', '--name=baz'));
         $input->bind(new InputDefinition(array(new InputOption('name', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY))));
-        $this->assertEquals(array('name' => array('foo', 'bar', 'baz')), $input->getOptions());
+        $this->assertEquals(array('name' => array('foo', 'bar', 'baz')), $input->getOptions(), '->parse() parses array options ("--option=value" syntax)');
+
+        $input = new ArgvInput(array('cli.php', '--name', 'foo', '--name', 'bar', '--name', 'baz'));
+        $input->bind(new InputDefinition(array(new InputOption('name', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY))));
+        $this->assertEquals(array('name' => array('foo', 'bar', 'baz')), $input->getOptions(), '->parse() parses array options ("--option value" syntax)');
+
+        $input = new ArgvInput(array('cli.php', '--name=foo', '--name=bar', '--name='));
+        $input->bind(new InputDefinition(array(new InputOption('name', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY))));
+        $this->assertSame(array('name' => array('foo', 'bar', null)), $input->getOptions(), '->parse() parses empty array options as null ("--option=value" syntax)');
+
+        $input = new ArgvInput(array('cli.php', '--name', 'foo', '--name', 'bar', '--name', '--anotherOption'));
+        $input->bind(new InputDefinition(array(
+            new InputOption('name', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY),
+            new InputOption('anotherOption', null, InputOption::VALUE_NONE),
+        )));
+        $this->assertSame(array('name' => array('foo', 'bar', null), 'anotherOption' => true), $input->getOptions(), '->parse() parses empty array options as null ("--option value" syntax)');
 
         try {
             $input = new ArgvInput(array('cli.php', '-1'));
@@ -206,6 +230,9 @@ class ArgvInputTest extends \PHPUnit_Framework_TestCase
 
         $input = new ArgvInput(array('cli.php', 'foo'));
         $this->assertFalse($input->hasParameterOption('--foo'), '->hasParameterOption() returns false if the given short option is not in the raw input');
+
+        $input = new ArgvInput(array('cli.php', '--foo=bar'));
+        $this->assertTrue($input->hasParameterOption('--foo'), '->hasParameterOption() returns true if the given option with provided value is in the raw input');
     }
 
     /**
@@ -224,6 +251,14 @@ class ArgvInputTest extends \PHPUnit_Framework_TestCase
             array(array('app/console', 'foo:bar', '--env=dev'), '--env', 'dev'),
             array(array('app/console', 'foo:bar', '-e', 'dev'), array('-e', '--env'), 'dev'),
             array(array('app/console', 'foo:bar', '--env=dev'), array('-e', '--env'), 'dev'),
+            array(array('app/console', 'foo:bar', '--env=dev', '--en=1'), array('--en'), '1'),
         );
+    }
+
+    public function testParseSingleDashAsArgument()
+    {
+        $input = new ArgvInput(array('cli.php', '-'));
+        $input->bind(new InputDefinition(array(new InputArgument('file'))));
+        $this->assertEquals(array('file' => '-'), $input->getArguments(), '->parse() parses single dash as an argument');
     }
 }

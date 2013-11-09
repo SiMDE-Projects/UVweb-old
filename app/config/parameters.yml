@@ -13,3 +13,7 @@ parameters:
 
     locale:            fr
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+#CAS UTC
+    cas_login_url:                      https://cas.utc.fr/cas/login
+    cas_service_validate_url:           https://cas.utc.fr/cas/serviceValidate

@@ -40,6 +40,16 @@ class Request
     protected static $trustedProxies = array();
 
     /**
+     * @var string[]
+     */
+    protected static $trustedHostPatterns = array();
+
+    /**
+     * @var string[]
+     */
+    protected static $trustedHosts = array();
+
+    /**
      * Names for headers that can be trusted when
      * using trusted proxies.
      *
@@ -338,11 +348,20 @@ class Request
                 break;
         }
 
+        $queryString = '';
         if (isset($components['query'])) {
             parse_str(html_entity_decode($components['query']), $qs);
-            $query = array_replace($qs, $query);
+
+            if ($query) {
+                $query = array_replace($qs, $query);
+                $queryString = http_build_query($query, '', '&');
+            } else {
+                $query = $qs;
+                $queryString = $components['query'];
+            }
+        } elseif ($query) {
+            $queryString = http_build_query($query, '', '&');
         }
-        $queryString = http_build_query($query, '', '&');
 
         $server['REQUEST_URI'] = $components['path'].('' !== $queryString ? '?'.$queryString : '');
         $server['QUERY_STRING'] = $queryString;
@@ -395,6 +414,14 @@ class Request
         $dup->basePath = null;
         $dup->method = null;
         $dup->format = null;
+
+        if (!$dup->get('_format') && $this->get('_format')) {
+            $dup->attributes->set('_format', $this->get('_format'));
+        }
+
+        if (!$dup->getRequestFormat(null)) {
+            $dup->setRequestFormat($format = $this->getRequestFormat(null));
+        }
 
         return $dup;
     }
@@ -499,6 +526,32 @@ class Request
     public static function getTrustedProxies()
     {
         return self::$trustedProxies;
+    }
+
+    /**
+     * Sets a list of trusted host patterns.
+     *
+     * You should only list the hosts you manage using regexs.
+     *
+     * @param array $hostPatterns A list of trusted host patterns
+     */
+    public static function setTrustedHosts(array $hostPatterns)
+    {
+        self::$trustedHostPatterns = array_map(function ($hostPattern) {
+            return sprintf('{%s}i', str_replace('}', '\\}', $hostPattern));
+        }, $hostPatterns);
+        // we need to reset trusted hosts on trusted host patterns change
+        self::$trustedHosts = array();
+    }
+
+    /**
+     * Gets the list of trusted host patterns.
+     *
+     * @return array An array of trusted host patterns.
+     */
+    public static function getTrustedHosts()
+    {
+        return self::$trustedHostPatterns;
     }
 
     /**
@@ -721,9 +774,10 @@ class Request
         $clientIps[] = $ip;
 
         $trustedProxies = self::$trustProxy && !self::$trustedProxies ? array($ip) : self::$trustedProxies;
+        $ip = $clientIps[0];
         $clientIps = array_diff($clientIps, $trustedProxies);
 
-        return array_pop($clientIps);
+        return $clientIps ? array_pop($clientIps) : $ip;
     }
 
     /**
@@ -836,8 +890,22 @@ class Request
      */
     public function getPort()
     {
-        if (self::$trustProxy && self::$trustedHeaders[self::HEADER_CLIENT_PORT] && $port = $this->headers->get(self::$trustedHeaders[self::HEADER_CLIENT_PORT])) {
-            return $port;
+        if (self::$trustProxy) {
+            if (self::$trustedHeaders[self::HEADER_CLIENT_PORT] && $port = $this->headers->get(self::$trustedHeaders[self::HEADER_CLIENT_PORT])) {
+                return $port;
+            }
+
+            if (self::$trustedHeaders[self::HEADER_CLIENT_PROTO] && 'https' === $this->headers->get(self::$trustedHeaders[self::HEADER_CLIENT_PROTO], 'http')) {
+                return 443;
+            }
+        }
+
+        if ($host = $this->headers->get('HOST')) {
+            if (false !== $pos = strrpos($host, ':')) {
+                return intval(substr($host, $pos + 1));
+            }
+
+            return 'https' === $this->getScheme() ? 443 : 80;
         }
 
         return $this->server->get('SERVER_PORT');
@@ -998,7 +1066,7 @@ class Request
     public function isSecure()
     {
         if (self::$trustProxy && self::$trustedHeaders[self::HEADER_CLIENT_PROTO] && $proto = $this->headers->get(self::$trustedHeaders[self::HEADER_CLIENT_PROTO])) {
-            return in_array(strtolower($proto), array('https', 'on', '1'));
+            return in_array(strtolower(current(explode(',', $proto))), array('https', 'on', 'ssl', '1'));
         }
 
         return 'on' == strtolower($this->server->get('HTTPS')) || 1 == $this->server->get('HTTPS');
@@ -1041,6 +1109,24 @@ class Request
         // check that it does not contain forbidden characters (see RFC 952 and RFC 2181)
         if ($host && !preg_match('/^\[?(?:[a-zA-Z0-9-:\]_]+\.?)+$/', $host)) {
             throw new \UnexpectedValueException('Invalid Host');
+        }
+
+        if (count(self::$trustedHostPatterns) > 0) {
+            // to avoid host header injection attacks, you should provide a list of trusted host patterns
+
+            if (in_array($host, self::$trustedHosts)) {
+                return $host;
+            }
+
+            foreach (self::$trustedHostPatterns as $pattern) {
+                if (preg_match($pattern, $host)) {
+                    self::$trustedHosts[] = $host;
+
+                    return $host;
+                }
+            }
+
+            throw new \UnexpectedValueException('Untrusted Host');
         }
 
         return $host;
@@ -1488,11 +1574,14 @@ class Request
     {
         $requestUri = '';
 
-        if ($this->headers->has('X_ORIGINAL_URL') && false !== stripos(PHP_OS, 'WIN')) {
+        if ($this->headers->has('X_ORIGINAL_URL')) {
             // IIS with Microsoft Rewrite Module
             $requestUri = $this->headers->get('X_ORIGINAL_URL');
             $this->headers->remove('X_ORIGINAL_URL');
-        } elseif ($this->headers->has('X_REWRITE_URL') && false !== stripos(PHP_OS, 'WIN')) {
+            $this->server->remove('HTTP_X_ORIGINAL_URL');
+            $this->server->remove('UNENCODED_URL');
+            $this->server->remove('IIS_WasUrlRewritten');
+        } elseif ($this->headers->has('X_REWRITE_URL')) {
             // IIS with ISAPI_Rewrite
             $requestUri = $this->headers->get('X_REWRITE_URL');
             $this->headers->remove('X_REWRITE_URL');
@@ -1552,7 +1641,7 @@ class Request
                 $seg     = $segs[$index];
                 $baseUrl = '/'.$seg.$baseUrl;
                 ++$index;
-            } while (($last > $index) && (false !== ($pos = strpos($path, $baseUrl))) && (0 != $pos));
+            } while ($last > $index && (false !== $pos = strpos($path, $baseUrl)) && 0 != $pos);
         }
 
         // Does the baseUrl have anything in common with the request_uri?
@@ -1569,7 +1658,7 @@ class Request
         }
 
         $truncatedRequestUri = $requestUri;
-        if (($pos = strpos($requestUri, '?')) !== false) {
+        if (false !== $pos = strpos($requestUri, '?')) {
             $truncatedRequestUri = substr($requestUri, 0, $pos);
         }
 
@@ -1582,7 +1671,7 @@ class Request
         // If using mod_rewrite or ISAPI_Rewrite strip the script filename
         // out of baseUrl. $pos !== 0 makes sure it is not matching a value
         // from PATH_INFO or QUERY_STRING
-        if ((strlen($requestUri) >= strlen($baseUrl)) && ((false !== ($pos = strpos($requestUri, $baseUrl))) && ($pos !== 0))) {
+        if (strlen($requestUri) >= strlen($baseUrl) && (false !== $pos = strpos($requestUri, $baseUrl)) && $pos !== 0) {
             $baseUrl = substr($requestUri, 0, $pos + strlen($baseUrl));
         }
 
@@ -1635,7 +1724,7 @@ class Request
             $requestUri = substr($requestUri, 0, $pos);
         }
 
-        if ((null !== $baseUrl) && (false === ($pathInfo = substr($requestUri, strlen($baseUrl))))) {
+        if (null !== $baseUrl && false === $pathInfo = substr($requestUri, strlen($baseUrl))) {
             // If substr() returns false then PATH_INFO is set to an empty string
             return '/';
         } elseif (null === $baseUrl) {

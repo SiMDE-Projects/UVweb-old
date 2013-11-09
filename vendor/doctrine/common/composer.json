@@ -1,6 +1,6 @@
 {
     "name": "doctrine/common",
-    "type": "library","version":"2.4.0-RC1",
+    "type": "library",
     "description": "Common Library for Doctrine projects",
     "keywords": ["collections", "spl", "eventmanager", "annotations", "persistence"],
     "homepage": "http://www.doctrine-project.org",
@@ -27,5 +27,8 @@
         "branch-alias": {
             "dev-master": "2.4.x-dev"
         }
+    },
+    "archive": {
+        "exclude": ["!vendor", "tests", "*phpunit.xml", ".travis.yml", "build.xml", "build.properties", "composer.phar"]
     }
 }

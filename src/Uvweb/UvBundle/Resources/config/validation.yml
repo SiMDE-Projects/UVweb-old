@@ -1,0 +1,18 @@
+Uvweb\UvBundle\Entity\User:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: { fields: [email], message: Email déjà enregistré sur le site. }
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: { fields:[identity], message: Pseudo déjà pris. }
+
+    properties:
+        email:
+            - Email:
+                message: '{{ value }}: Email non valide.'
+                checkMX: true
+            - NotBlank:
+                message: Une adresse email est requise.
+        identity:
+            - NotBlank: 
+                message: Un pseudo est requis.
+        origin:
+            - NotBlank:
+                message: Un cursus d'origine est requis.

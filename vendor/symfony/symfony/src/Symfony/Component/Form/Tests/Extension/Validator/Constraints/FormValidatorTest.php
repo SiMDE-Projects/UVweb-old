@@ -291,6 +291,23 @@ class FormValidatorTest extends \PHPUnit_Framework_TestCase
         $this->validator->validate($form, new Form());
     }
 
+    public function testDontExecuteFunctionNames()
+    {
+        $context = $this->getMockExecutionContext();
+        $object = $this->getMock('\stdClass');
+        $options = array('validation_groups' => 'header');
+        $form = $this->getBuilder('name', '\stdClass', $options)
+            ->setData($object)
+            ->getForm();
+
+        $context->expects($this->once())
+            ->method('validate')
+            ->with($object, 'data', 'header', true);
+
+        $this->validator->initialize($context);
+        $this->validator->validate($form, new Form());
+    }
+
     public function testHandleClosureValidationGroups()
     {
         $context = $this->getMockExecutionContext();
@@ -501,6 +518,7 @@ class FormValidatorTest extends \PHPUnit_Framework_TestCase
             array(1024, '1K', 0),
             array(null, '1K', 0),
             array(1024, '', 0),
+            array(1024, 0, 0),
         );
     }
 

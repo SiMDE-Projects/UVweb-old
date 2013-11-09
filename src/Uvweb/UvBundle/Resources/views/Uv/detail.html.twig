@@ -44,42 +44,6 @@
 
     </p>
 	{% for comment in comments %}
-		<div class="span12">
-			<div class="row-fluid">
-				<div class="span8">
-					<div class="span2">
-						<a href="{{ path('uvweb_uv_profile', { 'userid' : comment.author.id }) }}" class="thumbnail">
-					    	<img src="{{ gravatar(comment.author.utcLogin ~ '@etu.utc.fr', 80) }}" alt="{{ comment.author.login }}'s gravatar"/>
-					    </a>
-					</div>
-					<div class="span10">
-						<h3>l'avis de <a href="{{ path('uvweb_uv_profile', { 'userid':comment.author.id }) }}">{{comment.author.login}}</a> pour {{ comment.semester }} <small>({{ comment.passed }})</small></h3>
-					</div>
-				</div>
-				<div class="span4 date text-right">
-					<h4>le {{ comment.date|date('d/m/Y') }}</h4>
-				</div>
-			</div>
-			<div class="row-fluid">
-				<div class="span8 comment">
-					<p> {{ comment.comment }} </p>
-				</div>
-				<div class="span4 well well-small">
-					<dl class="dl-horizontal">
-						<dt>Utilité</dt>
-						<dd>{{ comment.utility }}</dd>
-						<dt>Dose de travail</dt>
-						<dd>{{ comment.workamount }}</dd>
-						<dt>Intérêt</dt>
-						<dd>{{ comment.interest }}</dd>
-						<dt>Pédagogie</dt>
-						<dd>{{ comment.pedagogy }}</dd>
-						<dt>Note</dt>
-						<dd>{{ comment.globalrate }}/10</dd>
-					</dl>
-				</div>
-			</div>
-			<hr>
-		</div>
+		{% include 'UvwebUvBundle:Uv:review_uv_profile_row.html.twig' with {'comment': comment} %}
 	{% endfor %}
 {% endblock %}

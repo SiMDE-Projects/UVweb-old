@@ -1,7 +1,7 @@
 {% extends "UvwebUvBundle::layout.html.twig" %}
 
   {% block title %}
-      {{ user.login }} - {{ parent() }}
+      Profil de {{ user.identity }} - {{ parent() }}
   {% endblock %}
 
   {% block style %}
@@ -10,63 +10,49 @@
   {% block body %}
       <div class="page-header">
           <div class="row-fluid">
-              <h1>{{ user.login }}</h1>
+              <h1>{{ user.identity }}</h1>
           </div>
       </div>
       <div class="media">
-          <img class="media-object img-polaroid pull-left" src="{{ gravatar(user.utcLogin ~ '@etu.utc.fr', 120) }}">
+
+          {% if app.session.has('currentUser') and app.session.get('currentUser').login == user.login %}
+              <a href="http://fr.gravatar.com"  target="_blank" class="media-object img-polaroid pull-left"><img src="{{ gravatar(user.email, 120) }}"></a>
+          {% else %}
+              <img class="media-object img-polaroid pull-left" src="{{ gravatar(user.email, 120) }}">
+          {% endif %}
 
           <div class="media-body">
               <ul class="unstyled">
                   <li>Vient de <strong>{{ user.origin }}</strong></li>
-                  <li>Entrée à l'UTC : <strong>{{ user.firstSemester }} {{ user.firstYear }}</strong></li>
+                  <li>Entrée à l'UTC : <strong>{{ user.firstSemester }}</strong></li>
                   <li>Branche : <strong>{{ user.branch }}</strong></li>
-                  {% if user.branch != 'TC' %}<li>Filière : <strong>{{ user.filiere }}</strong></li> {% endif %}
+                  {% if user.filiere != '' %}<li>Filière : <strong>{{ user.filiere }}</strong></li> {% endif %}
+                  {% if app.session.has('currentUser') and app.session.get('currentUser').login == user.login %}<div style="margin-top: 10px;" class="alert alert-info"><li>Tu peux ajouter ou changer l'image qui apparaît sur ton compte à l'aide du service <a href="http://fr.gravatar.com" target="_blank">Gravatar</a>, qu'utilise UVweb.</li></div> {% endif %}
               </ul>
           </div>
       </div>
+
       {% if comments %}
+
           <div class="page-header">
               <div class="row-fluid">
                   <h3>Derniers commentaires</h3>
               </div>
           </div>
+
           {% for comment in comments %}
-              <div class="span12">
-                  <div class="row-fluid">
-                      <div class="span8">
-                              <h2><a href="{{ path('uvweb_uv_detail', { 'uvname': comment.uv.name }) }}">{{ comment.uv.name }}</a> <small>({{ comment.passed }} en {{ comment.semester }})</small></h2>
-                      </div>
-                      <div class="span4 date text-right">
-                          <h4>le {{ comment.date|date('d/m/Y') }}</h4>
-                      </div>
-                  </div>
-                  <div class="row-fluid">
-                      <div class="span8 comment">
-                          <p>{{ comment.comment }}</p>
-                      </div>
-                      <div class="span4 well well-small">
-                          <dl class="dl-horizontal">
-                              <dt>Utilité</dt>
-                              <dd>{{ comment.utility }}</dd>
-                              <dt>Dose de travail</dt>
-                              <dd>{{ comment.workamount }}</dd>
-                              <dt>Intérêt</dt>
-                              <dd>{{ comment.interest }}</dd>
-                              <dt>Pédagogie</dt>
-                              <dd>{{ comment.pedagogy }}</dd>
-                              <dt>Note</dt>
-                              <dd>{{ comment.globalRate }}/10</dd>
-                          </dl>
-                      </div>
-                  </div>
-                  <hr>
-              </div>
+              {% include 'UvwebUvBundle:Profile:review_user_profile_row.html.twig' with {'comment': comment} %}
           {% endfor %}
+
       {% else %}
+
           <br>
           <div class="span12 well">
-             <p>{{ user.login }} n'a pas encore posté d'avis sur UVweb.</p>
+              {% if app.session.has('currentUser') and app.session.get('currentUser').login == user.login %}
+                  <p>Tu n'as pas encore posté d'avis sur UVweb</p>
+              {% else %}
+                  <p>{{ user.identity }} n'a pas encore posté d'avis sur UVweb.</p>
+              {% endif %}
           </div>
       {% endif %}
   {% endblock %}

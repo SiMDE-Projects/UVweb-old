@@ -17,7 +17,6 @@
  * <http://www.doctrine-project.org>.
  */
 
-
 namespace Doctrine\DBAL;
 
 use Doctrine\DBAL\Connection;
@@ -25,28 +24,28 @@ use Doctrine\DBAL\Connection;
 /**
  * Utility class that parses sql statements with regard to types and parameters.
  *
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.com
- * @since       2.0
- * @author      Benjamin Eberlei <kontakt@beberlei.de>
+ * @link   www.doctrine-project.org
+ * @since  2.0
+ * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
 class SQLParserUtils
 {
     const POSITIONAL_TOKEN = '\?';
-    const NAMED_TOKEN      = ':[a-zA-Z_][a-zA-Z0-9_]*';
+    const NAMED_TOKEN      = '(?<!:):[a-zA-Z_][a-zA-Z0-9_]*';
 
     // Quote characters within string literals can be preceded by a backslash.
     const ESCAPED_SINGLE_QUOTED_TEXT = "'(?:[^'\\\\]|\\\\'|\\\\\\\\)*'";
     const ESCAPED_DOUBLE_QUOTED_TEXT = '"(?:[^"\\\\]|\\\\"|\\\\\\\\)*"';
 
     /**
-     * Get an array of the placeholders in an sql statements as keys and their positions in the query string.
+     * Gets an array of the placeholders in an sql statements as keys and their positions in the query string.
      *
      * Returns an integer => integer pair (indexed from zero) for a positional statement
      * and a string => int[] pair for a named statement.
      *
-     * @param string $statement
-     * @param bool $isPositional
+     * @param string  $statement
+     * @param boolean $isPositional
+     *
      * @return array
      */
     static public function getPlaceholderPositions($statement, $isPositional = true)
@@ -77,11 +76,13 @@ class SQLParserUtils
     /**
      * For a positional query this method can rewrite the sql statement with regard to array parameters.
      *
-     * @param string    $query  The SQL query to execute.
-     * @param array     $params The parameters to bind to the query.
-     * @param array     $types  The types the previous parameters are in.
-     * 
+     * @param string $query  The SQL query to execute.
+     * @param array  $params The parameters to bind to the query.
+     * @param array  $types  The types the previous parameters are in.
+     *
      * @return array
+     *
+     * @throws SQLParserUtilsException
      */
     static public function expandListParameters($query, $params, $types)
     {
@@ -103,7 +104,7 @@ class SQLParserUtils
             $arrayPositions[$name] = false;
         }
 
-        if (( ! $arrayPositions && $isPositional) || (count($params) != count($types))) {
+        if (( ! $arrayPositions && $isPositional)) {
             return array($query, $params, $types);
         }
 
@@ -130,11 +131,13 @@ class SQLParserUtils
 
                 $types = array_merge(
                     array_slice($types, 0, $needle),
-                    array_fill(0, $count, $types[$needle] - Connection::ARRAY_PARAM_OFFSET), // array needles are at PDO::PARAM_* + 100
+                    $count ?
+                        array_fill(0, $count, $types[$needle] - Connection::ARRAY_PARAM_OFFSET) : // array needles are at PDO::PARAM_* + 100
+                        array(),
                     array_slice($types, $needle + 1)
                 );
 
-                $expandStr  = implode(", ", array_fill(0, $count, "?"));
+                $expandStr  = $count ? implode(", ", array_fill(0, $count, "?")) : 'NULL';
                 $query      = substr($query, 0, $needlePos) . $expandStr . substr($query, $needlePos + 1);
 
                 $paramOffset += ($count - 1); // Grows larger by number of parameters minus the replaced needle.
@@ -144,31 +147,30 @@ class SQLParserUtils
             return array($query, $params, $types);
         }
 
-
         $queryOffset = 0;
         $typesOrd    = array();
         $paramsOrd   = array();
 
         foreach ($paramPos as $pos => $paramName) {
-            $paramLen   = strlen($paramName) + 1;
-            $value      = $params[$paramName];
+            $paramLen = strlen($paramName) + 1;
+            $value    = static::extractParam($paramName, $params, true);
 
-            if ( ! isset($arrayPositions[$paramName])) {
+            if ( ! isset($arrayPositions[$paramName]) && ! isset($arrayPositions[':' . $paramName])) {
                 $pos         += $queryOffset;
                 $queryOffset -= ($paramLen - 1);
                 $paramsOrd[]  = $value;
-                $typesOrd[]   = $types[$paramName];
+                $typesOrd[]   = static::extractParam($paramName, $types, false, \PDO::PARAM_STR);
                 $query        = substr($query, 0, $pos) . '?' . substr($query, ($pos + $paramLen));
-            
+
                 continue;
             }
 
             $count      = count($value);
-            $expandStr  = $count > 0 ? implode(', ', array_fill(0, $count, '?')) : '?';
+            $expandStr  = $count > 0 ? implode(', ', array_fill(0, $count, '?')) : 'NULL';
 
             foreach ($value as $val) {
                 $paramsOrd[] = $val;
-                $typesOrd[]  = $types[$paramName] - Connection::ARRAY_PARAM_OFFSET;
+                $typesOrd[]  = static::extractParam($paramName, $types, false) - Connection::ARRAY_PARAM_OFFSET;
             }
 
             $pos         += $queryOffset;
@@ -196,5 +198,36 @@ class SQLParserUtils
         preg_match_all("/([^'\"]+)(?:$literal)?/s", $statement, $fragments, PREG_OFFSET_CAPTURE);
 
         return $fragments[1];
+    }
+
+    /**
+     * @param string    $paramName      The name of the parameter (without a colon in front)
+     * @param array     $paramsOrTypes  A hash of parameters or types
+     * @param bool      $isParam
+     * @param mixed     $defaultValue   An optional default value. If omitted, an exception is thrown
+     *
+     * @throws SQLParserUtilsException
+     * @return mixed
+     */
+    static private function extractParam($paramName, $paramsOrTypes, $isParam, $defaultValue = null)
+    {
+        if (array_key_exists($paramName, $paramsOrTypes)) {
+            return $paramsOrTypes[$paramName];
+        }
+
+        // Hash keys can be prefixed with a colon for compatibility
+        if (array_key_exists(':' . $paramName, $paramsOrTypes)) {
+            return $paramsOrTypes[':' . $paramName];
+        }
+
+        if (null !== $defaultValue) {
+            return $defaultValue;
+        }
+
+        if ($isParam) {
+            throw SQLParserUtilsException::missingParam($paramName);
+        }
+
+        throw SQLParserUtilsException::missingType($paramName);
     }
 }

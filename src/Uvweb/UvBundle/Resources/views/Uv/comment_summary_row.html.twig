@@ -1,0 +1,27 @@
+<div class="row-fluid well well-small">
+
+  <div class="span3">
+    <a href="{{ path('uvweb_uv_profile', { 'userid' : comment.author.id }) }}" class="thumbnail">
+      <img src="{{ gravatar(comment.author.email, 80) }}" alt="{{ comment.author.identity }}'s gravatar"/>
+    </a>
+  </div>
+
+  <div class="span9">
+    <div class="row-fluid">
+      <div class="span9">
+        <h4>
+          <a href="{{ path('uvweb_uv_profile', { 'userid' : comment.author.id }) }}">{{ comment.author.identity }}</a> a posté un nouveau commentaire sur <a href="{{ path('uvweb_uv_detail', { 'uvname':comment.uv.name }) }}">{{ comment.uv.name }}</a>
+        </h4>
+      </div>
+      <div class="span3">
+        <h6>Le {{ comment.date|date('d/m/Y') }}</h6>
+      </div>
+    </div>
+    <p>
+      {{ comment.comment }}
+    </p>
+  </div>
+
+{% block comment_footer %}{% endblock %}
+
+</div>

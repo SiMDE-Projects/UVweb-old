@@ -6,7 +6,7 @@
     <title>{% block title %}UVweb{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="Alexandre Masciulli - Thomas Keunebroek">
+    <meta name="author" content="Alexandre Masciulli - Thomas Keunebroek - Maxime">
 
     <!-- Le styles -->
     <style type="text/css">
@@ -60,14 +60,31 @@
 
           <div class="btn-group pull-right">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="icon-user"></i> amasciul
+              <i class="icon-user"></i> 
+              {% if app.session.has('currentUser') %}
+                <span>{{ app.session.get('currentUser').identity }}</span>
+              {% else %}
+                <span>Non connecté</span>
+              {% endif %}
               <span class="caret"></span>
             </a>
+
             <ul class="dropdown-menu">
-              <li><a href="{{  path('uvweb_uv_profile' , { 'userid':2543 }) }}">Profil</a></li>
-              <li class="divider"></li>
-              <li><a href="#">Déconnexion</a></li>
+              {% if app.session.has('currentUser') %}
+                <li><a href="{{  path('uvweb_uv_profile' , { 'userid': app.session.get('currentUser').id }) }}">Profil</a></li>
+                <li class="divider"></li>
+
+                {% if app.session.get('currentUser').isadmin == true %}
+                  <li><a href="{{  path('uvweb_admin_home') }}">Modération</a></li>
+                  <li class="divider"></li>
+                {% endif %}
+
+                <li><a href="{{ path('uvweb_logout') }}">Déconnexion</a></li>
+              {% else %}
+                <li><a href="{{  path('uvweb_login') }}">Connexion (CAS UTC)</a></li>
+              {% endif %}
             </ul>
+
           </div>
             {% if searchbar is defined %}
           <form class="navbar-search pull-right" method='POST' {{ form_enctype(searchbar) }}>
@@ -92,16 +109,24 @@
 
     <div class="container">
       <div class="row-fluid">
+
+        {% if app.session.flashbag.has('message_to_display') %}
+          {% set message = app.session.flashbag.get('message_to_display')[0] %}
+          <div class="alert alert-{{ message.type }}">
+            {{ message.content }}
+          </div>
+        {% endif %}
+
         {% block body %}
-          {% endblock %}
+        {% endblock %}
       <hr>
 
       <footer>
-        <p>&copy; <a href="http://masciulli.fr">Alexandre Masciulli</a> - <a href="http://thomaskeunebroek.fr">Thomas Keunebroek</a> 2013</p>
+        <p>&copy; <a href="http://masciulli.fr">Alexandre Masciulli</a> - <a href="http://thomaskeunebroek.fr">Thomas Keunebroek</a> - <a href="#">Maxime</a> 2013</p>
       </footer>
 
     </div>
-
+  </div>
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

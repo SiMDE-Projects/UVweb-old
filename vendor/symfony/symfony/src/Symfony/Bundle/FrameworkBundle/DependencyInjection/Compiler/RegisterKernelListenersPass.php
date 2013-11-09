@@ -25,6 +25,15 @@ class RegisterKernelListenersPass implements CompilerPassInterface
         $definition = $container->getDefinition('event_dispatcher');
 
         foreach ($container->findTaggedServiceIds('kernel.event_listener') as $id => $events) {
+            $def = $container->getDefinition($id);
+            if (!$def->isPublic()) {
+                throw new \InvalidArgumentException(sprintf('The service "%s" must be public as event listeners are lazy-loaded.', $id));
+            }
+
+            if ($def->isAbstract()) {
+                throw new \InvalidArgumentException(sprintf('The service "%s" must not be abstract as event listeners are lazy-loaded.', $id));
+            }
+
             foreach ($events as $event) {
                 $priority = isset($event['priority']) ? $event['priority'] : 0;
 
@@ -33,10 +42,11 @@ class RegisterKernelListenersPass implements CompilerPassInterface
                 }
 
                 if (!isset($event['method'])) {
-                    $event['method'] = 'on'.preg_replace(array(
-                        '/(?<=\b)[a-z]/ie',
-                        '/[^a-z0-9]/i'
-                    ), array('strtoupper("\\0")', ''), $event['event']);
+                    $event['method'] = 'on'.preg_replace_callback(array(
+                        '/(?<=\b)[a-z]/i',
+                        '/[^a-z0-9]/i',
+                    ), function ($matches) { return strtoupper($matches[0]); }, $event['event']);
+                    $event['method'] = preg_replace('/[^a-z0-9]/i', '', $event['method']);
                 }
 
                 $definition->addMethodCall('addListenerService', array($event['event'], array($id, $event['method']), $priority));
@@ -44,8 +54,13 @@ class RegisterKernelListenersPass implements CompilerPassInterface
         }
 
         foreach ($container->findTaggedServiceIds('kernel.event_subscriber') as $id => $attributes) {
+            $def = $container->getDefinition($id);
+            if (!$def->isPublic()) {
+                throw new \InvalidArgumentException(sprintf('The service "%s" must be public as event subscribers are lazy-loaded.', $id));
+            }
+
             // We must assume that the class value has been correctly filled, even if the service is created by a factory
-            $class = $container->getDefinition($id)->getClass();
+            $class = $def->getClass();
 
             $refClass = new \ReflectionClass($class);
             $interface = 'Symfony\Component\EventDispatcher\EventSubscriberInterface';

@@ -63,7 +63,7 @@ class Firewall implements EventSubscriberInterface
 
         // initiate the listener chain
         foreach ($listeners as $listener) {
-            $response = $listener->handle($event);
+            $listener->handle($event);
 
             if ($event->hasResponse()) {
                 break;
@@ -71,6 +71,9 @@ class Firewall implements EventSubscriberInterface
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public static function getSubscribedEvents()
     {
         return array(KernelEvents::REQUEST => array('onKernelRequest', 8));

@@ -11,6 +11,11 @@
 
 namespace Symfony\Component\Console\Input;
 
+if (!defined('JSON_UNESCAPED_UNICODE')) {
+    define('JSON_UNESCAPED_SLASHES', 64);
+    define('JSON_UNESCAPED_UNICODE', 256);
+}
+
 /**
  * A InputDefinition represents a set of valid command line arguments and options.
  *
@@ -475,7 +480,7 @@ class InputDefinition
      *
      * @param Boolean $asDom Whether to return a DOM or an XML string
      *
-     * @return string|DOMDocument An XML string representing the InputDefinition
+     * @return string|\DOMDocument An XML string representing the InputDefinition
      */
     public function asXml($asDom = false)
     {

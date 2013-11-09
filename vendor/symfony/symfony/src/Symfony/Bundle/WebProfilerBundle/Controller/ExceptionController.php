@@ -50,7 +50,7 @@ class ExceptionController
         if (!$this->twig->getLoader()->exists($template)) {
             $handler = new ExceptionHandler();
 
-            return new Response($handler->getContent($exception));
+            return new Response($handler->getContent($exception), 200, array('Content-Type' => 'text/html'));
         }
 
         $code = $exception->getStatusCode();
@@ -64,7 +64,7 @@ class ExceptionController
                 'logger'         => null,
                 'currentContent' => '',
             )
-        ));
+        ), 200, array('Content-Type' => 'text/html'));
     }
 
     /**
@@ -84,10 +84,10 @@ class ExceptionController
         if (!$this->templateExists($template)) {
             $handler = new ExceptionHandler();
 
-            return new Response($handler->getStylesheet($exception));
+            return new Response($handler->getStylesheet($exception), 200, array('Content-Type' => 'text/css'));
         }
 
-        return new Response($this->twig->render('@WebProfiler/Collector/exception.css.twig'));
+        return new Response($this->twig->render('@WebProfiler/Collector/exception.css.twig'), 200, array('Content-Type' => 'text/css'));
     }
 
     protected function getTemplate()

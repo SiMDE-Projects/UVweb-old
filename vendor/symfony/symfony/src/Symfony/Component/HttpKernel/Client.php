@@ -20,6 +20,7 @@ use Symfony\Component\BrowserKit\Cookie as DomCookie;
 use Symfony\Component\BrowserKit\History;
 use Symfony\Component\BrowserKit\CookieJar;
 use Symfony\Component\HttpKernel\TerminableInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Client simulates a browser and makes requests to a Kernel object.
@@ -83,7 +84,7 @@ class Client extends BaseClient
         $requirePath = str_replace("'", "\\'", $r->getFileName());
         $symfonyPath = str_replace("'", "\\'", realpath(__DIR__.'/../../..'));
 
-        return <<<EOF
+        $code = <<<EOF
 <?php
 
 require_once '$requirePath';
@@ -93,7 +94,22 @@ require_once '$requirePath';
 \$loader->register();
 
 \$kernel = unserialize('$kernel');
-echo serialize(\$kernel->handle(unserialize('$request')));
+\$request = unserialize('$request');
+EOF;
+
+        return $code.$this->getHandleScript();
+    }
+
+    protected function getHandleScript()
+    {
+        return <<<'EOF'
+$response = $kernel->handle($request);
+
+if ($kernel instanceof Symfony\Component\HttpKernel\TerminableInterface) {
+    $kernel->terminate($request, $response);
+}
+
+echo serialize($response);
 EOF;
     }
 

@@ -13,6 +13,7 @@ namespace Symfony\Bundle\SecurityBundle\DependencyInjection;
 
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\UserProvider\UserProviderFactoryInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Alias;
@@ -240,7 +241,6 @@ class SecurityExtension extends Extension
     private function createFirewall(ContainerBuilder $container, $id, $firewall, &$authenticationProviders, $providerIds)
     {
         // Matcher
-        $i = 0;
         $matcher = null;
         if (isset($firewall['request_matcher'])) {
             $matcher = new Reference($firewall['request_matcher']);
@@ -414,7 +414,7 @@ class SecurityExtension extends Extension
         }
 
         if (false === $hasListeners) {
-            throw new \LogicException(sprintf('No authentication listener registered for firewall "%s".', $id));
+            throw new InvalidConfigurationException(sprintf('No authentication listener registered for firewall "%s".', $id));
         }
 
         return array($listeners, $defaultEntryPoint);

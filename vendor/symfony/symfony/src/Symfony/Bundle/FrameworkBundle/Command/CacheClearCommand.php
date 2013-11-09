@@ -83,6 +83,9 @@ EOF
             $this->warmup($warmupDir, $realCacheDir, !$input->getOption('no-optional-warmers'));
 
             $filesystem->rename($realCacheDir, $oldCacheDir);
+            if (defined('PHP_WINDOWS_VERSION_BUILD')) {
+                sleep(1);  // workaround for windows php rename bug
+            }
             $filesystem->rename($warmupDir, $realCacheDir);
         }
 
@@ -126,8 +129,10 @@ EOF
         }
 
         // fix references to cached files with the real cache directory name
+        $search  = array($warmupDir, str_replace('\\', '\\\\', $warmupDir));
+        $replace = str_replace('\\', '/', $realCacheDir);
         foreach (Finder::create()->files()->in($warmupDir) as $file) {
-            $content = str_replace($warmupDir, $realCacheDir, file_get_contents($file));
+            $content = str_replace($search, $replace, file_get_contents($file));
             file_put_contents($file, $content);
         }
 

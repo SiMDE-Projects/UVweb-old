@@ -387,6 +387,12 @@ class PhpDumper extends Dumper
                 continue;
             }
 
+            // if the instance is simple, the return statement has already been generated
+            // so, the only possible way to get there is because of a circular reference
+            if ($this->isSimpleInstance($id, $definition)) {
+                throw new ServiceCircularReferenceException($id, array($id));
+            }
+
             $name = (string) $this->definitionVariables->offsetGet($iDefinition);
             $code .= $this->addServiceMethodCalls(null, $iDefinition, $name);
             $code .= $this->addServiceProperties(null, $iDefinition, $name);
@@ -436,7 +442,6 @@ class PhpDumper extends Dumper
      */
     private function addService($id, $definition)
     {
-        $name = Container::camelize($id);
         $this->definitionVariables = new \SplObjectStorage();
         $this->referenceVariables = array();
         $this->variableCount = 0;
@@ -479,7 +484,7 @@ EOF;
      *
      * $return
      */
-    protected function get{$name}Service()
+    protected function {$this->getMethodName($id)}()
     {
 
 EOF;
@@ -527,7 +532,6 @@ EOF;
      */
     private function addServiceAlias($alias, $id)
     {
-        $name = Container::camelize($alias);
         $type = 'Object';
 
         if ($this->container->hasDefinition($id)) {
@@ -542,12 +546,32 @@ EOF;
      *
      * @return $type An instance of the $id service
      */
-    protected function get{$name}Service()
+    protected function {$this->getMethodName($alias)}()
     {
         return {$this->getServiceCall($id)};
     }
 
 EOF;
+    }
+
+    /**
+     * Convert a service id to a valid PHP method name.
+     *
+     * @param string $id
+     *
+     * @return string
+     *
+     * @throws InvalidArgumentException
+     */
+    private function getMethodName($id)
+    {
+        $name = Container::camelize($id);
+
+        if (!preg_match('/^[a-zA-Z0-9_\x7f-\xff]+$/', $name)) {
+            throw new InvalidArgumentException(sprintf('Service id "%s" cannot be converted to a valid PHP method name.', $id));
+        }
+
+        return 'get'.$name.'Service';
     }
 
     /**

@@ -1,0 +1,14 @@
+{% extends "UvwebUvBundle:Uv:review_row.html.twig" %}
+
+{% block specific_content %}
+
+	<div class="span2">
+		<a href="{{ path('uvweb_uv_profile', { 'userid' : comment.author.id }) }}" class="thumbnail">
+	    	<img src="{{ gravatar(comment.author.email, 80) }}" alt="{{ comment.author.identity }}'s gravatar"/>
+	    </a>
+	</div>
+	<div class="span10">
+		<h3>l'avis de <a href="{{ path('uvweb_uv_profile', { 'userid':comment.author.id }) }}">{{comment.author.identity}}</a> pour {{ comment.semester }} <small>({{ comment.passed }})</small></h3>
+	</div>
+
+{% endblock %}

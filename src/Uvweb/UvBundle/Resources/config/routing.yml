@@ -3,39 +3,85 @@ uvweb_uv_detail:
     defaults:  { _controller: UvwebUvBundle:Detail:detail}
     requirements:
         uvname:  ^[a-zA-Z0-9]{4}$
+
 uvweb_uv_newpost:
     path: /post/{uvname}
     defaults:  { _controller: UvwebUvBundle:Detail:post}
     requirements:
         uvname:  ^[a-zA-Z0-9]{4}$
+
 uvweb_uv_uvtitlefetcher:
     path: /uv/titlefetcher
     defaults:  { _controller: UvwebUvBundle:Detail:uvTitle}
+
 uvweb_uv_uvnametoid:
     path: /uv/uvnametoid
     defaults:  { _controller: UvwebUvBundle:Detail:uvNametoUvId}
+
 uvweb_uv_pollsemestertoyear:
     path: /uv/pollsemestertoyear
     defaults:  { _controller: UvwebUvBundle:Detail:pollSemesterToYear}
+
 uvweb_uv_search:
     path: /uv/search/{searchtext}
     defaults:  { _controller: UvwebUvBundle:Detail:search}
+
 uvweb_uv_applist:
     path: /uv/app/list
     defaults:  { _controller: UvwebUvBundle:Detail:appList}
+
 uvweb_uv_appdetail:
     path: /uv/app/{uvname}
     defaults:  { _controller: UvwebUvBundle:Detail:appDetail}
     requirements:
         uvname:  ^[a-zA-Z]{2}+[0-9]{2}$
+
 uvweb_uv_homepage:
     pattern:  /
     defaults: { _controller: UvwebUvBundle:Home:index }
+
 uvweb_uv_appfeed:
     path: /uv/app/newsfeed
     defaults:  { _controller: UvwebUvBundle:Home:appNewsfeed}
+
+#Profile paths
 uvweb_uv_profile:
     pattern: /user/{userid}
-    defaults: { _controller: UvwebUvBundle:Profile:display}
+    defaults: { _controller: UvwebUvBundle:Profile:display }
     requirements:
-            userid:  ^[0-9]+$
+        userid:  ^[0-9]+$
+
+uvweb_login:
+    pattern: /login
+    defaults: { _controller: UvwebUvBundle:Profile:login }
+
+uvweb_logout:
+    pattern: /logout
+    defaults: { _controller: UvwebUvBundle:Profile:logout }
+
+uvweb_user_add:
+    pattern: /user/register
+    defaults: { _controller: UvwebUvBundle:Profile:addUser }
+
+#Admin paths
+uvweb_admin_home:
+    pattern: /admin
+    defaults: { _controller: UvwebUvBundle:Admin:home }
+
+uvweb_admin_comment_validate:
+    pattern: /admin/validatecomment/{commentid}
+    defaults: { _controller: UvwebUvBundle:Admin:validateComment }
+    requirements:
+        commentid: \d
+
+uvweb_admin_comment_refuse:
+    pattern: /admin/refusecomment/{commentid}
+    defaults: { _controller: UvwebUvBundle:Admin:refuseComment }
+    requirements:
+        commentid: \d
+
+sf_login:
+    pattern: /sflogin
+
+sf_logout:
+    pattern: /sflogout

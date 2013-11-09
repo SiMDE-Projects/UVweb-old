@@ -114,9 +114,16 @@ class Application
             } else {
                 $this->renderException($e, $output);
             }
-            $statusCode = $e->getCode();
 
-            $statusCode = is_numeric($statusCode) && $statusCode ? $statusCode : 1;
+            $statusCode = $e->getCode();
+            if (is_numeric($statusCode)) {
+                $statusCode = (int) $statusCode;
+                if (0 === $statusCode) {
+                    $statusCode = 1;
+                }
+            } else {
+                $statusCode = 1;
+            }
         }
 
         if ($this->autoExit) {
@@ -164,7 +171,7 @@ class Application
 
         if (function_exists('posix_isatty') && $this->getHelperSet()->has('dialog')) {
             $inputStream = $this->getHelperSet()->get('dialog')->getInputStream();
-            if (!posix_isatty($inputStream)) {
+            if (!@posix_isatty($inputStream)) {
                 $input->setInteractive(false);
             }
         }
@@ -193,7 +200,7 @@ class Application
         $statusCode = $command->run($input, $output);
         $this->runningCommand = null;
 
-        return is_numeric($statusCode) ? $statusCode : 0;
+        return $statusCode;
     }
 
     /**
@@ -492,20 +499,24 @@ class Application
      */
     public function findNamespace($namespace)
     {
-        $allNamespaces = array();
-        foreach ($this->getNamespaces() as $n) {
-            $allNamespaces[$n] = explode(':', $n);
-        }
-
-        $found = array();
+        $allNamespaces = $this->getNamespaces();
+        $found = '';
         foreach (explode(':', $namespace) as $i => $part) {
-            $abbrevs = static::getAbbreviations(array_unique(array_values(array_filter(array_map(function ($p) use ($i) { return isset($p[$i]) ? $p[$i] : ''; }, $allNamespaces)))));
+            // select sub-namespaces matching the current namespace we found
+            $namespaces = array();
+            foreach ($allNamespaces as $n) {
+                if ('' === $found || 0 === strpos($n, $found)) {
+                    $namespaces[$n] = explode(':', $n);
+                }
+            }
+
+            $abbrevs = static::getAbbreviations(array_unique(array_values(array_filter(array_map(function ($p) use ($i) { return isset($p[$i]) ? $p[$i] : ''; }, $namespaces)))));
 
             if (!isset($abbrevs[$part])) {
                 $message = sprintf('There are no commands defined in the "%s" namespace.', $namespace);
 
                 if (1 <= $i) {
-                    $part = implode(':', $found).':'.$part;
+                    $part = $found.':'.$part;
                 }
 
                 if ($alternatives = $this->findAlternativeNamespace($part, $abbrevs)) {
@@ -521,14 +532,19 @@ class Application
                 throw new \InvalidArgumentException($message);
             }
 
+            // there are multiple matches, but $part is an exact match of one of them so we select it
+            if (in_array($part, $abbrevs[$part])) {
+                $abbrevs[$part] = array($part);
+            }
+
             if (count($abbrevs[$part]) > 1) {
                 throw new \InvalidArgumentException(sprintf('The namespace "%s" is ambiguous (%s).', $namespace, $this->getAbbreviationSuggestions($abbrevs[$part])));
             }
 
-            $found[] = $abbrevs[$part][0];
+            $found .= $found ? ':' . $abbrevs[$part][0] : $abbrevs[$part][0];
         }
 
-        return implode(':', $found);
+        return $found;
     }
 
     /**
@@ -569,6 +585,10 @@ class Application
         $abbrevs = static::getAbbreviations(array_unique($commands));
         if (isset($abbrevs[$searchName]) && 1 == count($abbrevs[$searchName])) {
             return $this->get($abbrevs[$searchName][0]);
+        }
+
+        if (isset($abbrevs[$searchName]) && in_array($searchName, $abbrevs[$searchName])) {
+            return $this->get($searchName);
         }
 
         if (isset($abbrevs[$searchName]) && count($abbrevs[$searchName]) > 1) {
@@ -651,19 +671,10 @@ class Application
     {
         $abbrevs = array();
         foreach ($names as $name) {
-            for ($len = strlen($name) - 1; $len > 0; --$len) {
+            for ($len = strlen($name); $len > 0; --$len) {
                 $abbrev = substr($name, 0, $len);
-                if (!isset($abbrevs[$abbrev])) {
-                    $abbrevs[$abbrev] = array($name);
-                } else {
-                    $abbrevs[$abbrev][] = $name;
-                }
+                $abbrevs[$abbrev][] = $name;
             }
-        }
-
-        // Non-abbreviations always get entered, even if they aren't unique
-        foreach ($names as $name) {
-            $abbrevs[$name] = array($name);
         }
 
         return $abbrevs;
@@ -725,7 +736,7 @@ class Application
      * @param string  $namespace An optional namespace name
      * @param Boolean $asDom     Whether to return a DOM or an XML string
      *
-     * @return string|DOMDocument An XML string representing the Application
+     * @return string|\DOMDocument An XML string representing the Application
      */
     public function asXml($namespace = null, $asDom = false)
     {
@@ -776,7 +787,7 @@ class Application
     /**
      * Renders a caught exception.
      *
-     * @param Exception       $e      An exception instance
+     * @param \Exception       $e      An exception instance
      * @param OutputInterface $output An OutputInterface instance
      */
     public function renderException($e, $output)
@@ -797,29 +808,29 @@ class Application
             $title = sprintf('  [%s]  ', get_class($e));
             $len = $strlen($title);
             $width = $this->getTerminalWidth() ? $this->getTerminalWidth() - 1 : PHP_INT_MAX;
+            $formatter = $output->getFormatter();
             $lines = array();
             foreach (preg_split('/\r?\n/', $e->getMessage()) as $line) {
                 foreach (str_split($line, $width - 4) as $line) {
-                    $lines[] = sprintf('  %s  ', $line);
-                    $len = max($strlen($line) + 4, $len);
+                    // pre-format lines to get the right string length
+                    $lineLength = $strlen(preg_replace('/\[[^m]*m/', '', $formatter->format($line))) + 4;
+                    $lines[] = array($line, $lineLength);
+
+                    $len = max($lineLength, $len);
                 }
             }
 
-            $messages = array(str_repeat(' ', $len), $title.str_repeat(' ', max(0, $len - $strlen($title))));
-
+            $messages = array('', '');
+            $messages[] = $emptyLine = $formatter->format(sprintf('<error>%s</error>', str_repeat(' ', $len)));
+            $messages[] = $formatter->format(sprintf('<error>%s%s</error>', $title, str_repeat(' ', max(0, $len - $strlen($title)))));
             foreach ($lines as $line) {
-                $messages[] = $line.str_repeat(' ', $len - $strlen($line));
+                $messages[] = $formatter->format(sprintf('<error>  %s  %s</error>', $line[0], str_repeat(' ', $len - $line[1])));
             }
+            $messages[] = $emptyLine;
+            $messages[] = '';
+            $messages[] = '';
 
-            $messages[] = str_repeat(' ', $len);
-
-            $output->writeln("");
-            $output->writeln("");
-            foreach ($messages as $message) {
-                $output->writeln('<error>'.$message.'</error>');
-            }
-            $output->writeln("");
-            $output->writeln("");
+            $output->writeln($messages, OutputInterface::OUTPUT_RAW);
 
             if (OutputInterface::VERBOSITY_VERBOSE === $output->getVerbosity()) {
                 $output->writeln('<comment>Exception trace:</comment>');

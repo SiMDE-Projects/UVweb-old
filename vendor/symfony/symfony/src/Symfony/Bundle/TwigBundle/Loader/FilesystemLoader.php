@@ -13,6 +13,7 @@ namespace Symfony\Bundle\TwigBundle\Loader;
 
 use Symfony\Component\Templating\TemplateNameParserInterface;
 use Symfony\Component\Config\FileLocatorInterface;
+use Symfony\Component\Templating\TemplateReferenceInterface;
 
 /**
  * FilesystemLoader extends the default Twig filesystem loader
@@ -38,6 +39,25 @@ class FilesystemLoader extends \Twig_Loader_Filesystem
         $this->locator = $locator;
         $this->parser = $parser;
         $this->cache = array();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function exists($template)
+    {
+        if (parent::exists($template)) {
+            return true;
+        }
+
+        // same logic as findTemplate below for the fallback
+        try {
+            $this->cache[(string) $template] = $this->locator->locate($this->parser->parse($template));
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

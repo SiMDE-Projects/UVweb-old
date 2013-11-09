@@ -51,7 +51,7 @@ class ErrorHandler
      *
      * @param integer $level The level at which the conversion to Exception is done (null to use the error_reporting() value and 0 to disable)
      *
-     * @return The registered error handler
+     * @return ErrorHandler The registered error handler
      */
     public static function register($level = null)
     {
@@ -87,7 +87,18 @@ class ErrorHandler
 
         if ($level & (E_USER_DEPRECATED | E_DEPRECATED)) {
             if (null !== self::$logger) {
-                $stack = version_compare(PHP_VERSION, '5.4', '<') ? array_slice(debug_backtrace(false), 0, 10) : debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
+                if (version_compare(PHP_VERSION, '5.4', '<')) {
+                    $stack = array_map(
+                        function ($row) {
+                            unset($row['args']);
+
+                            return $row;
+                        },
+                        array_slice(debug_backtrace(false), 0, 10)
+                    );
+                } else {
+                    $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
+                }
 
                 self::$logger->warning($message, array('type' => self::TYPE_DEPRECATION, 'stack' => $stack));
             }
@@ -108,7 +119,7 @@ class ErrorHandler
             return;
         }
 
-        unset($this->reservedMemory);
+        $this->reservedMemory = '';
         $type = $error['type'];
         if (0 === $this->level || !in_array($type, array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE))) {
             return;

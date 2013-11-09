@@ -36,6 +36,7 @@ class Command
     private $description;
     private $ignoreValidationErrors;
     private $applicationDefinitionMerged;
+    private $applicationDefinitionMergedWithArgs;
     private $code;
     private $synopsis;
     private $helperSet;
@@ -54,6 +55,7 @@ class Command
         $this->definition = new InputDefinition();
         $this->ignoreValidationErrors = false;
         $this->applicationDefinitionMerged = false;
+        $this->applicationDefinitionMergedWithArgs = false;
         $this->aliases = array();
 
         if (null !== $name) {
@@ -240,7 +242,7 @@ class Command
             $statusCode = $this->execute($input, $output);
         }
 
-        return is_numeric($statusCode) ? $statusCode : 0;
+        return is_numeric($statusCode) ? (int) $statusCode : 0;
     }
 
     /**
@@ -277,7 +279,7 @@ class Command
      */
     private function mergeApplicationDefinition($mergeArgs = true)
     {
-        if (null === $this->application || true === $this->applicationDefinitionMerged) {
+        if (null === $this->application || (true === $this->applicationDefinitionMerged && ($this->applicationDefinitionMergedWithArgs || !$mergeArgs))) {
             return;
         }
 
@@ -290,6 +292,9 @@ class Command
         $this->definition->addOptions($this->application->getDefinition()->getOptions());
 
         $this->applicationDefinitionMerged = true;
+        if ($mergeArgs) {
+            $this->applicationDefinitionMergedWithArgs = true;
+        }
     }
 
     /**
@@ -592,7 +597,7 @@ class Command
      *
      * @param Boolean $asDom Whether to return a DOM or an XML string
      *
-     * @return string|DOMDocument An XML string representing the command
+     * @return string|\DOMDocument An XML string representing the command
      */
     public function asXml($asDom = false)
     {

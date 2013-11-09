@@ -3,6 +3,7 @@
 namespace Uvweb\UvBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * User
@@ -25,7 +26,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="login", type="string", length=30, nullable=false)
+     * @ORM\Column(name="login", type="string", length=30, nullable=false, unique=true)
      */
     private $login;
 
@@ -39,21 +40,21 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=50, nullable=false)
+     * @ORM\Column(name="email", type="string", length=50, nullable=false, unique=true)
      */
     private $email;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="sem_entree", type="string", length=10, nullable=true)
+     * @ORM\Column(name="sem_entree", type="string", length=10, nullable=false)
      */
     private $firstSemester;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="annee_entree", type="string", length=4, nullable=true)
+     * @ORM\Column(name="annee_entree", type="string", length=4, nullable=false)
      */
     private $firstYear;
 
@@ -102,21 +103,21 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="filiere", type="string", length=10, nullable=false)
+     * @ORM\Column(name="filiere", type="string", length=10, nullable=true)
      */
     private $filiere;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="message", type="boolean", nullable=false)
+     * @ORM\Column(name="message", type="boolean", nullable=true)
      */
     private $message;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="identite", type="string", length=50, nullable=true)
+     * @ORM\Column(name="identite", type="string", length=50, nullable=false, unique=true)
      */
     private $identity;
 

@@ -8,6 +8,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Uvweb\UvBundle\Entity\Comment;
+use Uvweb\UvBundle\Entity\Poll;
 
 class DetailController extends BaseController
 {
@@ -35,7 +36,8 @@ class DetailController extends BaseController
             array('uv' => $uv, 'moderated' => true),
             array('date' => 'desc'),
             20,
-            0);
+            0
+        );
 
         foreach ($comments as $comment) {
             try {
@@ -51,7 +53,8 @@ class DetailController extends BaseController
             array('uv' => $uv),
             array('year' => 'desc'),
             4,
-            0);
+            0
+        );
 
         $averageRate = $commentRepository->averageRate($uv);
 
@@ -60,7 +63,7 @@ class DetailController extends BaseController
             'uv' => $uv,
             'comments' => $comments,
             'polls' => $polls,
-            'firstPoll' => $polls[0],
+            'firstPoll' => $polls != null ? $polls[0] : new \Uvweb\UvBundle\Entity\Poll,
             'averageRate' => $averageRate,
             'searchbar' => $this->searchBarForm->createView(),
         ));
@@ -68,16 +71,37 @@ class DetailController extends BaseController
 
     public function postAction($uvname) {
 
+        //Is the user registered ?
+        $session = $this->getRequest()->getSession();
+        $currentUser = $session->get('currentUser');
+
+        if($currentUser === null)  //Not registered: redirection to the login controller
+            return $this->redirect($this->generateUrl('uvweb_login'));
+
         $manager = $this->getDoctrine()->getManager();
+
+        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
         $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
         $userRepository = $manager->getRepository("UvwebUvBundle:User");
 
+        $author = $userRepository->find($currentUser->getId());
         $uv = $uvRepository->findOneByName($uvname);
+
         if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 
+        //Has the user already commented this UV in the past?
+        if($commentRepository->userAlreadyCommentedUv($author, $uv))
+        {
+            $this->container->get('uvweb_uv.fbmanager')->addFlashMessage('Tu as déjà donné ton avis sur cette UV.');
+
+            return $this->redirect($this->generateUrl('uvweb_uv_detail', array(
+                'uvname' => $uv->getName()
+            )));
+        }
 
         $comment = new Comment();
         $comment->setUv($uv);
+
         $form = $this->createFormBuilder($comment)
             ->add('comment', 'textarea', array(
                 'label' => 'Ton commentaire'
@@ -123,7 +147,6 @@ class DetailController extends BaseController
 
             if ($form->isValid()) {
 
-                $author = $userRepository->find(2543);
                 $comment->setDate(new \DateTime());
                 $comment->setModerated(true);
                 $comment->setAuthor($author);

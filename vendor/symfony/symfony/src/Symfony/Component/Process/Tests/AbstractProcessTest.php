@@ -12,6 +12,7 @@
 namespace Symfony\Component\Process\Tests;
 
 use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\RuntimeException;
 
 /**
  * @author Robert Schönthal <seroscho@googlemail.com>
@@ -44,6 +45,47 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($p->getTimeout());
     }
 
+    public function testStopWithTimeoutIsActuallyWorking()
+    {
+        if (defined('PHP_WINDOWS_VERSION_BUILD')) {
+            $this->markTestSkipped('Stop with timeout does not work on windows, it requires posix signals');
+        }
+        if (!function_exists('pcntl_signal')) {
+            $this->markTestSkipped('This test require pcntl_signal function');
+        }
+
+        // exec is mandatory here since we send a signal to the process
+        // see https://github.com/symfony/symfony/issues/5030 about prepending
+        // command with exec
+        $p = $this->getProcess('exec php '.__DIR__.'/NonStopableProcess.php 3');
+        $p->start();
+        usleep(100000);
+        $start = microtime(true);
+        $p->stop(1.1);
+        while ($p->isRunning()) {
+            usleep(1000);
+        }
+        $duration = microtime(true) - $start;
+
+        $this->assertLessThan(1.3, $duration);
+    }
+
+    public function testCallbacksAreExecutedWithStart()
+    {
+        $data = '';
+
+        $process = $this->getProcess('echo foo && php -r "sleep(1);" && echo foo');
+        $process->start(function ($type, $buffer) use (&$data) {
+            $data .= $buffer;
+        });
+
+        while ($process->isRunning()) {
+            usleep(10000);
+        }
+
+        $this->assertEquals(2, preg_match_all('/foo/', $data, $matches));
+    }
+
     /**
      * tests results from sub processes
      *
@@ -62,22 +104,27 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider pipesCodeProvider
      */
-    public function testProcessPipes($expected, $code)
+    public function testProcessPipes($code, $size)
     {
-        if (defined('PHP_WINDOWS_VERSION_BUILD')) {
-            $this->markTestSkipped('Test hangs on Windows & PHP due to https://bugs.php.net/bug.php?id=60120 and https://bugs.php.net/bug.php?id=51800');
-        }
+        $expected = str_repeat(str_repeat('*', 1024), $size) . '!';
+        $expectedLength = (1024 * $size) + 1;
 
         $p = $this->getProcess(sprintf('php -r %s', escapeshellarg($code)));
         $p->setStdin($expected);
         $p->run();
 
-        $this->assertSame($expected, $p->getOutput());
-        $this->assertSame($expected, $p->getErrorOutput());
+        $this->assertEquals($expectedLength, strlen($p->getOutput()));
+        $this->assertEquals($expectedLength, strlen($p->getErrorOutput()));
     }
 
     public function chainedCommandsOutputProvider()
     {
+        if (defined('PHP_WINDOWS_VERSION_BUILD')) {
+            return array(
+                array("2 \r\n2\r\n", '&&', '2')
+            );
+        }
+
         return array(
             array("1\n1\n", ';', '1'),
             array("2\n2\n", '&&', '2'),
@@ -90,10 +137,6 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
      */
     public function testChainedCommandsOutput($expected, $operator, $input)
     {
-        if (defined('PHP_WINDOWS_VERSION_BUILD')) {
-            $this->markTestSkipped('Does it work on windows ?');
-        }
-
         $process = $this->getProcess(sprintf('echo %s %s echo %s', $input, $operator, $input));
         $process->run();
         $this->assertEquals($expected, $process->getOutput());
@@ -132,7 +175,7 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOutput()
     {
-        $p = new Process(sprintf('php -r %s', escapeshellarg('$n=0;while ($n<3) {echo \' foo \';$n++;}')));
+        $p = new Process(sprintf('php -r %s', escapeshellarg('$n=0;while ($n<3) {echo \' foo \';$n++; usleep(500); }')));
 
         $p->run();
         $this->assertEquals(3, preg_match_all('/foo/', $p->getOutput(), $matches));
@@ -189,6 +232,27 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(strlen($process->getOutput()) > 0);
     }
 
+    public function testGetExitCodeIsNullOnStart()
+    {
+        $process = $this->getProcess('php -r "usleep(200000);"');
+        $this->assertNull($process->getExitCode());
+        $process->start();
+        $this->assertNull($process->getExitCode());
+        $process->wait();
+        $this->assertEquals(0, $process->getExitCode());
+    }
+
+    public function testGetExitCodeIsNullOnWhenStartingAgain()
+    {
+        $process = $this->getProcess('php -r "usleep(200000);"');
+        $process->run();
+        $this->assertEquals(0, $process->getExitCode());
+        $process->start();
+        $this->assertNull($process->getExitCode());
+        $process->wait();
+        $this->assertEquals(0, $process->getExitCode());
+    }
+
     public function testGetExitCode()
     {
         $process = $this->getProcess('php -m');
@@ -217,7 +281,7 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
 
     public function testStop()
     {
-        $process = $this->getProcess('php -r "while (true) {}"');
+        $process = $this->getProcess('php -r "sleep(4);"');
         $process->start();
         $this->assertTrue($process->isRunning());
         $process->stop();
@@ -231,9 +295,21 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($process->isSuccessful());
     }
 
+    public function testIsSuccessfulOnlyAfterTerminated()
+    {
+        $process = $this->getProcess('php -r "sleep(1);"');
+        $process->start();
+        while ($process->isRunning()) {
+            $this->assertFalse($process->isSuccessful());
+            usleep(300000);
+        }
+
+        $this->assertTrue($process->isSuccessful());
+    }
+
     public function testIsNotSuccessful()
     {
-        $process = $this->getProcess('php -r "while (true) {}"');
+        $process = $this->getProcess('php -r "sleep(4);"');
         $process->start();
         $this->assertTrue($process->isRunning());
         $process->stop();
@@ -268,7 +344,7 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
             $this->markTestSkipped('Windows does not support POSIX signals');
         }
 
-        $process = $this->getProcess('php -r "while (true) {}"');
+        $process = $this->getProcess('php -r "sleep(4);"');
         $process->start();
         $process->stop();
         $this->assertTrue($process->hasBeenSignaled());
@@ -283,7 +359,7 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
         // SIGTERM is only defined if pcntl extension is present
         $termSignal = defined('SIGTERM') ? SIGTERM : 15;
 
-        $process = $this->getProcess('php -r "while (true) {}"');
+        $process = $this->getProcess('php -r "sleep(4);"');
         $process->start();
         $process->stop();
 
@@ -320,6 +396,47 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
         // PHP will deadlock when it tries to cleanup $process
     }
 
+    public function testRunProcessWithTimeout()
+    {
+        $timeout = 0.5;
+        $process = $this->getProcess('php -r "sleep(3);"');
+        $process->setTimeout($timeout);
+        $start = microtime(true);
+        try {
+            $process->run();
+            $this->fail('A RuntimeException should have been raised');
+        } catch (RuntimeException $e) {
+
+        }
+        $duration = microtime(true) - $start;
+
+        $this->assertLessThan($timeout + Process::TIMEOUT_PRECISION, $duration);
+    }
+
+    public function testCheckTimeoutOnStartedProcess()
+    {
+        $timeout = 0.5;
+        $precision = 100000;
+        $process = $this->getProcess('php -r "sleep(3);"');
+        $process->setTimeout($timeout);
+        $start = microtime(true);
+
+        $process->start();
+
+        try {
+            while ($process->isRunning()) {
+                $process->checkTimeout();
+                usleep($precision);
+            }
+            $this->fail('A RuntimeException should have been raised');
+        } catch (RuntimeException $e) {
+
+        }
+        $duration = microtime(true) - $start;
+
+        $this->assertLessThan($timeout + $precision, $duration);
+    }
+
     public function responsesCodeProvider()
     {
         return array(
@@ -334,15 +451,20 @@ abstract class AbstractProcessTest extends \PHPUnit_Framework_TestCase
     {
         $variations = array(
             'fwrite(STDOUT, $in = file_get_contents(\'php://stdin\')); fwrite(STDERR, $in);',
-            'include \'' . __DIR__ . '/ProcessTestHelper.php\';',
+            'include \''.__DIR__.'/PipeStdinInStdoutStdErrStreamSelect.php\';',
         );
-        $baseData = str_repeat('*', 1024);
+
+        if (defined('PHP_WINDOWS_VERSION_BUILD')) {
+            // Avoid XL buffers on Windows because of https://bugs.php.net/bug.php?id=65650
+            $sizes = array(1, 2, 4, 8);
+        } else {
+            $sizes = array(1, 16, 64, 1024, 4096);
+        }
 
         $codes = array();
-        foreach (array(1, 16, 64, 1024, 4096) as $size) {
-            $data = str_repeat($baseData, $size) . '!';
+        foreach ($sizes as $size) {
             foreach ($variations as $code) {
-                $codes[] = array($data, $code);
+                $codes[] = array($code, $size);
             }
         }
 

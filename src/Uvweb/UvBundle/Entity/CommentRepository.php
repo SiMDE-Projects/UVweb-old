@@ -23,4 +23,16 @@ class CommentRepository extends EntityRepository
 		return $qb->getQuery()->getSingleScalarResult();
 
 	}
+
+	public function userAlreadyCommentedUv(User $user, Uv $uv)
+	{
+		$qb = $this->createQueryBuilder('c');
+		
+		$qb->where('c.author = :author')->setParameter('author', $user->getId())
+		   ->andWhere('c.uv = :uv')->setParameter('uv', $uv->getId());
+
+		$comment = $qb->getQuery()->getOneOrNullResult();
+
+		return $comment !== null;
+	}
 }

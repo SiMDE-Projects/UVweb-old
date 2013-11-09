@@ -10,6 +10,10 @@
  * file that was distributed with this source code.
  */
 
+if (PHP_SAPI !== 'cli') {
+    echo 'Warning: '.__FILE__.' should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
+}
+
 $argv = $_SERVER['argv'];
 
 // allow the base path to be passed as the first argument, or default

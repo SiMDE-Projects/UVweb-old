@@ -1,0 +1,9 @@
+{% extends "UvwebUvBundle:Uv:review_row.html.twig" %}
+
+{% block specific_content %}
+
+<h2>
+	<a href="{{ path('uvweb_uv_detail', { 'uvname': comment.uv.name }) }}">{{ comment.uv.name }}</a> <small>({{ comment.passed }} en {{ comment.semester }})</small>
+</h2>
+
+{% endblock %}

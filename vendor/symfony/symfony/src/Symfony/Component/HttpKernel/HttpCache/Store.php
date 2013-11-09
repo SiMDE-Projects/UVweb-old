@@ -50,7 +50,9 @@ class Store implements StoreInterface
     {
         // unlock everything
         foreach ($this->locks as $lock) {
-            @unlink($lock);
+            if (file_exists($lock)) {
+                @unlink($lock);
+            }
         }
 
         $error = error_get_last();
@@ -246,15 +248,6 @@ class Store implements StoreInterface
                 throw new \RuntimeException('Unable to store the metadata.');
             }
         }
-
-        // As per the RFC, invalidate Location and Content-Location URLs if present
-        foreach (array('Location', 'Content-Location') as $header) {
-            if ($uri = $request->headers->get($header)) {
-                $subRequest = $request::create($uri, 'get', array(), array(), array(), $request->server->all());
-
-                $this->invalidate($subRequest);
-            }
-        }
     }
 
     /**
@@ -265,7 +258,7 @@ class Store implements StoreInterface
      * @param array  $env1 A Request HTTP header array
      * @param array  $env2 A Request HTTP header array
      *
-     * @return Boolean true if the the two environments match, false otherwise
+     * @return Boolean true if the two environments match, false otherwise
      */
     private function requestsMatch($vary, $env1, $env2)
     {
