@@ -61,8 +61,8 @@
           <div class="btn-group pull-right">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
               <i class="icon-user"></i> 
-              {% if app.session.has('currentUser') %}
-                <span>{{ app.session.get('currentUser').identity }}</span>
+              {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <span>{{ app.user.identity }}</span>
               {% else %}
                 <span>Non connecté</span>
               {% endif %}
@@ -70,11 +70,11 @@
             </a>
 
             <ul class="dropdown-menu">
-              {% if app.session.has('currentUser') %}
-                <li><a href="{{  path('uvweb_uv_profile' , { 'userid': app.session.get('currentUser').id }) }}">Profil</a></li>
+              {% if app.user is not null %}
+                <li><a href="{{  path('uvweb_uv_profile' , { 'userid': app.user.id }) }}">Profil</a></li>
                 <li class="divider"></li>
 
-                {% if app.session.get('currentUser').isadmin == true %}
+                {% if is_granted('ROLE_ADMIN') %}
                   <li><a href="{{  path('uvweb_admin_home') }}">Modération</a></li>
                   <li class="divider"></li>
                 {% endif %}
@@ -108,14 +108,19 @@
     </div>
 
     <div class="container">
-      <div class="row-fluid">
 
         {% if app.session.flashbag.has('message_to_display') %}
           {% set message = app.session.flashbag.get('message_to_display')[0] %}
-          <div class="alert alert-{{ message.type }}">
-            {{ message.content }}
-          </div>
+          <div class="row-fluid">
+            <div class="span12">
+              <div class="alert alert-{{ message.type }}">
+                {{ message.content }}
+              </div>
+            </div>
+        </div>
         {% endif %}
+
+      <div class="row-fluid">
 
         {% block body %}
         {% endblock %}

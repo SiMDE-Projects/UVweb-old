@@ -11,18 +11,14 @@ security:
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
-        in_memory:
-            memory:
-                users:
-                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
-                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
         main:
-            entity: { class: Uvweb\UvBundle\Entity\User, property: login}
+            entity: { class: Uvweb\UvBundle\Entity\User, property: identity}
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/sflogout, roles: ROLE_USER }
+        - { path: ^/logout, roles: ROLE_USER }
         - { path: ^/sflogin, roles: ROLE_USER }
+        - { path: ^/post, roles: ROLE_USER }
 
     firewalls:
         dev:
@@ -36,7 +32,7 @@ security:
                 login_path: uvweb_login
                 check_path: sf_login
             logout:
-                path:       sf_logout
+                path:       uvweb_logout
                 target:     /
 
             #anonymous: ~

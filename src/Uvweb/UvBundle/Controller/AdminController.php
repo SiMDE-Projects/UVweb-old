@@ -18,7 +18,7 @@ class AdminController extends BaseController
         $newsRepository = $manager->getRepository('UvwebUvBundle:News');
 
         $comments = $commentRepository->findBy(
-            array('moderated' => true),
+            array('moderated' => false),
             array('date' => 'desc')
         );
 
@@ -32,12 +32,57 @@ class AdminController extends BaseController
 
     public function validateCommentAction($commentid)
     {
-        return new Response('etst');
+        $manager = $this->getDoctrine()->getManager();
+        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+
+        $comment = $commentRepository->findOneBy(
+            array('id' => $commentid, 'moderated' => false)
+        );
+
+        if($comment === null) //Comment can't be validated anymore or does not exist
+            $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Le commentaire a déjà été validé, ou n'existe pas.");
+        else
+            try
+            {
+                $comment->setModerated(true);
+                $manager->persist($comment);
+                $manager->flush();
+
+                $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Commentaire validé avec succès, merci !", 'success');
+            }
+            catch(\Exception $e)
+            {
+                $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite, le commentaire n'a pas pu être validé.");
+            }
+
+        return $this->redirect($this->generateUrl('uvweb_admin_home'));
     }
 
     public function refuseCommentAction($commentid)
     {
-        return new Response('refuse');
+        $manager = $this->getDoctrine()->getManager();
+        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+
+        $comment = $commentRepository->findOneBy(
+            array('id' => $commentid, 'moderated' => false)
+        );
+
+        if($comment === null) //Comment can't be validated anymore or does not exist
+            $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Le commentaire a déjà été validé, supprimé, ou n'existe pas.");
+        else
+            try
+            {
+                $manager->remove($comment);
+                $manager->flush();
+
+                $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Commentaire supprimé avec succès, merci.", 'success');
+            }
+            catch(\Exception $e)
+            {
+                $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite, le commentaire n'a pas pu être supprimé.");
+            }
+
+        return $this->redirect($this->generateUrl('uvweb_admin_home'));    
     }
 }
 ?>

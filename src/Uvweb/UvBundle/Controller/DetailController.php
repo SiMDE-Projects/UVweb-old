@@ -73,7 +73,7 @@ class DetailController extends BaseController
 
         //Is the user registered ?
         $session = $this->getRequest()->getSession();
-        $currentUser = $session->get('currentUser');
+        $currentUser = $this->getUser();
 
         if($currentUser === null)  //Not registered: redirection to the login controller
             return $this->redirect($this->generateUrl('uvweb_login'));
@@ -148,7 +148,7 @@ class DetailController extends BaseController
             if ($form->isValid()) {
 
                 $comment->setDate(new \DateTime());
-                $comment->setModerated(true);
+                $comment->setModerated(false);
                 $comment->setAuthor($author);
 
                 $manager->persist($comment);

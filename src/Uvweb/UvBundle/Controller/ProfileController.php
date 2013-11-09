@@ -43,14 +43,14 @@ class ProfileController extends BaseController
             'comments' => $comments
         ));
     }
- 
+
     public function loginAction()
     {
         $session = $this->getRequest()->getSession();
 
         $loginUrl = $this->generateUrl('uvweb_login', array(), true); //Absolute url to this controller action
 
-        if($currentUser = $session->get('currentUser') === null)
+        if($currentUser = $this->getUser() === null)
         {
             //User not connected: he has to connect through the UTC CAS
             if($ticket = $this->getRequest()->query->get('ticket'))
@@ -80,26 +80,7 @@ class ProfileController extends BaseController
                 }
                 else
                 {
-                    $session = $this->getRequest()->getSession();
-
-                    if($user->getIsadmin())
-                    {
-                        //Use the symfony2 security system to protect the whole admin controller with a firewall
-                        $token = new UsernamePasswordToken($user->getLogin(), null, 'admin_views', array('ROLE_ADMIN'));
-                        $this->container->get('security.context')->setToken($token);
-
-                        $session->set('_security_admin_views',  serialize($token));
-                    }
-                    else
-                    {
-                        //User is not admin: USER_ROLE
-                        $token = new UsernamePasswordToken($user->getLogin(), null, 'admin_views', array('ROLE_USER'));
-                        $this->container->get('security.context')->setToken($token);
-
-                        $session->set('_security_admin_views',  serialize($token));
-                    }
-
-                    $session->set('currentUser', $user);
+                    $this->grandUserRole($user);
 
                     //One more connection for the user
                     $user->setConnections($user->getConnections() + 1);
@@ -120,43 +101,12 @@ class ProfileController extends BaseController
         }
     }
 
-    public function logoutAction()
-    {
-/*        $session = $this->getRequest()->getSession();
-        $currentUser = $session->get('currentUser');
-
-        if($currentUser === null)
-        {
-            //Not logged in: no need to logout
-            return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
-        }
-        else
-        {
-            $session->remove('currentUser');
-
-            //Is user is admin, he has to be removed from the security manager of symfony, which will redirect after to home
-            if($currentUser->getIsadmin())
-                return $this->redirect($this->generateUrl('sf_logout'));
-
-            return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
-        }*/
-
-        $session = $this->getRequest()->getSession();
-        $currentUser = $session->get('currentUser');
-
-        if($currentUser !== null)
-        {
-            $session->remove('currentUser');
-
-            return $this->redirect($this->generateUrl('sf_logout'));
-        }
-    }
-
     public function addUserAction()
     {
         //Should not be accessible if the user did not register on the UTC CAS or if he is already registered on UVweb
         $session = $this->getRequest()->getSession();
-        if($session->get('currentUser') !== null)
+
+        if($this->getUser() !== null)
             return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
 
         if($session->get('newUserLogin') === null)
@@ -191,7 +141,7 @@ class ProfileController extends BaseController
                 }
                 catch(\Exception $e)
                 {
-                    //Insertion failed: should display a message to the user through flash session
+                    //Insertion failed: invite the user to try again, displaying the errors
                     return $this->render('UvwebUvBundle:Profile:user_form.html.twig', array(
                         'login' => $session->get('newUserLogin'),
                         'add_user_form' => $this->createForm(new UserType, new User())
@@ -200,7 +150,9 @@ class ProfileController extends BaseController
 
                 //Correctly inserted into the DB
                 $session->remove('newUserLogin'); //No longer usefull
-                $session->set('currentUser', $user);
+
+                //Auto authentication
+                $this->grandUserRole($user);
 
                 return $this->render('UvwebUvBundle:Profile:user_added.html.twig', array(
                     'user' => $user
@@ -212,6 +164,23 @@ class ProfileController extends BaseController
             'login' => $session->get('newUserLogin'),
             'add_user_form' => $form->createView()
         ));
+    }
+
+
+    /* ====== Private functions                                                                         ======= */
+
+    private function grandUserRole(\Uvweb\UvBundle\Entity\User $user)
+    {
+        $token;
+
+        if($user->getIsadmin())    
+            $token = new UsernamePasswordToken($user, null, 'main', array('ROLE_ADMIN')); //Use the symfony2 security system to protect the whole admin controller with a firewall
+        else
+            $token = new UsernamePasswordToken($user, null, 'main', array('ROLE_USER'));  //User is not admin: USER_ROLE
+
+        $this->container->get('security.context')->setToken($token);
+
+        $this->getRequest()->getSession()->set('_security_main',  serialize($token));
     }
 
     /* ====== Private helpers to manage CAS connection. Not in a service as it will only be used here. ======= */

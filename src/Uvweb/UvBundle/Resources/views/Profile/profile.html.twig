@@ -15,7 +15,7 @@
       </div>
       <div class="media">
 
-          {% if app.session.has('currentUser') and app.session.get('currentUser').login == user.login %}
+          {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.login == user.login %}
               <a href="http://fr.gravatar.com"  target="_blank" class="media-object img-polaroid pull-left"><img src="{{ gravatar(user.email, 120) }}"></a>
           {% else %}
               <img class="media-object img-polaroid pull-left" src="{{ gravatar(user.email, 120) }}">
@@ -27,7 +27,7 @@
                   <li>Entrée à l'UTC : <strong>{{ user.firstSemester }}</strong></li>
                   <li>Branche : <strong>{{ user.branch }}</strong></li>
                   {% if user.filiere != '' %}<li>Filière : <strong>{{ user.filiere }}</strong></li> {% endif %}
-                  {% if app.session.has('currentUser') and app.session.get('currentUser').login == user.login %}<div style="margin-top: 10px;" class="alert alert-info"><li>Tu peux ajouter ou changer l'image qui apparaît sur ton compte à l'aide du service <a href="http://fr.gravatar.com" target="_blank">Gravatar</a>, qu'utilise UVweb.</li></div> {% endif %}
+                  {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.login == user.login %}<div style="margin-top: 10px;" class="alert alert-info"><li>Tu peux ajouter ou changer l'image qui apparaît sur ton compte à l'aide du service <a href="http://fr.gravatar.com" target="_blank">Gravatar</a>, qu'utilise UVweb.</li></div> {% endif %}
               </ul>
           </div>
       </div>
@@ -47,12 +47,14 @@
       {% else %}
 
           <br>
-          <div class="span12 well">
-              {% if app.session.has('currentUser') and app.session.get('currentUser').login == user.login %}
-                  <p>Tu n'as pas encore posté d'avis sur UVweb</p>
-              {% else %}
-                  <p>{{ user.identity }} n'a pas encore posté d'avis sur UVweb.</p>
-              {% endif %}
+          <div class="row-fluid">
+            <div class="span12 well">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.login == user.login %}
+                    <p>Tu n'as pas encore posté d'avis sur UVweb</p>
+                {% else %}
+                    <p>{{ user.identity }} n'a pas encore posté d'avis sur UVweb.</p>
+                {% endif %}
+            </div>
           </div>
       {% endif %}
   {% endblock %}

@@ -489,4 +489,10 @@ class User
     {
         return $this->identity;
     }
+
+    //Required to use Symfony2 security, so that we can store entire user into session
+    public function __toString()
+    {
+        return $this->identity;
+    }
 }

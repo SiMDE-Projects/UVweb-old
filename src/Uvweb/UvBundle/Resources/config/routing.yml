@@ -55,10 +55,6 @@ uvweb_login:
     pattern: /login
     defaults: { _controller: UvwebUvBundle:Profile:login }
 
-uvweb_logout:
-    pattern: /logout
-    defaults: { _controller: UvwebUvBundle:Profile:logout }
-
 uvweb_user_add:
     pattern: /user/register
     defaults: { _controller: UvwebUvBundle:Profile:addUser }
@@ -80,8 +76,10 @@ uvweb_admin_comment_refuse:
     requirements:
         commentid: \d
 
+#Authentication paths
+
 sf_login:
     pattern: /sflogin
 
-sf_logout:
-    pattern: /sflogout
+uvweb_logout:
+    pattern: /logout
