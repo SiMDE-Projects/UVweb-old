@@ -14,6 +14,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 class User
 {
+    public function __construct()
+    {
+        $this->isadmin = 0;
+    }
+
     /**
      * @var integer
      *

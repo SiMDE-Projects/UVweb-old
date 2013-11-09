@@ -3,6 +3,8 @@
 namespace Uvweb\UvBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
+use Uvweb\UvBundle\Entity\News;
+use Uvweb\UvBundle\Form\NewsType;
 
 class AdminController extends BaseController
 {
@@ -83,6 +85,54 @@ class AdminController extends BaseController
             }
 
         return $this->redirect($this->generateUrl('uvweb_admin_home'));    
+    }
+
+    public function addNewsAction()
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $userRepository = $manager->getRepository("UvwebUvBundle:Comment");
+
+        $news = new News();
+
+        //Generate form from Symfony2 forms
+        $form = $this->createForm(new NewsType, $news);
+
+        $request = $this->getRequest();
+
+        if ($request->isMethod('POST')) 
+        {
+            $form->bind($request);
+
+            if ($form->isValid()) 
+            {   
+                try
+                {
+                    $news->setAuthorId($this->getUser()->getId());
+
+                    $manager->persist($news);
+                    $manager->flush();
+                }
+                catch(\Exception $e)
+                {
+                    //Insertion failed: invite the user to try again
+                    $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de l'ajout de la news.");
+
+                    return $this->render('UvwebUvBundle:Admin:add_news.html.twig', array(
+                        'add_news_form' => $this->createForm(new NewsType, new News())
+                    ));                
+                }
+
+                //Ok: news was inserted correctly
+                $this->get('uvweb_uv.fbmanager')->addFlashMessage('News ajoutée avec succès, merci !', 'success');
+
+                return $this->redirect($this->generateUrl('uvweb_admin_home'));
+            }
+        }
+
+        return $this->render('UvwebUvBundle:Admin:add_news.html.twig', array(
+            'add_news_form' => $form->createView()
+        ));
+
     }
 }
 ?>

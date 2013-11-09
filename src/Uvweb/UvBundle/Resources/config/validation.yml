@@ -16,3 +16,13 @@ Uvweb\UvBundle\Entity\User:
         origin:
             - NotBlank:
                 message: Un cursus d'origine est requis.
+
+Uvweb\UvBundle\Entity\News:
+    properties:
+        title:
+            - NotBlank:
+                message: Un titre est requis.
+
+        text:
+            - NotBlank:
+                message: Un contenu est requis.

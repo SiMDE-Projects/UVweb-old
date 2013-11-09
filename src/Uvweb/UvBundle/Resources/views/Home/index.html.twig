@@ -30,14 +30,14 @@ Accueil - {{ parent() }}
             <h2>News</h2>
           </div>
             {% for newsitem in news %}
-              <div class="row-fluid">
+              <div class="row-fluid well well-small">
                 <div class="span9">
                   <h4>{{ newsitem.title }}</h4>
                 </div>
                 <div class="span3">
-                  <h5>Le {{ newsitem.date|date('d/m/Y') }}</h5>
+                  <h6>Le {{ newsitem.date|date('d/m/Y') }}</h5>
                 </div>
-                  <p>{{ newsitem.text }}</p>
+                  <p>{{ newsitem.text|nl2br }}</p>
               </div>
             {% endfor %}
         </div>

@@ -1,0 +1,21 @@
+{% extends "UvwebUvBundle::layout.html.twig" %}
+
+{% block title %}
+	Nouvelle news - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <div class="page-header">
+        <h1>Ajout d'une nouvelle news</h1>
+    </div>
+
+    <div class="well">
+            {{ form_errors(add_news_form) }}
+        <form method="post" {{ form_enctype(add_news_form) }}>
+            {{ form_widget(add_news_form) }}
+            <input type="submit" class="btn btn-primary" />
+        </form>
+    </div>
+
+{% endblock %}

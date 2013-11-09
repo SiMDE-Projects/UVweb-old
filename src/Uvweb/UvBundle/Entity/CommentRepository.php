@@ -16,9 +16,9 @@ class CommentRepository extends EntityRepository
 
 		$qb = $this->createQueryBuilder('c');
 
-		$qb->select('AVG(c.globalRate) as globalRate');
-
-		$qb->where('c.uv = :uv')->setParameter('uv', $uv);
+		$qb->select('AVG(c.globalRate) as globalRate')
+		   ->where('c.moderated = :moderated')->setParameter('moderated', true)
+		   ->andWhere('c.uv = :uv')->setParameter('uv', $uv);
 
 		return $qb->getQuery()->getSingleScalarResult();
 

@@ -68,13 +68,17 @@ uvweb_admin_comment_validate:
     pattern: /admin/validatecomment/{commentid}
     defaults: { _controller: UvwebUvBundle:Admin:validateComment }
     requirements:
-        commentid: \d
+        commentid: \d+
 
 uvweb_admin_comment_refuse:
     pattern: /admin/refusecomment/{commentid}
     defaults: { _controller: UvwebUvBundle:Admin:refuseComment }
     requirements:
-        commentid: \d
+        commentid: \d+
+
+uvweb_admin_add_news:
+    pattern: /admin/addnews
+    defaults: { _controller: UvwebUvBundle:Admin:addNews }
 
 #Authentication paths
 

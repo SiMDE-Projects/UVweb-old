@@ -41,7 +41,7 @@ class UserType extends AbstractType
                     'label' => 'Branche'
                 ))
                 ->add('filiere', 'choice', array(
-                    'choices' => array('' => 'Aucune', 'ICSI' => 'ICSI'),
+                    'choices' => array('' => 'Aucune', 'ICSI' => 'ICSI', 'BB' => 'BB'),
                     'label' => 'Filière',
                     'required' => false
                 ));

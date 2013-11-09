@@ -5,24 +5,38 @@
 {% endblock %}
 
 {% block body %}
+
+  
 <div class="span12">
   <div class="page-header">
-    <p class="lead">Tu peux ici publier des news, ainsi que modérer les derniers avis ajoutés sur UVweb, qui attendent d'être validés.</p>
-  </div>
-  <div class="row-fluid">
-    <div class="span6">
-      <div class="page-header">
-        <h3>Derniers avis</h3>
+    <div class="row-fluid">
+      <div class="span10">
+          <p class="lead">Tu peux ici publier des news, ainsi que modérer les derniers avis ajoutés sur UVweb, qui attendent d'être validés.</p>
       </div>
-      {% for comment in comments %}
-            {% include 'UvwebUvBundle:Uv:comment_summary_not_approved.html.twig' with {'comment': comment} %}
-      {% endfor %}
+      <div class="span2">
+        <a href="{{ path('uvweb_admin_add_news') }}"><button class="btn btn-primary"><i class="icon-plus"></i> Ajouter News</button></a>
+      </div>
     </div>
-    <div class="span6">
-      <div class="page-header">
-        <h3>Dernières news</h3>
+  </div>
+</div>
+
+<div class="row-fluid">
+  <div class="span12">
+    <div class="row-fluid">
+      <div class="span6">
+        <div class="page-header">
+          <h3>Derniers avis</h3>
+        </div>
+        {% for comment in comments %}
+              {% include 'UvwebUvBundle:Uv:comment_summary_not_approved.html.twig' with {'comment': comment} %}
+        {% endfor %}
       </div>
-    </div>      
+      <div class="span6">
+        <div class="page-header">
+          <h3>Dernières news</h3>
+        </div>
+      </div>      
+    </div>
   </div>
 </div>
 

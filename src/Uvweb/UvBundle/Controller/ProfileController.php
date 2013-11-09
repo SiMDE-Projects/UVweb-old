@@ -130,8 +130,8 @@ class ProfileController extends BaseController
             {
                 $user->setLogin($session->get('newUserLogin'));
                 $user->setPassword('1234');
-                $user->setIsadmin(0);
                 $user->setConnections(1);
+                
                 $user->setFirstSemester($user->getFirstSemester() . ($user->getFirstYear() % 100));
 
                 try
