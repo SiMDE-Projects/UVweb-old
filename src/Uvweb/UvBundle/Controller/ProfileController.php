@@ -5,6 +5,7 @@ namespace Uvweb\UvBundle\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Uvweb\UvBundle\Entity\User;
 use Uvweb\UvBundle\Form\UserType;
+use Uvweb\UvBundle\Form\UserEditType;
 use \SimpleXMLElement;
 use \Httpful\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -80,8 +81,7 @@ class ProfileController extends BaseController
                 }
                 else
                 {
-                    $this->grandUserRole($user);
-
+                    $this->grantUserRole($user);
                     //One more connection for the user
                     $user->setConnections($user->getConnections() + 1);
                     $manager->persist($user);
@@ -117,7 +117,7 @@ class ProfileController extends BaseController
 
         $user = new User();
 
-        //Generate for from Symfony2 forms
+        //Generate form from Symfony2 forms
         $form = $this->createForm(new UserType, $user);
 
         $request = $this->getRequest();
@@ -152,7 +152,7 @@ class ProfileController extends BaseController
                 $session->remove('newUserLogin'); //No longer usefull
 
                 //Auto authentication
-                $this->grandUserRole($user);
+                $this->grantUserRole($user);
 
                 return $this->render('UvwebUvBundle:Profile:user_added.html.twig', array(
                     'user' => $user
@@ -166,10 +166,59 @@ class ProfileController extends BaseController
         ));
     }
 
+    public function editUserAction($userid)
+    {
+        if($this->getUser()->getId() != $userid)
+        {
+            $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Vous n'êtes pas autorisé à modifier le profil des autres utilisateurs.");
+            return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
+        }
+
+        $manager = $this->getDoctrine()->getManager();
+        $userRepository = $manager->getRepository("UvwebUvBundle:User");
+
+        $user = $userRepository->findOneById($this->getUser()->getId());
+
+        //Generate form from Symfony2 forms
+        $form = $this->createForm(new UserEditType, $user);
+
+        $request = $this->getRequest();
+
+        if ($request->isMethod('POST')) 
+        {
+            $form->bind($request);
+
+            if ($form->isValid()) 
+            {
+                try
+                {
+                    $manager->persist($user);
+                    $manager->flush();
+                }
+                catch(\Exception $e)
+                {
+                    //Insertion failed: invite the user to try again, displaying the errors
+                    return $this->render('UvwebUvBundle:Profile:user_edit.html.twig', array(
+                        'edit_user_form' => $this->createForm(new UserEditType, $user)
+                    ));
+                }
+
+                //Correctly updated: change the current user in session, and display a confirmation message to the user
+                $this->grantUserRole($user);
+                $this->get('uvweb_uv.fbmanager')->addFlashMessage('Profile mis à jour avec succès !', 'success');
+
+                return $this->redirect($this->generateUrl('uvweb_uv_profile', array('userid' => $this->getUser()->getId())));
+            }
+        }
+
+        return $this->render('UvwebUvBundle:Profile:user_edit.html.twig', array(
+            'edit_user_form' => $form->createView()
+        ));
+    }
 
     /* ====== Private functions                                                                         ======= */
 
-    private function grandUserRole(\Uvweb\UvBundle\Entity\User $user)
+    private function grantUserRole(\Uvweb\UvBundle\Entity\User $user)
     {
         $token;
 

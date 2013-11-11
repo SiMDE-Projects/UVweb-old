@@ -19,6 +19,7 @@ security:
         - { path: ^/logout, roles: ROLE_USER }
         - { path: ^/sflogin, roles: ROLE_USER }
         - { path: ^/post, roles: ROLE_USER }
+        - { path: ^/user/edit, roles: ROLE_USER }
 
     firewalls:
         dev:

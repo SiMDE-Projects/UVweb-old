@@ -1,8 +1,12 @@
 uvweb_uv_detail:
     path: /uv/{uvname}
-    defaults:  { _controller: UvwebUvBundle:Detail:detail}
+    defaults:  { _controller: UvwebUvBundle:Detail:detail, uvname: ''}
     requirements:
         uvname:  ^[a-zA-Z0-9]{4}$
+
+uvweb_uv_nameslike:
+    path: /uv/like/
+    defaults: { _controller: UvwebUvBundle:Home:getUvNamesLike }
 
 uvweb_uv_newpost:
     path: /post/{uvname}
@@ -58,6 +62,12 @@ uvweb_login:
 uvweb_user_add:
     pattern: /user/register
     defaults: { _controller: UvwebUvBundle:Profile:addUser }
+
+uvweb_user_edit:
+    pattern: /user/edit/{userid}
+    defaults: { _controller: UvwebUvBundle:Profile:editUser }
+    requirements:
+        userid: \d+
 
 #Admin paths
 uvweb_admin_home:

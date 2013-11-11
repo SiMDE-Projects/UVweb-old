@@ -132,7 +132,6 @@ class AdminController extends BaseController
         return $this->render('UvwebUvBundle:Admin:add_news.html.twig', array(
             'add_news_form' => $form->createView()
         ));
-
     }
 }
 ?>

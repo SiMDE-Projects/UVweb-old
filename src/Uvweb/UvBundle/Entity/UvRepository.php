@@ -12,4 +12,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class UvRepository extends EntityRepository
 {
+	public function getUvNamesLike($uvLike, $limit = 0)
+	{
+        $qb = $this->createQueryBuilder('u');
+        $qb->select('u.name');
+        $qb->where($qb->expr()->like('u.name', $qb->expr()->literal('%' . $uvLike . '%')));
+        $qb->orderBy('u.name');
+
+        if($limit)
+        	$qb->setMaxResults($limit);
+
+        return $qb->getQuery()->getScalarResult();
+	}
 }

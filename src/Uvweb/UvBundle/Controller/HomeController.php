@@ -62,5 +62,37 @@ class HomeController extends BaseController
 
         return $response;
     }
+
+    public function getUvNamesLikeAction()
+    {
+        $uvLike = $this->getRequest()->query->get('uvLike');
+
+        //Limite the results
+        $limit = (int) $this->getRequest()->query->get('limit');
+        if($limit < 0)
+            $limit = 0;
+
+        if($uvLike === null || $uvLike === '')
+        {
+            return new Response(json_encode(array(
+                'error' => true,
+                'message' => 'No string given'
+            )));
+        }
+
+        $manager = $this->getDoctrine()->getManager();
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+
+        $uvs = $uvRepository->getUvNamesLike($uvLike, $limit); //Array of type 'name' => 'NF16'...
+
+        $uvNames = array();
+
+        //Keeping only the uv names
+        foreach ($uvs as $uv) {
+            $uvNames[] = $uv['name'];
+        }
+
+        return new Response(json_encode($uvNames));
+    }
 }
 ?>

@@ -8,11 +8,18 @@
   {% endblock %}
 
   {% block body %}
+
       <div class="page-header">
           <div class="row-fluid">
+            <div class="span6">
               <h1>{{ user.identity }}</h1>
+            </div>
+            <div class="span6">
+              <a href="{{path('uvweb_user_edit' , { 'userid': user.id })}}" class="pull-right btn btn-primary"><i class="icon-pencil icon-white"></i> Éditer Profil</a>
+            </div>
           </div>
       </div>
+
       <div class="media">
 
           {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.login == user.login %}

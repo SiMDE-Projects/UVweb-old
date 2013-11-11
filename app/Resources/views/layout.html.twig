@@ -11,31 +11,15 @@
     <!-- Le styles -->
     <style type="text/css">
       body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      .navbar-search{
-        margin-right: 20px;
-      }
-      .navbar-search .search-icon {
-        z-index: 3;
-      }
-      .icon-search {
-        position: absolute;
-        top: 7px;
-        right: 7px;
-        display: block;
-        width: 26px;
-        height: 26px;
-        cursor: pointer;
-        }
-      {% block style %}
-      {% endblock %}
+      padding-top: 60px;
+      padding-bottom: 40px;
+    }
     </style>
     
     {% block stylesheets %}
       <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" type="text/css" />
     {% endblock %}
+
 <script src="https://code.jquery.com/jquery.min.js" type="text/javascript"></script>
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -51,11 +35,6 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
           <a class="brand" href="{{ path('uvweb_uv_homepage') }}"><img src="{{ asset('img/uvweb_logo.png') }}"></a>
 
           <div class="btn-group pull-right">
@@ -68,7 +47,6 @@
               {% endif %}
               <span class="caret"></span>
             </a>
-
             <ul class="dropdown-menu">
               {% if app.user is not null %}
                 <li><a href="{{  path('uvweb_uv_profile' , { 'userid': app.user.id }) }}">Profil</a></li>
@@ -86,7 +64,18 @@
             </ul>
 
           </div>
-            {% if searchbar is defined %}
+
+          <form id="search-uv-form" class="form-search navbar-search pull-right" method="GET" action="{{ path('uvweb_uv_detail') }}" style="margin-right: 15px;">
+              <div class="input-append">
+                <input name="uvname" autocomplete="off" id="search-uv-name" class="search-query span2" type="text" placeholder="Rechercher une UV">
+                <button type="submit" class="btn btn-primary">
+            <i class="icon-search icon-white"></i>
+          </button>
+              </div>
+          </form>
+
+
+ {#           {% if searchbar is defined %}
           <form class="navbar-search pull-right" method='POST' {{ form_enctype(searchbar) }}>
               {% form_theme searchbar 'UvwebUvBundle::searchbar.html.twig' %}
               {{ form_widget(searchbar) }}
@@ -97,7 +86,7 @@
               </button> -->
             </span>
           </form>
-            {% endif %}
+            {% endif %} #}
           <div class="nav-collapse collapse">
             <ul class="nav">
              <!-- <li class="active"><a href="#">Accueil</a></li> -->
@@ -109,34 +98,64 @@
 
     <div class="container">
 
-        {% if app.session.flashbag.has('message_to_display') %}
-          {% set message = app.session.flashbag.get('message_to_display')[0] %}
-          <div class="row-fluid">
-            <div class="span12">
-              <div class="alert alert-{{ message.type }}">
-                {{ message.content }}
-              </div>
+      {% if app.session.flashbag.has('message_to_display') %}
+        {% set message = app.session.flashbag.get('message_to_display')[0] %}
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="alert alert-{{ message.type }}">
+              {{ message.content }}
             </div>
-        </div>
-        {% endif %}
+          </div>
+      </div>
+      {% endif %}
 
       <div class="row-fluid">
 
         {% block body %}
         {% endblock %}
-      <hr>
+        <hr>
 
-      <footer>
-        <p>&copy; <a href="http://masciulli.fr">Alexandre Masciulli</a> - <a href="http://thomaskeunebroek.fr">Thomas Keunebroek</a> - <a href="#">Maxime</a> 2013</p>
-      </footer>
+        <footer>
+          <p>&copy; <a href="http://masciulli.fr">Alexandre Masciulli</a> - <a href="http://thomaskeunebroek.fr">Thomas Keunebroek</a> - <a href="#">Maxime</a> 2013</p>
+        </footer>
 
+      </div>
     </div>
-  </div>
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-	<script type="text/javascript" language="javascript"
-		src="{{ asset('js/bootstrap.js') }}"></script>
 
+  <!-- Le javascript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" language="javascript"
+  src="{{ asset('js/bootstrap.min.js') }}"></script>
+
+<script type="text/javascript" language="javascript">
+$(function() {
+
+  //Function used to show UV names to the user when he is typing
+  $('#search-uv-name').typeahead({
+    //Fetching the matching UV names
+    source: function(query, process) {
+      return $.ajax({
+        url: '{{ path('uvweb_uv_nameslike') }}',
+        type: 'GET',
+        data: {
+          uvLike: query,
+          limit: 10
+        },
+        dataType: 'json',
+        success: function (result) {
+                  return process(result);
+        }
+      });
+    },
+    //On click on a tab, the user is redirected to the UV
+    updater: function (item) {
+      document.location = '{{ path('uvweb_uv_detail') }}' + '/' +encodeURIComponent(item);
+      return item;
+    }
+  });
+
+});
+</script>
   </body>
 </html>

@@ -17,11 +17,23 @@ class DetailController extends BaseController
         parent::__construct();
     }
 
-    public function detailAction($uvname)
+    public function detailAction($uvname = '')
     {
         /** those lines allow redirection after submitting search bar form */
         if ($redirect = $this->initSearchBar()) {
             return $redirect;
+        }
+
+        //Parameter from symfony route
+        if(empty($uvname))
+        {
+            //If is empty: is there a get parameter?
+            $uvname = $this->getRequest()->query->get('uvname');
+            if(empty($uvname))
+            {
+                $this->get('uvweb_uv.fbmanager')->addFlashMessage("Vous devez entrer un nom d'UV.");
+                return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
+            }
         }
 
         $manager = $this->getDoctrine()->getManager();
