@@ -87,8 +87,20 @@ uvweb_admin_comment_refuse:
         commentid: \d+
 
 uvweb_admin_add_news:
-    pattern: /admin/addnews
+    pattern: /admin/news/add
     defaults: { _controller: UvwebUvBundle:Admin:addNews }
+
+uvweb_admin_edit_news:
+    pattern: /admin/news/edit/{newsid}
+    defaults: { _controller: UvwebUvBundle:Admin:editNews }
+    requirements:
+        newsid: \d+
+
+uvweb_admin_delete_news:
+    pattern:   /admin/news/delete/{newsid}
+    defaults:  { _controller: UvwebUvBundle:Admin:deleteNews }
+    requirements:
+        newsid: \d+
 
 #Authentication paths
 

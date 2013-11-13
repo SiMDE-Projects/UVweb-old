@@ -1,0 +1,7 @@
+<div class="well">
+        {{ form_errors(news_form) }}
+    <form method="post" {{ form_enctype(news_form) }}>
+        {{ form_widget(news_form) }}
+        <input type="submit" class="btn btn-primary" />
+    </form>
+</div>

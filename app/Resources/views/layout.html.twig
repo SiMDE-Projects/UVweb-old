@@ -98,27 +98,22 @@
 
     <div class="container">
 
-      {% if app.session.flashbag.has('message_to_display') %}
-        {% set message = app.session.flashbag.get('message_to_display')[0] %}
-        <div class="row-fluid">
-          <div class="span12">
-            <div class="alert alert-{{ message.type }}">
-              {{ message.content }}
-            </div>
-          </div>
+      <div id="ajax-message">
+        {% if app.session.flashbag.has('message_to_display') %}
+          {% set message = app.session.flashbag.get('message_to_display')[0] %}
+          {% include 'UvwebUvBundle:Common:message-info.html.twig' with { 'message': message } %}
+        {% endif %}
       </div>
-      {% endif %}
 
       <div class="row-fluid">
-
         {% block body %}
         {% endblock %}
+
         <hr>
 
         <footer>
           <p>&copy; <a href="http://masciulli.fr">Alexandre Masciulli</a> - <a href="http://thomaskeunebroek.fr">Thomas Keunebroek</a> - <a href="#">Maxime</a> 2013</p>
         </footer>
-
       </div>
     </div>
 
@@ -157,5 +152,7 @@ $(function() {
 
 });
 </script>
+
+{% block js %}{% endblock %}
   </body>
 </html>

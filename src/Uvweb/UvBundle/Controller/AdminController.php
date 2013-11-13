@@ -3,6 +3,7 @@
 namespace Uvweb\UvBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Uvweb\UvBundle\Entity\News;
 use Uvweb\UvBundle\Form\NewsType;
 
@@ -89,9 +90,6 @@ class AdminController extends BaseController
 
     public function addNewsAction()
     {
-        $manager = $this->getDoctrine()->getManager();
-        $userRepository = $manager->getRepository("UvwebUvBundle:Comment");
-
         $news = new News();
 
         //Generate form from Symfony2 forms
@@ -109,6 +107,8 @@ class AdminController extends BaseController
                 {
                     $news->setAuthorId($this->getUser()->getId());
 
+                    //Saving the news
+                    $manager = $this->getDoctrine()->getManager();
                     $manager->persist($news);
                     $manager->flush();
                 }
@@ -118,7 +118,7 @@ class AdminController extends BaseController
                     $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de l'ajout de la news.");
 
                     return $this->render('UvwebUvBundle:Admin:add_news.html.twig', array(
-                        'add_news_form' => $this->createForm(new NewsType, new News())
+                        'news_form' => $this->createForm(new NewsType, new News())
                     ));                
                 }
 
@@ -130,7 +130,104 @@ class AdminController extends BaseController
         }
 
         return $this->render('UvwebUvBundle:Admin:add_news.html.twig', array(
-            'add_news_form' => $form->createView()
+            'news_form' => $form->createView()
+        ));
+    }
+
+    public function editNewsAction($newsid)
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $newsRepository = $manager->getRepository("UvwebUvBundle:News");
+
+        $news = $newsRepository->findOneById($newsid);
+
+        $form = $this->createForm(new NewsType, $news);
+
+        $request = $this->getRequest();
+
+        if ($request->isMethod('POST')) 
+        {
+            $form->bind($request);
+
+            if ($form->isValid())
+            {   
+                try
+                {
+                    $news->setAuthorId($this->getUser()->getId());
+
+                    $manager->persist($news);
+                    $manager->flush();
+                }
+                catch(\Exception $e)
+                {
+                    //Insertion failed: invite the user to try again
+                    $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de la modification de la news.");
+
+                    return $this->render('UvwebUvBundle:Admin:edit_news.html.twig', array(
+                        'news_form' => $this->createForm(new NewsType, $news)
+                    ));                
+                }
+
+                //Ok: news was inserted correctly
+                $this->get('uvweb_uv.fbmanager')->addFlashMessage('News modifiée avec succès, merci !', 'success');
+
+                return $this->redirect($this->generateUrl('uvweb_admin_home'));
+            }
+        }
+
+        return $this->render('UvwebUvBundle:Admin:edit_news.html.twig', array(
+            'news_form' => $form->createView()
+        ));    
+    }
+
+    public function deleteNewsAction($newsid)
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $newsRepository = $manager->getRepository("UvwebUvBundle:News");
+
+        $news = $newsRepository->findOneById($newsid);
+
+        $request = $this->getRequest();
+
+        if ($request->isMethod('POST')) 
+        {
+            try
+            {
+                $manager->remove($news);
+                $manager->flush();
+            }
+            catch(\Exception $e)
+            {
+                //Deletion failed: notification for user
+
+                //Getting the view for the confirmation message to display
+                $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                                'message' => array(
+                                    'type' => 'error', 
+                                    'content' => "Une erreur s'est produite lors de la suppression de la news."
+                                    )
+                                )))));
+
+                //We are sending json
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
+            }
+
+            //Getting the view for the confirmation message to display
+            $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                            'message' => array(
+                                'type' => 'success', 
+                                'content' => 'News "' . $news->getTitle() . '" supprimée avec succès.'
+                                )
+                            )))));
+
+            //We are sending json
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+
+        return $this->render('UvwebUvBundle:Admin:delete_news.html.twig', array(
+            'news' => $news
         ));
     }
 }

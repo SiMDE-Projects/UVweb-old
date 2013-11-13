@@ -9,41 +9,32 @@ Accueil - {{ parent() }}
 
 {% block body %}
 <div class="row-fluid">
-<div class="span12">
-    <div class="hero-unit">
-      <h1>Bienvenue sur UVweb.</h1>
-      <p>Pour consulter les avis d'une UV ou pour donner le tien, tape son nom dans la barre de recherche (par exemple, "MT23").</p>
-    </div>
+  <div class="span12">
+      <div class="hero-unit">
+        <h1>Bienvenue sur UVweb.</h1>
+        <p>Pour consulter les avis d'une UV ou pour donner le tien, tape son nom dans la barre de recherche (par exemple, "MT23").</p>
+      </div>
 
-    <div class="row-fluid">
-
-        <div class="span6">
-          <div class="page-header">
-            <h2>Activité récente</h2>
-          </div>
-          {% for comment in comments %}
-            {% include 'UvwebUvBundle:Uv:comment_summary_row.html.twig' with {'comment': comment} %}
-          {% endfor %}
-        </div>
-
-        <div class="span5 offset1">
-          <div class="page-header">
-            <h2>News</h2>
-          </div>
-            {% for newsitem in news %}
-              <div class="row-fluid well well-small">
-                <div class="span9">
-                  <h4>{{ newsitem.title }}</h4>
-                </div>
-                <div class="span3">
-                  <h6>Le {{ newsitem.date|date('d/m/Y') }}</h6>
-                </div>
-                  <p>{{ newsitem.text|nl2br }}</p>
-              </div>
+      <div class="row-fluid">
+          <div class="span6">
+            <div class="page-header">
+              <h2>Activité récente</h2>
+            </div>
+            {% for comment in comments %}
+              {% include 'UvwebUvBundle:Uv:comment_summary_row.html.twig' with {'comment': comment} %}
             {% endfor %}
-        </div>
-        
-    </div>
-</div>
+          </div>
+
+          <div class="span5 offset1">
+            <div class="page-header">
+              <h2>News</h2>
+            </div>
+              {% for newsitem in news %}
+                {% include 'UvwebUvBundle:Common:news_row.html.twig' with { 'news': news } %}
+              {% endfor %}
+          </div>  
+      </div>
+      
+  </div>
 </div>
 {% endblock %}

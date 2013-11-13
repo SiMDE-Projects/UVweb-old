@@ -11,7 +11,7 @@
   <div class="page-header">
     <div class="row-fluid">
       <div class="span10">
-          <p class="lead">Tu peux ici publier des news, ainsi que modérer les derniers avis ajoutés sur UVweb, qui attendent d'être validés.</p>
+        <p class="lead">Tu peux ici publier des news, ainsi que modérer les derniers avis ajoutés sur UVweb, qui attendent d'être validés.</p>
       </div>
       <div class="span2">
         <a href="{{ path('uvweb_admin_add_news') }}"><button class="btn btn-primary"><i class="icon-plus"></i> Ajouter News</button></a>
@@ -25,21 +25,40 @@
     <div class="row-fluid">
       <div class="span6">
         <div class="page-header">
-          <h3>Derniers avis</h3>
+          <h3>
+            Derniers avis : <span class="text-info">{{ comments | length }}</span> en attente de validation.
+          </h3>
         </div>
         {% for comment in comments %}
-              {% include 'UvwebUvBundle:Uv:comment_summary_not_approved.html.twig' with {'comment': comment} %}
+          {% include 'UvwebUvBundle:Uv:comment_summary_not_approved.html.twig' with {'comment': comment} %}
         {% endfor %}
       </div>
-      <div class="span6">
+
+      <div id="news-list" class="offset1 span5">
         <div class="page-header">
           <h3>Dernières news</h3>
         </div>
-      </div>      
+        {% for newsitem in news %}
+          {% include 'UvwebUvBundle:Common:news_row_editable.html.twig' with { 'news': news } %}
+        {% endfor %}
+      </div>
     </div>
   </div>
 </div>
 
+<div id="modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
 
+{% endblock %}
+
+{% block js %}
+
+<script type="text/javascript" language="javascript"
+  src="{{ asset('js/uvweb-ajax-modal.js') }}"></script>
+
+<script type="text/javascript" language="javascript">
+$(function() {
+  ajaxModal(); //Waiting for modal action
+});
+</script>
 
 {% endblock %}
