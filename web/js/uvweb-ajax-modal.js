@@ -22,12 +22,14 @@ var ajaxForm = function() {
     var $form = $(this);
     var $parent = $($form.parents('.modal')); //The modal: should be closed after processing the form
     var $target = $($form.attr('data-target')); //The row that will be graphically deleted
+    var data = $form.serializeArray();
+    data.push({name: 'ajax', value: true});
 
     //After the user submitted the form, ajax call to get the return
     $.ajax({
         type: $form.attr('method'),
         url: $form.attr('action'),
-        data: $form.serialize(),
+        data: data,
         dataType: 'json',
 
         success: function(data) {
@@ -36,7 +38,8 @@ var ajaxForm = function() {
 
           //Displaying the received message (confirmation message if everything went fine) to the user
           $('#ajax-message').html(data.messageHTML);
-          
+          $('#comment-list').trigger('comment-removed');
+
           $parent.modal('hide');
           ajaxModal();
         },
@@ -46,5 +49,22 @@ var ajaxForm = function() {
         }
     });
     e.preventDefault();
+  });
+};
+
+//Function thats binds an event on the comment list to update the number of comments to validate
+var checkCommentDeletion = function() {
+  var $commentList = $('#comment-list');
+  var $spanCountComments = $('#count-comments-text');
+
+  //Updates the text that indicates the user the number of remaining comments waiting for validation
+  $commentList.on('comment-removed', function() {
+
+  var countComments = $('.comment-row', $commentList).length;
+  
+  if(countComments)
+    $spanCountComments.html('<span class="text-info">' + countComments + '</span> avis en attente de validation.');
+  else
+    $spanCountComments.html("Pas d'avis en attente de validation.");
   });
 };

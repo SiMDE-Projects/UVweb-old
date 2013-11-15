@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+  <h3>Refuser un avis</h3>
+</div>
+
+<form data-async data-target="#comment-list #comment-{{ comment.id }}" method="POST" action="{{ path('uvweb_admin_comment_refuse', { 'commentid': comment.id }) }}">
+
+  <div class="modal-body">
+      <p>Supprimer l'avis suivant ? (L'avis sera supprimé de la base de données)</p>
+      <div style="width: 90%;">
+          {% include 'UvwebUvBundle:Uv:comment_summary_row.html.twig' with {'comment': comment} %}
+      </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+      <a><button class="btn btn-danger">Refuser</button></a>
+  </div>
+
+</form>

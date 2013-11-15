@@ -42,23 +42,64 @@ class AdminController extends BaseController
             array('id' => $commentid, 'moderated' => false)
         );
 
-        if($comment === null) //Comment can't be validated anymore or does not exist
-            $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Le commentaire a déjà été validé, ou n'existe pas.");
-        else
+        if($comment === null) //Comment can't be approved anymore or does not exist: redirection
+        {
+            $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Le commentaire a déjà été validé, supprimé, ou n'existe pas.");
+            return $this->redirect($this->generateUrl('uvweb_admin_home'));
+        }
+
+        $request = $this->getRequest();
+        
+        if ($request->isMethod('POST'))
+        {
             try
             {
                 $comment->setModerated(true);
                 $manager->persist($comment);
                 $manager->flush();
-
-                $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Commentaire validé avec succès, merci !", 'success');
             }
             catch(\Exception $e)
             {
-                $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite, le commentaire n'a pas pu être validé.");
+                //Validation failed: notification for user
+
+                //Getting the view for the confirmation message to display
+                $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                                'message' => array(
+                                    'type' => 'error', 
+                                    'content' => "Une erreur s'est produite lors de la validation de l'avis."
+                                    )
+                                )))));
+
+                //We are sending json
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
             }
 
-        return $this->redirect($this->generateUrl('uvweb_admin_home'));
+            $ajax = $request->get('ajax', false);
+
+            if(!$ajax) //User does not have javascript: redirection
+            {
+                $this->get('uvweb_uv.fbmanager')->addFlashMessage('Avis de ' . $comment->getAuthor()->getIdentity() . ' sur ' . $comment->getUv()->getName() . ' validé avec succès.', 'success');
+
+                return $this->redirect($this->generateUrl('uvweb_admin_home'));
+            }
+
+            //Getting the view for the confirmation message to display
+            $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                            'message' => array(
+                                'type' => 'success', 
+                                'content' => 'Avis de ' . $comment->getAuthor()->getIdentity() . ' sur ' . $comment->getUv()->getName() . ' validé avec succès.'
+                                )
+                            )))));
+
+            //We are sending json
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+
+        return $this->render('UvwebUvBundle:Admin:validate_comment.html.twig', array(
+            'comment' => $comment
+        ));
     }
 
     public function refuseCommentAction($commentid)
@@ -70,22 +111,63 @@ class AdminController extends BaseController
             array('id' => $commentid, 'moderated' => false)
         );
 
-        if($comment === null) //Comment can't be validated anymore or does not exist
+        if($comment === null) //Comment can't be approved anymore or does not exist: redirection
+        {
             $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Le commentaire a déjà été validé, supprimé, ou n'existe pas.");
-        else
+            return $this->redirect($this->generateUrl('uvweb_admin_home'));
+        }
+
+        $request = $this->getRequest();
+
+        if ($request->isMethod('POST'))
+        {
             try
             {
                 $manager->remove($comment);
                 $manager->flush();
-
-                $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Commentaire supprimé avec succès, merci.", 'success');
             }
             catch(\Exception $e)
             {
-                $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite, le commentaire n'a pas pu être supprimé.");
+                //Deletion failed: notification for user
+
+                //Getting the view for the confirmation message to display
+                $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                                'message' => array(
+                                    'type' => 'error', 
+                                    'content' => "Une erreur s'est produite lors de la suppression de l'avis."
+                                    )
+                                )))));
+
+                //We are sending json
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
             }
 
-        return $this->redirect($this->generateUrl('uvweb_admin_home'));    
+            $ajax = $request->get('ajax', false);
+
+            if(!$ajax) //User does not have javascript: redirection
+            {
+                $this->get('uvweb_uv.fbmanager')->addFlashMessage('Avis de ' . $comment->getAuthor()->getIdentity() . ' sur ' . $comment->getUv()->getName() . ' supprimé avec succès.', 'success');
+
+                return $this->redirect($this->generateUrl('uvweb_admin_home'));
+            }
+
+            //Getting the view for the confirmation message to display
+            $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                            'message' => array(
+                                'type' => 'success', 
+                                'content' => 'Avis de ' . $comment->getAuthor()->getIdentity() . ' sur ' . $comment->getUv()->getName() . ' supprimé avec succès.'
+                                )
+                            )))));
+
+            //We are sending json
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+
+        return $this->render('UvwebUvBundle:Admin:refuse_comment.html.twig', array(
+            'comment' => $comment
+        ));
     }
 
     public function addNewsAction()
@@ -119,7 +201,7 @@ class AdminController extends BaseController
 
                     return $this->render('UvwebUvBundle:Admin:add_news.html.twig', array(
                         'news_form' => $this->createForm(new NewsType, new News())
-                    ));                
+                    ));
                 }
 
                 //Ok: news was inserted correctly
@@ -211,6 +293,15 @@ class AdminController extends BaseController
                 //We are sending json
                 $response->headers->set('Content-Type', 'application/json');
                 return $response;
+            }
+
+            $ajax = $request->get('ajax', false);
+
+            if(!$ajax) //User does not have javascript: redirection
+            {
+                $this->get('uvweb_uv.fbmanager')->addFlashMessage('News "' . $news->getTitle() . '" supprimée avec succès.', 'success');
+
+                return $this->redirect($this->generateUrl('uvweb_admin_home'));
             }
 
             //Getting the view for the confirmation message to display

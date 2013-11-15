@@ -23,10 +23,14 @@
 <div class="row-fluid">
   <div class="span12">
     <div class="row-fluid">
-      <div class="span6">
+      <div id="comment-list" class="span6">
         <div class="page-header">
           <h3>
-            Derniers avis : <span class="text-info">{{ comments | length }}</span> en attente de validation.
+            {% if comments|length > 0 %}
+              <span id="count-comments-text"><span class="text-info">{{ comments | length }}</span> avis en attente de validation.</span>
+            {% else %}
+              <span id="count-comments-text">Pas d'avis en attente de validation.</span>
+            {% endif %}
           </h3>
         </div>
         {% for comment in comments %}
@@ -57,7 +61,11 @@
 
 <script type="text/javascript" language="javascript">
 $(function() {
+
   ajaxModal(); //Waiting for modal action
+
+  checkCommentDeletion(); //Will update the number of comments to approve if a comment is refused or approved
+
 });
 </script>
 
