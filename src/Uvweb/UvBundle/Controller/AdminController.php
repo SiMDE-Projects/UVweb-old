@@ -29,7 +29,8 @@ class AdminController extends BaseController
 
         return $this->render('UvwebUvBundle:Admin:home.html.twig', array(
             'comments' => $comments,
-            'news' => $news
+            'news' => $news,
+            'adminView' => true
         ));
     }
 
@@ -55,6 +56,7 @@ class AdminController extends BaseController
             try
             {
                 $comment->setModerated(true);
+                $comment->setModerator($this->getDoctrine()->getManager()->getRepository('UvwebUvBundle:User')->findOneById($this->getUser()->getId()));
                 $manager->persist($comment);
                 $manager->flush();
             }

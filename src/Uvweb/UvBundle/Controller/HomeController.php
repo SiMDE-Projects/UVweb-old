@@ -29,11 +29,14 @@ class HomeController extends BaseController
 			20,
 			0);
 
+        $bestUvs = $commentRepository->highlyRatedUvs(6);
+
         $news = $newsRepository->findLastNews();
 
 		return $this->render('UvwebUvBundle:Home:index.html.twig', array(
             'comments' => $comments,
             'news' => $news,
+            'bestUvs' => $bestUvs,
             'searchbar' => $this->searchBarForm->createView()
         ));
 	}

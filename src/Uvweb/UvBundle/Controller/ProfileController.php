@@ -41,7 +41,8 @@ class ProfileController extends BaseController
         return $this->render("UvwebUvBundle:Profile:profile.html.twig", array(
             'searchbar' => $this->searchBarForm->createView(),
             'user' => $user,
-            'comments' => $comments
+            'comments' => $comments,
+            'userView' => true
         ));
     }
 

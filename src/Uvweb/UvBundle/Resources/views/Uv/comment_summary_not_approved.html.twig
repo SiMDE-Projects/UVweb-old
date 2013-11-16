@@ -5,8 +5,8 @@
 {% block comment_footer %}
 
 	<div class="pull-right">
-		<a data-target="#modal" data-toggle="ajax-modal" href="{{ path('uvweb_admin_comment_validate', { 'commentid': comment.id }) }}"><button class="btn btn-success btn-mini">Valider</button></a>
-		<a data-target="#modal" data-toggle="ajax-modal" href="{{ path('uvweb_admin_comment_refuse', { 'commentid': comment.id }) }}"><button class="btn btn-danger btn-mini">Refuser</button></a>
+		<a data-target="#modal" data-toggle="ajax-modal" href="{{ path('uvweb_admin_comment_validate', { 'commentid': comment.id }) }}"><button class="btn btn-success btn-mini"><i class="icon-ok icon-white"></i> Valider</button></a>
+		<a data-target="#modal" data-toggle="ajax-modal" href="{{ path('uvweb_admin_comment_refuse', { 'commentid': comment.id }) }}"><button class="btn btn-danger btn-mini"><i class="icon-remove icon-white"></i> Refuser</button></a>
 	</div>
 
 {% endblock %}

@@ -20,7 +20,7 @@ class UvRepository extends EntityRepository
         $qb->orderBy('u.name');
 
         if($limit)
-        	$qb->setMaxResults($limit);
+            $qb->setMaxResults($limit);
 
         return $qb->getQuery()->getScalarResult();
 	}

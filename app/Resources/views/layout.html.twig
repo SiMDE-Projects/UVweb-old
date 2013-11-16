@@ -14,6 +14,12 @@
       padding-top: 60px;
       padding-bottom: 40px;
     }
+    .table thead tr.success th {
+        background-color: #d6e9c6;
+    }
+    .table thead tr.error th {
+        background-color: #eed3d7;
+    }
     </style>
     
     {% block stylesheets %}
@@ -35,43 +41,71 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+             
           <a class="brand" href="{{ path('uvweb_uv_homepage') }}"><img src="{{ asset('img/uvweb_logo.png') }}"></a>
+          <div class="nav-collapse collapse navbar-responsive-collapse">
+            <ul class="nav pull-right">
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  UVs
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="nav-header">Branche</li>
+                  <li><a href="#">GB</a></li>
+                  <li><a href="#">GI</a></li>
+                  <li><a href="#">GM</a></li>
+                  <li><a href="#">GP</a></li>
+                  <li><a href="#">GSM</a></li>
+                  <li><a href="#">GSU</a></li>
+                  <li class="nav-header">Communes</li>
+                  <li><a href="#">TC</a></li>
+                  <li><a href="#">TSH</a></li>
+                  <li class="nav-header">Toutes</li>
+                  <li><a href="#">Ordre Alphabétique</a></li>
+                  <li><a href="#">Notes Étudiants</a></li>
+                </ul>
+              </li>
+              <li style="height: 49px;" class="divider-vertical"></li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <i class="icon-user icon-white"></i> 
+                  {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <span>{{ app.user.identity }}</span>
+                  {% else %}
+                    <span>Non connecté</span>
+                  {% endif %}
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  {% if app.user is not null %}
+                    <li class="{% if userView is defined %}active{% endif %}"><a href="{{  path('uvweb_uv_profile' , { 'userid': app.user.id }) }}"><i class="icon-home"></i> Profil</a></li>
 
-          <div class="btn-group pull-right">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-              <i class="icon-user"></i> 
-              {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                <span>{{ app.user.identity }}</span>
-              {% else %}
-                <span>Non connecté</span>
-              {% endif %}
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              {% if app.user is not null %}
-                <li><a href="{{  path('uvweb_uv_profile' , { 'userid': app.user.id }) }}">Profil</a></li>
-                <li class="divider"></li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                      <li class="{% if adminView is defined %}active{% endif %}"><a href="{{  path('uvweb_admin_home') }}"><i class="icon-star"></i> Modération</a></li>
+                    {% endif %}
+                      <li class="divider"></li>
 
-                {% if is_granted('ROLE_ADMIN') %}
-                  <li><a href="{{  path('uvweb_admin_home') }}">Modération</a></li>
-                  <li class="divider"></li>
-                {% endif %}
-
-                <li><a href="{{ path('uvweb_logout') }}">Déconnexion</a></li>
-              {% else %}
-                <li><a href="{{  path('uvweb_login') }}">Connexion (CAS UTC)</a></li>
-              {% endif %}
-            </ul>
-
-          </div>
+                    <li><a href="{{ path('uvweb_logout') }}"><i class="icon-off"></i> Déconnexion</a></li>
+                  {% else %}
+                    <li><a href="{{  path('uvweb_login') }}">Connexion (CAS UTC)</a></li>
+                  {% endif %}
+                </ul>
+            </li>
+          </ul>
 
           <form id="search-uv-form" class="form-search navbar-search pull-right" method="GET" action="{{ path('uvweb_uv_detail') }}" style="margin-right: 15px;">
-              <div class="input-append">
-                <input name="uvname" autocomplete="off" id="search-uv-name" class="search-query span2" type="text" placeholder="Rechercher une UV">
-                <button type="submit" class="btn btn-primary">
-            <i class="icon-search icon-white"></i>
-          </button>
-              </div>
+            <div class="input-append">
+              <input style="width: 120px;" name="uvname" autocomplete="off" id="search-uv-name" class="search-query span2" type="text" placeholder="Rechercher une UV">
+              <button type="submit" class="btn btn-primary">
+                <i class="icon-search icon-white"></i>
+              </button>
+            </div>
           </form>
 
 
@@ -87,11 +121,7 @@
             </span>
           </form>
             {% endif %} #}
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-             <!-- <li class="active"><a href="#">Accueil</a></li> -->
-            </ul>
-          </div><!--/.nav-collapse -->
+          </div>
         </div>
       </div>
     </div>

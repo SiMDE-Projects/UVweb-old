@@ -35,4 +35,22 @@ class CommentRepository extends EntityRepository
 
 		return $comment !== null;
 	}
+
+	public function highlyRatedUvs($limit = 0)
+	{
+		$qb = $this->createQueryBuilder('c');
+
+		$qb->select('AVG(c.globalRate) AS globalRate')
+            ->addSelect('COUNT(c.globalRate) as commentCount')
+            ->addSelect('u.name as name')
+            ->join('c.uv', 'u')
+		    ->where('c.moderated = :moderated')->setParameter('moderated', true)
+		    ->groupBy('name')
+            ->orderBy('globalRate', 'DESC');
+
+        if($limit > 0)
+        	$qb->setMaxResults($limit);
+
+		return $qb->getQuery()->getResult();
+	}
 }
