@@ -39,14 +39,14 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="mdp", type="string", length=32, nullable=false)
+     * @ORM\Column(name="mdp", type="string", length=32, nullable=true)
      */
     private $password;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=50, nullable=false, unique=true)
+     * @ORM\Column(name="email", type="string", length=50, nullable=false, unique=false)
      */
     private $email;
 
@@ -123,7 +123,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="identite", type="string", length=50, nullable=false, unique=true)
+     * @ORM\Column(name="identite", type="string", length=50, nullable=false, unique=false)
      */
     private $identity;
 

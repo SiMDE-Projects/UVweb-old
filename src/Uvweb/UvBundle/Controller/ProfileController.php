@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Uvweb\UvBundle\Entity\User;
 use Uvweb\UvBundle\Form\UserType;
 use Uvweb\UvBundle\Form\UserEditType;
+use Uvweb\UvBundle\Form\MigrationType;
 use \SimpleXMLElement;
 use \Httpful\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -71,6 +72,7 @@ class ProfileController extends BaseController
                 $userRepository = $manager->getRepository("UvwebUvBundle:User");
 
                 $user = $userRepository->findOneByLogin($userLogin);
+
                 if ($user == null)
                 {
                     //No user with this login from UTC exists in UVWeb: show him the new user form
@@ -83,8 +85,10 @@ class ProfileController extends BaseController
                 else
                 {
                     $this->grantUserRole($user);
+
                     //One more connection for the user
                     $user->setConnections($user->getConnections() + 1);
+                    $user->setLast(new \Datetime());
                     $manager->persist($user);
                     $manager->flush();
 
@@ -116,24 +120,44 @@ class ProfileController extends BaseController
         $manager = $this->getDoctrine()->getManager();
         $userRepository = $manager->getRepository("UvwebUvBundle:User");
 
-        $user = new User();
+        $user;
+
+        if($session->get('previousUVWebUser') !== null)
+        {
+            //The user had an account on UVweb: he is already in the DB
+            $user = $userRepository->findOneByLogin($session->get('previousUVWebUser'));
+            $user->setIdentity($user->getLogin());
+        }
+        else
+            $user = new User();
 
         //Generate form from Symfony2 forms
         $form = $this->createForm(new UserType, $user);
 
         $request = $this->getRequest();
 
-        if ($request->isMethod('POST')) 
+        if ($request->isMethod('POST'))
         {
             $form->bind($request);
 
             if ($form->isValid()) 
             {
+                if($session->get('previousUVWebUser') === null) //New user: never used UVWeb1
+                {
+                    $user->setIsAdmin(false);
+                    $user->setConnections(1);
+                }
+                else //Previous UVWeb1 user
+                {
+                    $user->setIsAdmin($userRepository->findOneByLogin($session->get('previousUVWebUser'))->getIsAdmin()); //Make sure that only a previous admin will be admin
+                    $user->setConnections($user->getConnections() + 1);
+                }
+
                 $user->setLogin($session->get('newUserLogin'));
-                $user->setPassword('1234');
-                $user->setConnections(1);
-                
-                $user->setFirstSemester($user->getFirstSemester() . ($user->getFirstYear() % 100));
+                $user->setPassword(null);
+                $user->setLast(new \Datetime());
+
+                $user->setFirstSemester($user->getFirstSemester());
 
                 try
                 {
@@ -142,15 +166,20 @@ class ProfileController extends BaseController
                 }
                 catch(\Exception $e)
                 {
+                    $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de l'ajout du compte.");
+
                     //Insertion failed: invite the user to try again, displaying the errors
                     return $this->render('UvwebUvBundle:Profile:user_form.html.twig', array(
                         'login' => $session->get('newUserLogin'),
-                        'add_user_form' => $this->createForm(new UserType, new User())
+                        'add_user_form' => $this->createForm(new UserType, new User())->createView()
                     ));                
                 }
 
                 //Correctly inserted into the DB
-                $session->remove('newUserLogin'); //No longer usefull
+                $session->remove('newUserLogin'); //No longer useful
+
+                if($session->get('previousUVWebUser') !== null)
+                    $session->remove('previousUVWebUser');
 
                 //Auto authentication
                 $this->grantUserRole($user);
@@ -198,15 +227,17 @@ class ProfileController extends BaseController
                 }
                 catch(\Exception $e)
                 {
+                    $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite la modification du compte.");
+
                     //Insertion failed: invite the user to try again, displaying the errors
                     return $this->render('UvwebUvBundle:Profile:user_edit.html.twig', array(
-                        'edit_user_form' => $this->createForm(new UserEditType, $user)
+                        'edit_user_form' => $this->createForm(new UserEditType, $user)->createView()
                     ));
                 }
 
                 //Correctly updated: change the current user in session, and display a confirmation message to the user
                 $this->grantUserRole($user);
-                $this->get('uvweb_uv.fbmanager')->addFlashMessage('Profile mis à jour avec succès !', 'success');
+                $this->get('uvweb_uv.fbmanager')->addFlashMessage('Profil mis à jour avec succès !', 'success');
 
                 return $this->redirect($this->generateUrl('uvweb_uv_profile', array('userid' => $this->getUser()->getId())));
             }
@@ -215,6 +246,47 @@ class ProfileController extends BaseController
         return $this->render('UvwebUvBundle:Profile:user_edit.html.twig', array(
             'edit_user_form' => $form->createView()
         ));
+    }
+
+    //Used to allow previous uvweb users to register on UVWeb 2.0
+    public function migrationAction()
+    {
+        if($this->getUser() !== null)
+            return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
+
+        $manager = $this->getDoctrine()->getManager();
+        $userRepository = $manager->getRepository("UvwebUvBundle:User");
+
+        $form = $this->createForm(new MigrationType);
+
+        $request = $this->getRequest();
+
+        if ($request->isMethod('POST'))
+        {
+            $form->bind($request);
+
+            if ($form->isValid()) 
+            {
+                $formData = $form->getData();
+                $user = $userRepository->findOneByLogin($formData['login']);
+
+                if($user === null)
+                    $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Les identifiants transmis ne correspondent à aucun utilisateur.");
+                else
+                {
+                    if($user->getPassword() === md5($formData['password']))
+                    {
+                        $this->getRequest()->getSession()->set('previousUVWebUser', $user->getLogin()); //Will be used to register the new user
+                        return $this->redirect($this->generateUrl('uvweb_login'));
+                    }
+                    else
+                        $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Les identifiants transmis ne correspondent à aucun utilisateur.");
+                }
+
+            }
+        }
+
+        return $this->render('UvwebUvBundle:Profile:migration.html.twig', array('form_migration' => $form->createView()));
     }
 
     /* ====== Private functions                                                                         ======= */
@@ -230,7 +302,7 @@ class ProfileController extends BaseController
 
         $this->container->get('security.context')->setToken($token);
 
-        $this->getRequest()->getSession()->set('_security_main',  serialize($token));
+        $this->getRequest()->getSession()->set('_security_main', serialize($token));
     }
 
     /* ====== Private helpers to manage CAS connection. Not in a service as it will only be used here. ======= */

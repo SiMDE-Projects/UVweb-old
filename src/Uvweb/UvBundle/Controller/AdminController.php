@@ -202,7 +202,7 @@ class AdminController extends BaseController
                     $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de l'ajout de la news.");
 
                     return $this->render('UvwebUvBundle:Admin:add_news.html.twig', array(
-                        'news_form' => $this->createForm(new NewsType, new News())
+                        'news_form' => $this->createForm(new NewsType, new News())->createView()
                     ));
                 }
 
@@ -248,7 +248,7 @@ class AdminController extends BaseController
                     $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de la modification de la news.");
 
                     return $this->render('UvwebUvBundle:Admin:edit_news.html.twig', array(
-                        'news_form' => $this->createForm(new NewsType, $news)
+                        'news_form' => $this->createForm(new NewsType, $news)->createView()
                     ));                
                 }
 
@@ -324,4 +324,5 @@ class AdminController extends BaseController
         ));
     }
 }
+
 ?>

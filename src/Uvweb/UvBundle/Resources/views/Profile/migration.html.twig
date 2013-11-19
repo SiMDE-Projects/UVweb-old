@@ -1,0 +1,53 @@
+{% extends "UvwebUvBundle::layout.html.twig" %}
+
+{% block title %}
+Migration - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+<div class="row-fluid">
+  <div class="span12">
+      <div class="page-header">
+        <h1>Migration de compte <small>Retrouver ton compte UVWeb pour l'utiliser sur UVWeb 2.0</small></h1>
+      </div>
+  </div>
+</div>
+
+<div class="row-fluid">
+  <div class="span12">
+    <div class="well">
+      <p>
+        Si tu as créé un compte sur le précédent service UVWeb, tu peux entrer tes identifiants ici.
+        <br/>
+        Si ton compte est retrouvé tu seras redirigé vers le CAS que tu devras ensuite utiliser pour te connecter les prochaines fois (plus besoin de mot de passe UVWeb).
+      </p>
+      <br/>
+      {{ form_errors(form_migration) }}
+      <form class="form-horizontal" action="{{ path('uvweb_migration') }}" method="POST" accept-charset="utf-8" {{ form_enctype(form_migration) }}>
+        <div class="control-group">
+          <label class="control-label" for="login">Login</label>
+          <div class="controls">
+            {{ form_widget(form_migration.login, {'attr': {'placeholder': 'Login'}}) }}
+            {{ form_errors(form_migration.login) }}
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="password">Password</label>
+          <div class="controls">
+            {{ form_widget(form_migration.password, {'attr': {'placeholder': 'Mot de passe'}}) }}
+            {{ form_errors(form_migration.password) }}
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls">
+            <button type="submit" class="btn btn-success">Valider</button>
+          </div>
+        </div>
+        {{ form_rest(form_migration) }}
+      </form>      
+    </div>
+  </div>
+</div>
+
+      
+{% endblock %}

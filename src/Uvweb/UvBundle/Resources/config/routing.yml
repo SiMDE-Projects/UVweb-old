@@ -1,8 +1,6 @@
 uvweb_uv_detail:
     path: /uv/{uvname}
     defaults:  { _controller: UvwebUvBundle:Detail:detail, uvname: ''}
-    requirements:
-        uvname:  ^[a-zA-Z0-9]{4}$
 
 uvweb_uv_nameslike:
     path: /uv/like/
@@ -58,6 +56,10 @@ uvweb_uv_profile:
 uvweb_login:
     pattern: /login
     defaults: { _controller: UvwebUvBundle:Profile:login }
+
+uvweb_migration:
+    pattern: /migration
+    defaults: { _controller: UvwebUvBundle:Profile:migration }
 
 uvweb_user_add:
     pattern: /user/register

@@ -29,7 +29,8 @@ class HomeController extends BaseController
 			20,
 			0);
 
-        $bestUvs = $commentRepository->highlyRatedUvs(6);
+        $bestUvs = $commentRepository->uvsByRate(6);
+        $worstUvs = $commentRepository->uvsByRate(6, false);
 
         $news = $newsRepository->findLastNews();
 
@@ -37,6 +38,7 @@ class HomeController extends BaseController
             'comments' => $comments,
             'news' => $news,
             'bestUvs' => $bestUvs,
+            'worstUvs' => $worstUvs,
             'searchbar' => $this->searchBarForm->createView()
         ));
 	}

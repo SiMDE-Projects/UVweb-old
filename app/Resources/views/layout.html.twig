@@ -93,7 +93,10 @@
 
                     <li><a href="{{ path('uvweb_logout') }}"><i class="icon-off"></i> Déconnexion</a></li>
                   {% else %}
+                    <li class="nav-header">Pas de compte UVWeb</li>
                     <li><a href="{{  path('uvweb_login') }}">Connexion (CAS UTC)</a></li>
+                    <li class="nav-header">Inscrit sur UVWeb 1</li>
+                    <li><a href="{{  path('uvweb_migration') }}">Retrouver mon compte</a></li>
                   {% endif %}
                 </ul>
             </li>

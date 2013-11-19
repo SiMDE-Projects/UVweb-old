@@ -15,7 +15,9 @@
               <h1>{{ user.identity }}</h1>
             </div>
             <div class="span6">
-              <a href="{{path('uvweb_user_edit' , { 'userid': user.id })}}" class="pull-right btn btn-primary"><i class="icon-pencil icon-white"></i> Éditer Profil</a>
+              {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.login == user.login %}
+                <a href="{{path('uvweb_user_edit' , { 'userid': user.id })}}" class="pull-right btn btn-primary"><i class="icon-pencil icon-white"></i> Éditer Profil</a>
+              {% endif %}
             </div>
           </div>
       </div>
@@ -31,7 +33,7 @@
           <div class="media-body">
               <ul class="unstyled">
                   <li>Vient de <strong>{{ user.origin }}</strong></li>
-                  <li>Entrée à l'UTC : <strong>{{ user.firstSemester }}</strong></li>
+                  <li>Entrée à l'UTC : <strong>{{ user.firstSemester }} {{ user.firstYear }}</strong></li>
                   <li>Branche : <strong>{{ user.branch }}</strong></li>
                   {% if user.filiere != '' %}<li>Filière : <strong>{{ user.filiere }}</strong></li> {% endif %}
                   {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.login == user.login %}<div style="margin-top: 10px;" class="alert alert-info"><li>Tu peux ajouter ou changer l'image qui apparaît sur ton compte à l'aide du service <a href="http://fr.gravatar.com" target="_blank">Gravatar</a>, qu'utilise UVweb.</li></div> {% endif %}

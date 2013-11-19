@@ -24,7 +24,7 @@ class UserType extends AbstractType
                     'label' => 'Email',
                 ))
                 ->add('firstsemester', 'choice', array(
-                    'choices' => array('A' => 'Automne', 'P' => 'Printemps'),
+                    'choices' => array('Automne' => 'Automne', 'Printemps' => 'Printemps'),
                     'label' => 'Semestre d\'entrée'
                 ))
                 ->add('firstyear', 'choice', array('choices' => $lastYears, 'label' => 'Année d\'entrée'))

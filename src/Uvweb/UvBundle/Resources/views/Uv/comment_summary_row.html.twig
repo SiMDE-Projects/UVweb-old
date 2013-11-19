@@ -2,7 +2,7 @@
 
   <div class="span3">
     <a href="{{ path('uvweb_uv_profile', { 'userid' : comment.author.id }) }}" class="thumbnail">
-      <img src="{{ gravatar(comment.author.email, 80) }}" alt="{{ comment.author.identity }}'s gravatar"/>
+      <img src="{{ gravatar(comment.author.email, 80) }}" alt="{% if comment.author.identity is not empty %}{{ comment.author.identity }}{% else %}{{ comment.author.login }}{% endif %}'s gravatar"/>
     </a>
   </div>
 
@@ -10,11 +10,19 @@
     <div class="row-fluid">
       <div class="span9">
         <h4>
-          <a href="{{ path('uvweb_uv_profile', { 'userid' : comment.author.id }) }}">{{ comment.author.identity }}</a> a posté un nouveau commentaire sur <a href="{{ path('uvweb_uv_detail', { 'uvname':comment.uv.name }) }}">{{ comment.uv.name }}</a>
+          <a href="{{ path('uvweb_uv_profile', { 'userid' : comment.author.id }) }}">
+            {% if comment.author.identity is not empty %}
+              {{ comment.author.identity }}
+            {% else %}
+              {{ comment.author.login }}
+            {% endif %}
+          </a>
+           a posté un nouveau commentaire sur <a href="{{ path('uvweb_uv_detail', { 'uvname': comment.uv.name}) }}">{{ comment.uv.name }}</a>
         </h4>
       </div>
       <div class="span3">
         <h6>Le {{ comment.date|date('d/m/Y') }}</h6>
+        <h6 class="text-info">{{ comment.globalRate|number_format(2, ',', ' ') }}/10</h6>
       </div>
     </div>
     <p>
