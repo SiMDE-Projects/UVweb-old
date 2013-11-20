@@ -24,4 +24,12 @@ class UvRepository extends EntityRepository
 
         return $qb->getQuery()->getScalarResult();
 	}
+
+    public function getAllOrdered()
+    {
+        $qb = $this->createQueryBuilder('u')
+                ->orderBy('u.name');
+
+        return $qb->getQuery()->getResult();
+    }
 }

@@ -31,10 +31,16 @@
                 </p>
 			</div>
 			<div class="span4 text-right">
-				<h2><small>Taux de réussite : </small> {{ firstPoll.semester }} : {{ firstPoll.successRate  | number_format(1, ',', ' ')}}%</h2>
+				{% if polls|length == 0 %}
+					<h2><small>Pas de sondage pour cette UV.</h2>
+				{% endif %}
 				<ul class="unstyled">
 					{% for poll in polls %}
-						<li>{{ poll.semester }} : {{poll.successRate| number_format(1, ',', ' ')}}%</li>
+						{% if loop.first %}
+							<h2><small>Taux de réussite : </small> {{ poll.semester }} : {{ poll.successRate  | number_format(1, ',', ' ')}}%</h2>
+						{% else %}
+							<li>{{ poll.semester }} : {{poll.successRate| number_format(1, ',', ' ')}}%</li>
+						{% endif %}
 					{% endfor %}
 				</ul>
 			</div>

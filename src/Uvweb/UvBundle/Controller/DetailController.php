@@ -45,9 +45,9 @@ class DetailController extends BaseController
         if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 
         $comments = $commentRepository->findBy(
-            array('uv' => $uv, 'moderated' => true),
-            array('date' => 'desc'),
-            20,
+            array('uv' => $uv),
+            array('id' => 'desc'), //Ordering by id: better than date for perf + if there are two comments the same day the order is respected
+            22,
             0
         );
 
@@ -62,9 +62,9 @@ class DetailController extends BaseController
         }
 
         $polls = $pollRepository->findBy(
-            array('uv' => $uv),
-            array('year' => 'desc'),
-            4,
+            array('uvName' => $uvname),
+            array('year' => 'desc', 'season' => 'asc'),
+            5,
             0
         );
 
@@ -75,7 +75,6 @@ class DetailController extends BaseController
             'uv' => $uv,
             'comments' => $comments,
             'polls' => $polls,
-            'firstPoll' => $polls != null ? $polls[0] : new \Uvweb\UvBundle\Entity\Poll,
             'averageRate' => $averageRate,
             'searchbar' => $this->searchBarForm->createView(),
         ));
