@@ -41,7 +41,7 @@ class DetailController extends BaseController
         $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
         $pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
 
-        $uv = $uvRepository->findOneByName($uvname);
+        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0));
         if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 
         $comments = $commentRepository->findBy(
@@ -96,7 +96,7 @@ class DetailController extends BaseController
         $userRepository = $manager->getRepository("UvwebUvBundle:User");
 
         $author = $userRepository->find($currentUser->getId());
-        $uv = $uvRepository->findOneByName($uvname);
+        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0));
 
         if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 
@@ -282,6 +282,41 @@ class DetailController extends BaseController
         $manager->flush();
 
         return new Response;
+    }
+
+    public function listAllAction($order)
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+
+        if($order === 'name')
+        { 
+            //Order by name
+            $uvs = $commentRepository->uvsOrderedByName();
+            
+            $groupedUvs = array(); //Will contain an array of type ['letter'] => array(UV1, UV2) with UV1, UV2 like 'letter%'
+            $sub = '';
+
+            foreach($uvs as $uv) 
+            {
+                $sub = substr($uv['name'], 0, 1);
+                $groupedUvs[$sub][] = $uv;
+            }
+
+            return $this->render('UvwebUvBundle:Uv:all_ordered.html.twig', array('groupedUvs' => $groupedUvs));
+        }
+
+        //Order by rate
+
+        $uvs = $commentRepository->uvsOrderedByRate();
+
+        $groupedUvs = array();
+        foreach($uvs as $uv)
+        {
+            $groupedUvs[ceil($uv['globalRate'])][] = $uv;
+        }
+
+        return $this->render('UvwebUvBundle:Uv:all_ordered_by_rate.html.twig', array('groupedUvs' => $groupedUvs));
     }
 
     public function appDetailAction($uvname)

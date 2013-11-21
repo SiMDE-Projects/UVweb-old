@@ -29,8 +29,8 @@ class HomeController extends BaseController
 			20,
 			0);
 
-        $bestUvs = $commentRepository->uvsByRate(6);
-        $worstUvs = $commentRepository->uvsByRate(6, false);
+        $bestUvs = $commentRepository->uvsOrderedByRate(6, true, 5);
+        $worstUvs = $commentRepository->uvsOrderedByRate(6, false, 5);
 
         $news = $newsRepository->findLastNews();
 

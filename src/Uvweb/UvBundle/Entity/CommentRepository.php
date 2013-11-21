@@ -36,7 +36,7 @@ class CommentRepository extends EntityRepository
 		return $comment !== null;
 	}
 
-	public function uvsByRate($limit = 0, $best = true)
+	private function prepareUvListQuery()
 	{
 		$qb = $this->createQueryBuilder('c');
 
@@ -45,13 +45,35 @@ class CommentRepository extends EntityRepository
             ->addSelect('u.name as name')
             ->join('c.uv', 'u')
 		    ->where('c.moderated = :moderated')->setParameter('moderated', true)
-		    ->groupBy('name')
-		    ->having('commentCount > :minCount')->setParameter('minCount', 5);
+		    ->andWhere('u.archived = :archived')->setParameter('archived', 0)
+		    ->groupBy('name');
+
+		return $qb;
+	}
+
+	public function uvsOrderedByRate($limit = 0, $best = true, $minCountComments = 0)
+	{
+		$qb = $this->prepareUvListQuery();
+
+		if($minCountComments > 0)
+		    $qb->having('commentCount > :minCount')->setParameter('minCount', $minCountComments);
 
 		if($best)
             $qb->orderBy('globalRate', 'DESC');
         else
             $qb->orderBy('globalRate', 'ASC');
+
+        $qb->addOrderBy('name');
+
+        if($limit > 0)
+        	$qb->setMaxResults($limit);
+
+		return $qb->getQuery()->getResult();
+	}
+
+	public function uvsOrderedByName($limit = 0)
+	{
+		$qb = $this->prepareUvListQuery();
 
         $qb->addOrderBy('name');
 

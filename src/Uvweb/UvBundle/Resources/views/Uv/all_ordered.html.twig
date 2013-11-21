@@ -1,0 +1,48 @@
+{% extends "UvwebUvBundle::layout.html.twig" %}
+
+{% block title %}
+	Toutes UVs (Ordre Alphabétique) - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+<div class="page-header text-center">
+	<div class="row-fluid">
+		<h2>Toutes les UVs <small>Ordre Alphabétique</small></h2>
+	</div>
+</div>
+
+
+
+<div class="row-fluid">
+	<div class="span3">
+		{% for letter, uvs in groupedUvs %}
+			{% if letter in {'A': 'A', 'E': 'E', 'H': 'H', 'I': 'I', 'P': 'P', 'T': 'T'}|keys %}
+				{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'tableType': '', 'uvs': uvs, 'title': letter } %}
+			{% endif %}
+		{% endfor %}
+	</div>
+	<div class="span3">
+		{% for letter, uvs in groupedUvs %}
+			{% if letter in {'B' : 'B', 'L': 'L', 'U': 'U'}|keys %}
+				{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'tableType': '', 'uvs': uvs, 'title': letter } %}
+			{% endif %}
+		{% endfor %}
+	</div>
+	<div class="span3">
+		{% for letter, uvs in groupedUvs %}
+			{% if letter in {'C': 'C', 'F': 'F', 'M': 'M'}|keys %}
+				{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'tableType': '', 'uvs': uvs, 'title': letter } %}
+			{% endif %}
+		{% endfor %}
+	</div>
+	<div class="span3">
+		{% for letter, uvs in groupedUvs %}
+			{% if letter in {'D': 'D', 'G': 'G', 'N': 'N', 'R': 'R', 'S': 'S'}|keys %}
+				{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'tableType': '', 'uvs': uvs, 'title': letter } %}
+			{% endif %}
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}

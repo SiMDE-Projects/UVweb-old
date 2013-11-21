@@ -1,0 +1,64 @@
+{% extends "UvwebUvBundle::layout.html.twig" %}
+
+{% block title %}
+	Toutes UVs (Moyenne Des Critiques) - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+<div class="page-header text-center">
+	<div class="row-fluid">
+		<h2>Toutes les UVs <small>Moyenne Des Critiques</small></h2>
+	</div>
+</div>
+
+
+
+<div class="row-fluid">
+	<div class="span3">
+		{% for ceilRate, uvs in groupedUvs %}
+			{% if loop.index % 4 == 1 %}
+				{% set tableType = 'error' %}
+				{% if ceilRate > 5 %}
+					{% set tableType = 'success' %}
+				{% endif %}
+				{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'tableType': tableType, 'uvs': uvs, 'title': ceilRate } %}
+			{% endif %}
+		{% endfor %}
+	</div>
+	<div class="span3">
+		{% for ceilRate, uvs in groupedUvs %}
+			{% if loop.index % 4 == 2 %}
+				{% set tableType = 'error' %}
+				{% if ceilRate > 5 %}
+					{% set tableType = 'success' %}
+				{% endif %}
+				{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'tableType': tableType, 'uvs': uvs, 'title': ceilRate } %}
+			{% endif %}
+		{% endfor %}
+	</div>
+	<div class="span3">
+		{% for ceilRate, uvs in groupedUvs %}
+			{% if loop.index % 4 == 3 %}
+				{% set tableType = 'error' %}
+				{% if ceilRate > 5 %}
+					{% set tableType = 'success' %}
+				{% endif %}
+				{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'tableType': tableType, 'uvs': uvs, 'title': ceilRate } %}
+			{% endif %}
+		{% endfor %}
+	</div>
+	<div class="span3">
+		{% for ceilRate, uvs in groupedUvs %}
+			{% if loop.index % 4 == 0 %}
+				{% set tableType = 'error' %}
+				{% if ceilRate > 5 %}
+					{% set tableType = 'success' %}
+				{% endif %}
+				{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'tableType': tableType, 'uvs': uvs, 'title': ceilRate } %}
+			{% endif %}
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}

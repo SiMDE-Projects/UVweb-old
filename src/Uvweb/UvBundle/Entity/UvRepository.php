@@ -17,6 +17,7 @@ class UvRepository extends EntityRepository
         $qb = $this->createQueryBuilder('u');
         $qb->select('u.name');
         $qb->where($qb->expr()->like('u.name', $qb->expr()->literal($uvLike . '%')));
+        $qb->andWhere('u.archived = :archived')->setParameter('archived', 0);
         $qb->orderBy('u.name');
 
         if($limit)
