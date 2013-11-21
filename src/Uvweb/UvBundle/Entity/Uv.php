@@ -42,7 +42,6 @@ class Uv
      */
     private $archived;
 
-
     /**
      * Get id
      *
