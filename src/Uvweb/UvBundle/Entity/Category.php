@@ -49,7 +49,7 @@ class Category
 
     /**
      *
-     * @ORM\ManyToMany(targetEntity="Uvweb\UvBundle\Entity\Uv", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Uvweb\UvBundle\Entity\Uv", inversedBy="categories", cascade={"persist"})
      * @ORM\JoinTable(name="classement",
      * joinColumns={@ORM\JoinColumn(name="id_categorie", referencedColumnName="id")},
      * inverseJoinColumns={@ORM\JoinColumn(name="id_uv", referencedColumnName="id")})

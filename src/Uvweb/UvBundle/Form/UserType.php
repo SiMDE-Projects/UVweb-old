@@ -17,6 +17,7 @@ class UserType extends AbstractType
         { 
             $lastYears[$i] = $i;
         }
+        
         $builder
                 ->add('identity', 'text', array(
                     'label' => 'Pseudo (sera visible sur le site)'))

@@ -25,7 +25,7 @@ class HomeController extends BaseController
 
 		$comments = $commentRepository->findBy(
 			array('moderated' => true),
-			array('date' => 'desc'),
+			array('id' => 'desc'),
 			20,
 			0);
 

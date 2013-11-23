@@ -11,7 +11,18 @@
 			<tr>
 				<td><a href="{{ path('uvweb_uv_detail' , { 'uvname': uv.name }) }}">{{ uv.name }}</a></td>
 				<td>{{ uv.commentCount }}</td>
-				<td>{{ uv.globalRate | number_format(2, ',', '.') }}</td>
+				{% if highlightRates is defined and highlightRates == true %}
+					{% if uv.globalRate > 7 %}
+						<td class="text-success">{{ uv.globalRate | number_format(2, ',', '.') }}</td>
+					{% elseif uv.globalRate < 5 %}
+						<td class="text-error">{{ uv.globalRate | number_format(2, ',', '.') }}</td>
+					{% else %}
+						<td>{{ uv.globalRate | number_format(2, ',', '.') }}</td>
+					{% endif %}
+				{% else %}
+					<td>{{ uv.globalRate | number_format(2, ',', '.') }}</td>
+				{% endif %}
+
 			</tr>
 		{% endfor %}
 	</tbody>

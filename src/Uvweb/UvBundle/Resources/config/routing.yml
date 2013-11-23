@@ -4,6 +4,13 @@ uvweb_uv_list:
     requirements:
         order: "name|rate"
 
+uvweb_uv_list_category:
+    path: /uv/{category}/{order}
+    defaults:  { _controller: UvwebUvBundle:Detail:listCategory, order: 'name' }
+    requirements:
+        category: "gb|gi|gm|gp|gsm|gsu|tsh|tc"
+        order: "name|rate"
+
 uvweb_uv_nameslike:
     path: /uv/like
     defaults: { _controller: UvwebUvBundle:Home:getUvNamesLike }

@@ -51,9 +51,24 @@ class CommentRepository extends EntityRepository
 		return $qb;
 	}
 
-	public function uvsOrderedByRate($limit = 0, $best = true, $minCountComments = 0)
+	public function uvsOrderedByRate($limit = 0, $best = true, $minCountComments = 0, $category = '')
 	{
 		$qb = $this->prepareUvListQuery();
+
+		if(!empty($category))
+		{
+			if($category !== 'tsh')
+			{	
+				$qb->join('u.categories', 'cat')
+				   ->andWhere('cat.category = :categorie')->setParameter('categorie', $category);
+			}
+			else
+			{
+				//TSH
+				$qb->join('u.categories', 'cat')
+				   ->andWhere('cat.category in (:tsh)')->setParameter('tsh', array('EC', 'ME', 'CT'));
+			}
+		}
 
 		if($minCountComments > 0)
 		    $qb->having('commentCount > :minCount')->setParameter('minCount', $minCountComments);
@@ -71,9 +86,24 @@ class CommentRepository extends EntityRepository
 		return $qb->getQuery()->getResult();
 	}
 
-	public function uvsOrderedByName($limit = 0)
+	public function uvsOrderedByName($limit = 0, $category = '')
 	{
 		$qb = $this->prepareUvListQuery();
+
+		if(!empty($category))
+		{
+			if($category !== 'tsh')
+			{
+				$qb->join('u.categories', 'cat')
+				   ->andWhere('cat.category = :categorie')->setParameter('categorie', $category);
+			}
+			else
+			{
+				//TSH
+				$qb->join('u.categories', 'cat')
+				   ->andWhere('cat.category in (:tsh)')->setParameter('tsh', array('EC', 'ME', 'CT'));
+			}
+		}
 
         $qb->addOrderBy('name');
 

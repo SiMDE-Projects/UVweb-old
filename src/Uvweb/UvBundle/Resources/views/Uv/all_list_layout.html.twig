@@ -1,0 +1,40 @@
+{% extends "UvwebUvBundle::layout.html.twig" %}
+
+{% block title %}
+	{{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+<div class="page-header text-center">
+	<div class="row-fluid">
+		<div class="offset2 span8">
+			{% block pageHeader %}{% endblock %}
+		</div>
+		<div class="span2">
+			<ul class="nav nav-pills nav-stacked">
+				<li class="{% if order == 'name' %}active{% endif %}">
+				    <a href="{% if categoryName is not defined %}{{ path('uvweb_uv_list', { 'order': 'name'}) }}{% else %}{{ path('uvweb_uv_list_category', { 'category': categoryName|lower, 'order': 'name' }) }}{% endif %}">Alphabétique</a>
+				</li>
+				<li class="{% if order == 'rate' %}active{% endif %}"><a href="{% if categoryName is not defined %}{{ path('uvweb_uv_list', { 'order': 'rate'}) }}{% else %}{{ path('uvweb_uv_list_category', { 'category': categoryName|lower, 'order': 'rate' }) }}{% endif %}">Note Moyenne</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div class="row-fluid">
+	<div class="span3">
+		{% block column1 %}{% endblock %}
+	</div>
+	<div class="span3">
+		{% block column2 %}{% endblock %}
+	</div>
+	<div class="span3">
+		{% block column3 %}{% endblock %}
+	</div>
+	<div class="span3">
+		{% block column4 %}{% endblock %}
+	</div>
+</div>
+
+{% endblock %}

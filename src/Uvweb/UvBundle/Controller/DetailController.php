@@ -45,7 +45,7 @@ class DetailController extends BaseController
         if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 
         $comments = $commentRepository->findBy(
-            array('uv' => $uv),
+            array('uv' => $uv, 'moderated' => true),
             array('id' => 'desc'), //Ordering by id: better than date for perf + if there are two comments the same day the order is respected
             22,
             0
@@ -303,11 +303,10 @@ class DetailController extends BaseController
                 $groupedUvs[$sub][] = $uv;
             }
 
-            return $this->render('UvwebUvBundle:Uv:all_ordered.html.twig', array('groupedUvs' => $groupedUvs));
+            return $this->render('UvwebUvBundle:Uv:all_ordered.html.twig', array('order' => $order, 'groupedUvs' => $groupedUvs));
         }
 
         //Order by rate
-
         $uvs = $commentRepository->uvsOrderedByRate();
 
         $groupedUvs = array();
@@ -316,7 +315,42 @@ class DetailController extends BaseController
             $groupedUvs[ceil($uv['globalRate'])][] = $uv;
         }
 
-        return $this->render('UvwebUvBundle:Uv:all_ordered_by_rate.html.twig', array('groupedUvs' => $groupedUvs));
+        return $this->render('UvwebUvBundle:Uv:all_ordered_by_rate.html.twig', array('order' => $order, 'groupedUvs' => $groupedUvs));
+    }
+
+    public function listCategoryAction($category, $order)
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $categoryRepository = $manager->getRepository('UvwebUvBundle:Category');
+        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+
+        if($order === 'name')
+        {
+            //Order by name
+            $uvs = $commentRepository->uvsOrderedByName(0, $category);
+
+            $groupedUvs = array(); //Will contain an array of type ['letter'] => array(UV1, UV2) with UV1, UV2 like 'letter%'
+            $sub = '';
+
+            foreach($uvs as $uv) 
+            {
+                $sub = substr($uv['name'], 0, 1);
+                $groupedUvs[$sub][] = $uv;
+            }
+
+            return $this->render('UvwebUvBundle:Uv:all_ordered_category.html.twig', array('order' => $order, 'categoryName' => strtoupper($category), 'groupedUvs' => $groupedUvs));
+        }
+
+        //Order by rate
+        $uvs = $commentRepository->uvsOrderedByRate(0, true, 0, $category);
+
+        $groupedUvs = array();
+        foreach($uvs as $uv)
+        {
+            $groupedUvs[ceil($uv['globalRate'])][] = $uv;
+        }
+
+        return $this->render('UvwebUvBundle:Uv:all_ordered_by_rate.html.twig', array('order' => $order, 'categoryName' => strtoupper($category), 'groupedUvs' => $groupedUvs));
     }
 
     public function appDetailAction($uvname)

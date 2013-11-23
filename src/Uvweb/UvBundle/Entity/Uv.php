@@ -13,6 +13,14 @@ use Doctrine\ORM\Mapping as ORM;
 class Uv
 {
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer")
@@ -41,6 +49,11 @@ class Uv
      * @ORM\Column(name="archived", type="boolean")
      */
     private $archived;
+
+   /**
+     * @ORM\ManyToMany(targetEntity="Uvweb\UvBundle\Entity\Category", mappedBy="uvs", cascade={"persist"})
+     */
+    private $categories;
 
     /**
      * Get id
@@ -139,5 +152,38 @@ class Uv
     public function getArchived()
     {
         return $this->archived;
+    }
+
+    /**
+     * Add category
+     *
+     * @param \Uvweb\UvBundle\Entity\Category $category
+     * @return Uv
+     */
+    public function addCategory(\Uvweb\UvBundle\Entity\Category $category)
+    {
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * Remove category
+     *
+     * @param \Uvweb\UvBundle\Entity\Category $category
+     */
+    public function removeCategory(\Uvweb\UvBundle\Entity\Category $category)
+    {
+        $this->categories->removeElement($category);
+    }
+
+    /**
+     * Get categories
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCategories()
+    {
+        return $this->categories;
     }
 }

@@ -1,17 +1,17 @@
 {% extends "UvwebUvBundle:Uv:all_list_layout.html.twig" %}
 
 {% block title %}
-	Toutes UVs (Ordre Alphabétique) - {{ parent() }}
+	Toutes UVs {{ categoryName }} (Ordre Alphabétique) - {{ parent() }}
 {% endblock %}
 
 
 {% block pageHeader %}		
-	<h2>Toutes les UVs <small>Ordre Alphabétique</small></h2>
+	<h2>{{ categoryName }} : Toutes les UVs <small>Ordre Alphabétique</small></h2>
 {% endblock %}
 
 {% block column1 %}
 	{% for letter, uvs in groupedUvs %}
-		{% if letter in {'A': 'A', 'E': 'E', 'H': 'H', 'I': 'I', 'P': 'P', 'T': 'T'}|keys %}
+		{% if loop.index % 4  == 1 %}
 			{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'highlightRates': true, 'tableType': '', 'uvs': uvs, 'title': letter } %}
 		{% endif %}
 	{% endfor %}
@@ -19,7 +19,7 @@
 
 {% block column2 %}
 	{% for letter, uvs in groupedUvs %}
-		{% if letter in {'B' : 'B', 'L': 'L', 'U': 'U'}|keys %}
+		{% if loop.index % 4  == 2 %}
 			{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'highlightRates': true, 'tableType': '', 'uvs': uvs, 'title': letter } %}
 		{% endif %}
 	{% endfor %}
@@ -27,7 +27,7 @@
 
 {% block column3 %}
 	{% for letter, uvs in groupedUvs %}
-		{% if letter in {'C': 'C', 'F': 'F', 'M': 'M'}|keys %}
+		{% if loop.index % 4  == 3 %}
 			{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'highlightRates': true, 'tableType': '', 'uvs': uvs, 'title': letter } %}
 		{% endif %}
 	{% endfor %}
@@ -35,9 +35,8 @@
 
 {% block column4 %}
 	{% for letter, uvs in groupedUvs %}
-		{% if letter in {'D': 'D', 'G': 'G', 'N': 'N', 'R': 'R', 'S': 'S'}|keys %}
+		{% if loop.index % 4  == 0 %}
 			{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'highlightRates': true, 'tableType': '', 'uvs': uvs, 'title': letter } %}
 		{% endif %}
 	{% endfor %}
 {% endblock %}
-

@@ -14,16 +14,11 @@
       padding-top: 60px;
       padding-bottom: 40px;
     }
-    .table thead tr.success th {
-        background-color: #d6e9c6;
-    }
-    .table thead tr.error th {
-        background-color: #eed3d7;
-    }
     </style>
     
     {% block stylesheets %}
       <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" type="text/css" />
+      <link rel="stylesheet" href="{{ asset('css/table-colors.css') }}" type="text/css" />
     {% endblock %}
 
 <script src="https://code.jquery.com/jquery.min.js" type="text/javascript"></script>
@@ -57,15 +52,15 @@
                 </a>
                 <ul class="dropdown-menu">
                   <li class="nav-header">Branche</li>
-                  <li><a href="#">GB</a></li>
-                  <li><a href="#">GI</a></li>
-                  <li><a href="#">GM</a></li>
-                  <li><a href="#">GP</a></li>
-                  <li><a href="#">GSM</a></li>
-                  <li><a href="#">GSU</a></li>
+                  <li><a href="{{ path('uvweb_uv_list_category', { 'category': 'gb', 'order': 'name'}) }}">GB</a></li>
+                  <li><a href="{{ path('uvweb_uv_list_category', { 'category': 'gi', 'order': 'name'}) }}">GI</a></li>
+                  <li><a href="{{ path('uvweb_uv_list_category', { 'category': 'gm', 'order': 'name'}) }}">GM</a></li>
+                  <li><a href="{{ path('uvweb_uv_list_category', { 'category': 'gp', 'order': 'name'}) }}">GP</a></li>
+                  <li><a href="{{ path('uvweb_uv_list_category', { 'category': 'gsm', 'order': 'name'}) }}">GSM</a></li>
+                  <li><a href="{{ path('uvweb_uv_list_category', { 'category': 'gsu', 'order': 'name'}) }}">GSU</a></li>
                   <li class="nav-header">Communes</li>
-                  <li><a href="#">TC</a></li>
-                  <li><a href="#">TSH</a></li>
+                  <li><a href="{{ path('uvweb_uv_list_category', { 'category': 'tc', 'order': 'name'}) }}">TC</a></li>
+                  <li><a href="{{ path('uvweb_uv_list_category', { 'category': 'tsh', 'order': 'name'}) }}">TSH</a></li>
                   <li class="nav-header">Toutes</li>
                   <li><a href="{{ path('uvweb_uv_list', { 'order': 'name' }) }}">Ordre Alphabétique</a></li>
                   <li><a href="{{ path('uvweb_uv_list', { 'order': 'rate' }) }}">Notes Étudiants</a></li>
