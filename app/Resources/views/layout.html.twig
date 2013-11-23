@@ -70,7 +70,7 @@
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                   <i class="icon-user icon-white"></i> 
-                  {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                  {% if app.user is not null and is_granted('IS_AUTHENTICATED_FULLY') %}
                     <span>{{ app.user.identity }}</span>
                   {% else %}
                     <span>Non connecté</span>
@@ -78,10 +78,10 @@
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  {% if app.user is not null %}
+                  {% if app.user is defined and app.user is not null %}
                     <li class="{% if userView is defined %}active{% endif %}"><a href="{{  path('uvweb_uv_profile' , { 'userid': app.user.id }) }}"><i class="icon-home"></i> Profil</a></li>
 
-                    {% if is_granted('ROLE_ADMIN') %}
+                    {% if app.user is defined and is_granted('ROLE_ADMIN') %}
                       <li class="{% if adminView is defined %}active{% endif %}"><a href="{{  path('uvweb_admin_home') }}"><i class="icon-star"></i> Modération</a></li>
                     {% endif %}
                       <li class="divider"></li>
@@ -127,7 +127,7 @@
     <div class="container">
 
       <div id="ajax-message">
-        {% if app.session.flashbag.has('message_to_display') %}
+        {% if app.session is defined and app.session.flashbag.has('message_to_display') %}
           {% set message = app.session.flashbag.get('message_to_display')[0] %}
           {% include 'UvwebUvBundle:Common:message-info.html.twig' with { 'message': message } %}
         {% endif %}

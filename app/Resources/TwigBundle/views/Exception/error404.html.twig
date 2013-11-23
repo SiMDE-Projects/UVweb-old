@@ -1,0 +1,8 @@
+{% extends "::layout.html.twig" %}
+
+{% block body %}
+	<div class="hero-unit">
+		<h1>Erreur <span class="text-error">{{ status_code }}</span> : Page introuvable</h1>
+		<p>L'adresse que vous avez indiquée n'existe pas.</p>
+	</div>
+{% endblock %}
