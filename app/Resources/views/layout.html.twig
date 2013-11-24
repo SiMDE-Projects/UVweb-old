@@ -94,31 +94,17 @@
                     <li><a href="{{  path('uvweb_migration') }}">Retrouver mon compte</a></li>
                   {% endif %}
                 </ul>
-            </li>
-          </ul>
+              </li>
+            </ul>
 
-          <form id="search-uv-form" class="form-search navbar-search pull-right" method="GET" action="{{ path('uvweb_uv_detail') }}" style="margin-right: 15px;">
-            <div class="input-append">
-              <input style="width: 120px;" name="uvname" autocomplete="off" id="search-uv-name" class="search-query span2" type="text" placeholder="Rechercher une UV">
-              <button type="submit" class="btn btn-primary">
-                <i class="icon-search icon-white"></i>
-              </button>
-            </div>
-          </form>
-
-
- {#           {% if searchbar is defined %}
-          <form class="navbar-search pull-right" method='POST' {{ form_enctype(searchbar) }}>
-              {% form_theme searchbar 'UvwebUvBundle::searchbar.html.twig' %}
-              {{ form_widget(searchbar) }}
-            <span class="icon-search">
-<!--               <button type="submit" class="icon nav-search" tabindex="-1">
-                <span class="visuallyhidden">
-                </span>
-              </button> -->
-            </span>
-          </form>
-            {% endif %} #}
+            <form id="search-uv-form" class="form-search navbar-search pull-right" method="GET" action="{{ path('uvweb_uv_detail') }}" style="margin-right: 15px;">
+              <div class="input-append">
+                <input style="width: 120px;" name="uvname" autocomplete="off" id="search-uv-name" class="search-query span2" type="text" placeholder="Rechercher une UV">
+                <button type="submit" class="btn btn-primary">
+                  <i class="icon-search icon-white"></i>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

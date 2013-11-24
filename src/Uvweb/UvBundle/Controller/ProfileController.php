@@ -136,11 +136,11 @@ class ProfileController extends BaseController
 
         $request = $this->getRequest();
 
-        if ($request->isMethod('POST'))
+        if($request->isMethod('POST'))
         {
             $form->bind($request);
 
-            if ($form->isValid()) 
+            if($form->isValid()) 
             {
                 if($session->get('previousUVWebUser') === null) //New user: never used UVWeb1
                 {
@@ -171,8 +171,8 @@ class ProfileController extends BaseController
                     //Insertion failed: invite the user to try again, displaying the errors
                     return $this->render('UvwebUvBundle:Profile:user_form.html.twig', array(
                         'login' => $session->get('newUserLogin'),
-                        'add_user_form' => $this->createForm(new UserType, new User())->createView()
-                    ));                
+                        'add_user_form' => $form->createView()
+                    ));
                 }
 
                 //Correctly inserted into the DB

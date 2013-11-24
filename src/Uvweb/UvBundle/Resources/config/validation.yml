@@ -10,6 +10,9 @@ Uvweb\UvBundle\Entity\User:
                 checkMX: true
             - NotBlank:
                 message: Une adresse email est requise.
+            - Length:
+                max: 50
+                maxMessage: L'adresse email ne doit pas faire plus de 50 caractères.
         identity:
             - NotBlank: 
                 message: Un pseudo est requis.
@@ -26,3 +29,9 @@ Uvweb\UvBundle\Entity\News:
         text:
             - NotBlank:
                 message: Un contenu est requis.
+
+Uvweb\UvBundle\Entity\Comment:
+    properties:
+        comment:
+            - NotBlank:
+                message: Un commentaire est requis.

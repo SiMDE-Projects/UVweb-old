@@ -9,6 +9,7 @@ use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Uvweb\UvBundle\Entity\Comment;
 use Uvweb\UvBundle\Entity\Poll;
+use Uvweb\UvBundle\Form\CommentType;
 
 class DetailController extends BaseController
 {
@@ -113,57 +114,35 @@ class DetailController extends BaseController
         $comment = new Comment();
         $comment->setUv($uv);
 
-        $form = $this->createFormBuilder($comment)
-            ->add('comment', 'textarea', array(
-                'label' => 'Ton commentaire'
-            ))
-            ->add('interest', 'choice', array(
-                'choices' => array('Passionnant' => 'Passionnant', 'Très intéressant' => 'Très intéressant',
-                    'Intéressant' => 'Intéressant', 'Peu intéressant' => 'Peu intéressant', 'Bof' => 'Bof', 'Nul' => 'Nul'),
-                'label' => 'Intérêt'
-            ))
-            ->add('pedagogy', 'choice', array(
-                'choices' => array('Passionnant' => 'Passionnant', 'Très intéressant' => 'Très intéressant',
-                    'Intéressant' => 'Intéressant', 'Peu intéressant' => 'Peu intéressant', 'Bof' => 'Bof', 'Nul' => 'Nul'),
-                'label' => 'Qualité de la pédagogie'
-            ))
-            ->add('utility', 'choice', array(
-                'choices' => array('Indispensable' => 'Indispensable', 'Très importante' => 'Très importante',
-                    'Utile' => 'Utile', 'Pas très utile' => 'Pas très utile', 'Très peu utile' => 'Très peu utile', 'Inutile' => 'Inutile'),
-                'label' => 'Utilité'
-            ))
-            ->add('workamount', 'choice', array(
-                'choices' => array('Symbolique' => 'Symbolique', 'Faible' => 'Faible',
-                    'Moyenne' => 'Moyenne', 'Importante' => 'Importante', 'Très importante' => 'Très importante'),
-                'label' => 'Quantité de travail'
-            ))
-            ->add('passed', 'choice', array(
-                'choices' => array('obtenue' => 'Obtenue', 'ratée' => 'Ratée', 'en cours' => 'En cours'),
-                'label' => 'As-tu obtenu '.$uv->getName().' ?'
-            ))
-            ->add('semester', 'choice', array(
-                'choices' => array('P13' => 'P13', 'A12' => 'A12', 'P12' => 'P12'),
-                'label' => 'Semestre lors duquel tu l\'as effectuée '
-            ))
-            ->add('globalRate', 'choice', array(
-                'choices' => array('10' => '10', '9' => '9', '8' => '8', '7' => '7', '6' => '6'
-                , '5' => '5', '4' => '4', '3' => '3', '2' => '2', '1' => '1', '0' => '0'),
-                'label' => 'Ta note pour '.$uv->getName()
-            ))
-            ->getForm();
+        $form = $this->createForm(new CommentType($uv), $comment);
+        $this->createFormBuilder($comment);
 
         $request = $this->getRequest();
-        if ($request->isMethod('POST')) {
+        if($request->isMethod('POST')) 
+        {
             $form->bind($request);
 
-            if ($form->isValid()) {
-
+            if($form->isValid()) 
+            {
                 $comment->setDate(new \DateTime());
                 $comment->setModerated(false);
                 $comment->setAuthor($author);
 
-                $manager->persist($comment);
-                $manager->flush();
+                try
+                {
+                    $manager->persist($comment);
+                    $manager->flush();
+                }
+                catch(\Exception $e)
+                {
+                    $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de l'ajout de l'avis.");
+
+                    //Insertion failed: invite the user to try again, displaying the errors
+                    return $this->render('UvwebUvBundle:Uv:post.html.twig', array(
+                        'uv' => $uv,
+                        'add_comment_form' => $form->createView()
+                    ));
+                }
 
                 return $this->render('UvwebUvBundle:Uv:posted.html.twig', array(
                     'uv' => $uv

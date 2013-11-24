@@ -15,6 +15,10 @@ uvweb_uv_nameslike:
     path: /uv/like
     defaults: { _controller: UvwebUvBundle:Home:getUvNamesLike }
 
+uvweb_uv_uvtitlefetcher:
+    path: /uv/titlefetcher
+    defaults:  { _controller: UvwebUvBundle:Detail:uvTitle }
+
 uvweb_uv_detail:
     path: /uv/{uvname}
     defaults:  { _controller: UvwebUvBundle:Detail:detail, uvname: '' }
@@ -22,10 +26,6 @@ uvweb_uv_detail:
 uvweb_uv_newpost:
     path: /post/{uvname}
     defaults:  { _controller: UvwebUvBundle:Detail:post }
-
-uvweb_uv_uvtitlefetcher:
-    path: /uv/titlefetcher
-    defaults:  { _controller: UvwebUvBundle:Detail:uvTitle }
 
 uvweb_uv_uvnametoid:
     path: /uv/uvnametoid

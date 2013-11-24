@@ -6,6 +6,24 @@
 
 {% block body %}
 
+<div class="row-fluid">
+	<div class="span12">
+<ul class="nav nav-tabs">
+                  <li {% if categoryName is defined and categoryName == 'GB' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'gb', 'order': 'name'}) }}">GB</a></li>
+                  <li {% if categoryName is defined and categoryName == 'GI' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'gi', 'order': 'name'}) }}">GI</a></li>
+                  <li {% if categoryName is defined and categoryName == 'GM' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'gm', 'order': 'name'}) }}">GM</a></li>
+                  <li {% if categoryName is defined and categoryName == 'GP' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'gp', 'order': 'name'}) }}">GP</a></li>
+                  <li {% if categoryName is defined and categoryName == 'GSM' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'gsm', 'order': 'name'}) }}">GSM</a></li>
+                  <li {% if categoryName is defined and categoryName == 'GSU' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'gsu', 'order': 'name'}) }}">GSU</a></li>
+                  <li {% if categoryName is defined and categoryName == 'TC' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'tc', 'order': 'name'}) }}">TC</a></li>
+                  <li {% if categoryName is defined and categoryName == 'TSH' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'tsh', 'order': 'name'}) }}">TSH</a></li>
+                  <li {% if categoryName is not defined and order == 'name' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list', { 'order': 'name' }) }}">Toutes - Alphabet</a></li>
+                  <li  {% if categoryName is not defined and order == 'rate' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list', { 'order': 'rate' }) }}">Toutes - Notes</a></li>
+</ul>
+	</div>
+</div>
+
+
 <div class="page-header text-center">
 	<div class="row-fluid">
 		<div class="offset2 span8">

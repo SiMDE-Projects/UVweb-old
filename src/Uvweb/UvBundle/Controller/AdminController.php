@@ -22,7 +22,7 @@ class AdminController extends BaseController
 
         $comments = $commentRepository->findBy(
             array('moderated' => false),
-            array('date' => 'desc')
+            array('id' => 'desc')
         );
 
         $news = $newsRepository->findLastNews();
