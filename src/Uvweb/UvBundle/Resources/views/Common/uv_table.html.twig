@@ -1,16 +1,20 @@
-<table class="table table-condensed table-bordered table-striped">
+<table class="table table-condensed table-bordered {% block tableExtraClasses %}table-striped{% endblock %}">
 	<thead>
 		<tr class="{{ tableType }}">
 			<th>{{ title }}</th>
-			<th>Avis</th>
+			{% if noCommentCount is not defined %}
+				<th>Avis</th>
+			{% endif %}
 			<th>Note</th>
 		</tr>
 	</thead>
 	<tbody>
 		{% for uv in uvs %}
-			<tr>
-				<td><a href="{{ path('uvweb_uv_detail' , { 'uvname': uv.name }) }}">{{ uv.name }}</a></td>
-				<td>{{ uv.commentCount }}</td>
+			<tr uv-name="{{ uv.name }}">
+				<td><a class="uv-link" href="{{ path('uvweb_uv_detail' , { 'uvname': uv.name }) }}">{{ uv.name }}</a></td>
+				{% if noCommentCount is not defined %}
+					<td>{{ uv.commentCount }}</td>
+				{% endif %}
 				{% if highlightRates is defined and highlightRates == true %}
 					{% if uv.globalRate > 7 %}
 						<td class="text-success">{{ uv.globalRate | number_format(2, ',', '.') }}</td>
@@ -22,7 +26,6 @@
 				{% else %}
 					<td>{{ uv.globalRate | number_format(2, ',', '.') }}</td>
 				{% endif %}
-
 			</tr>
 		{% endfor %}
 	</tbody>

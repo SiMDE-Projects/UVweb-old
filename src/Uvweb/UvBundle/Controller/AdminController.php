@@ -123,8 +123,43 @@ class AdminController extends BaseController
 
         if ($request->isMethod('POST'))
         {
+            $refuseMotive = $request->get('refuse-mail-text');
+
+            if($refuseMotive === '')
+            {
+                //Admin did not give a motive for the refuse: he has to do so
+                $response =  new Response(json_encode(array(
+                    'status' => 'error',
+                    'messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                                'message' => array(
+                                    'type' => 'error', 
+                                    'content' => "Il faut préciser un motif de refus pour refuser un avis (avis trop peu précis, non respectueux...)."
+                                    )
+                                )))));
+
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
+            }
+
             try
             {
+                $author = $comment->getAuthor();
+                
+                $mailer = $this->get('mailer');
+
+                $message = \Swift_Message::newInstance()
+                    ->setSubject('Commentaire refusé')
+                    ->setFrom('a@gmail.com')
+                    ->setTo($author->getEmail())
+                    ->setBody($this->renderView('UvwebUvBundle:Mail:refused_comment.txt.twig', array(
+                                        'userIdentity' => $author->getIdentity(),
+                                        'comment' => $comment->getComment(),
+                                        'adminComment' => $refuseMotive,
+                                        'uvname' => $comment->getUv()->getName()
+                            )));
+
+                $mailer->send($message);
+
                 $manager->remove($comment);
                 $manager->flush();
             }
@@ -133,7 +168,9 @@ class AdminController extends BaseController
                 //Deletion failed: notification for user
 
                 //Getting the view for the confirmation message to display
-                $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                $response =  new Response(json_encode(array(
+                    'status' => 'error',
+                    'messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
                                 'message' => array(
                                     'type' => 'error', 
                                     'content' => "Une erreur s'est produite lors de la suppression de l'avis."
@@ -147,7 +184,7 @@ class AdminController extends BaseController
 
             $ajax = $request->get('ajax', false);
 
-            if(!$ajax) //User does not have javascript: redirection
+            if(!$ajax) //Javascript does not work: redirection
             {
                 $this->get('uvweb_uv.fbmanager')->addFlashMessage('Avis de ' . $comment->getAuthor()->getIdentity() . ' sur ' . $comment->getUv()->getName() . ' supprimé avec succès.', 'success');
 
@@ -155,7 +192,9 @@ class AdminController extends BaseController
             }
 
             //Getting the view for the confirmation message to display
-            $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+            $response =  new Response(json_encode(array(
+                'status' => 'success',
+                'messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
                             'message' => array(
                                 'type' => 'success', 
                                 'content' => 'Avis de ' . $comment->getAuthor()->getIdentity() . ' sur ' . $comment->getUv()->getName() . ' supprimé avec succès.'

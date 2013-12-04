@@ -1,0 +1,29 @@
+<div class="page-header">
+	<div class="row-fluid">
+		<div class="span8">
+			<h1 class="uvname">{{ uv.letterCode | upper }}<span class="uvnumbercode">{{ uv.numberCode }}</span> <small>{{ uv.title | capitalize }}</small></h1>
+			<h2><small>Note moyenne : </small>{{ averageRate | number_format(2, ',', ' ') }}/10</h2>
+            <p>
+                <a class="btn btn-primary btn-large" href="{{ path('uvweb_uv_newpost', { 'uvname':uv.name }) }}">Donne ton avis sur {{ uv.name }}</a>
+            </p>
+		</div>
+		<div class="span4 text-right">
+			{% if polls|length == 0 %}
+				<h2><small>Pas de sondage pour cette UV.</h2>
+			{% endif %}
+			<ul class="unstyled">
+				{% for poll in polls %}
+					{% if loop.first %}
+						<h2><small>Taux de réussite : </small> {{ poll.semester }} : {{ poll.successRate  | number_format(1, ',', ' ')}}%</h2>
+					{% else %}
+						<li>{{ poll.semester }} : {{poll.successRate| number_format(1, ',', ' ')}}%</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+</div>
+
+{% for comment in comments %}
+	{% include 'UvwebUvBundle:Uv:review_uv_profile_row.html.twig' with {'comment': comment} %}
+{% endfor %}

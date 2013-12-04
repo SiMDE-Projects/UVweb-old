@@ -19,6 +19,15 @@ Uvweb\UvBundle\Entity\User:
         origin:
             - NotBlank:
                 message: Un cursus d'origine est requis.
+        firstSemester:
+            - NotBlank:
+                message: Un semestre d'entrée est requis.
+        firstYear:
+            - NotBlank:
+                message: Une année d'entrée est requise.
+        branch:
+            - NotBlank:
+                message: Un cursus est requis.
 
 Uvweb\UvBundle\Entity\News:
     properties:

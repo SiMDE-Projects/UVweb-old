@@ -25,6 +25,8 @@ class DetailController extends BaseController
             return $redirect;
         }
 
+        $ajaxRequest = $this->getRequest()->isXmlHttpRequest(); //Can be called from the dynamic list view
+
         //Parameter from symfony route
         if(empty($uvname))
         {
@@ -33,7 +35,11 @@ class DetailController extends BaseController
             if(empty($uvname))
             {
                 $this->get('uvweb_uv.fbmanager')->addFlashMessage("Vous devez entrer un nom d'UV.");
-                return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
+
+                if(!$ajaxRequest)
+                    return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
+                else
+                    return new Response(json_encode(array('status' => 'error')));
             }
         }
 
@@ -71,14 +77,22 @@ class DetailController extends BaseController
 
         $averageRate = $commentRepository->averageRate($uv);
 
-
-        return $this->render('UvwebUvBundle:Uv:detail.html.twig', array(
+        $viewParameters = array(
             'uv' => $uv,
             'comments' => $comments,
             'polls' => $polls,
             'averageRate' => $averageRate,
-            'searchbar' => $this->searchBarForm->createView(),
-        ));
+        );
+
+        if($ajaxRequest)
+        {
+            return new Response(json_encode(array('status' => 'success', 'html' => $this->renderView('UvwebUvBundle:Uv:detail_body.html.twig', $viewParameters))));
+        }
+
+        $viewParameters['searchbar'] = $this->searchBarForm->createView();
+
+
+        return $this->render('UvwebUvBundle:Uv:detail.html.twig', $viewParameters);
     }
 
     public function postAction($uvname) {
@@ -303,7 +317,7 @@ class DetailController extends BaseController
         $categoryRepository = $manager->getRepository('UvwebUvBundle:Category');
         $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
 
-        if($order === 'name')
+        if($order === 'name' || $order === 'dynamic')
         {
             //Order by name
             $uvs = $commentRepository->uvsOrderedByName(0, $category);
@@ -317,19 +331,25 @@ class DetailController extends BaseController
                 $groupedUvs[$sub][] = $uv;
             }
 
+            if($order === 'dynamic') //Dynamic: pass the UV names to the appropriate view
+                return $this->render('UvwebUvBundle:Uv:all_ordered_category_ajax.html.twig', array('order' => $order, 'categoryName' => strtoupper($category), 'groupedUvs' => $groupedUvs));
+            
+            //Order by name
             return $this->render('UvwebUvBundle:Uv:all_ordered_category.html.twig', array('order' => $order, 'categoryName' => strtoupper($category), 'groupedUvs' => $groupedUvs));
         }
-
-        //Order by rate
-        $uvs = $commentRepository->uvsOrderedByRate(0, true, 0, $category);
-
-        $groupedUvs = array();
-        foreach($uvs as $uv)
+        else if($order === 'rate')
         {
-            $groupedUvs[ceil($uv['globalRate'])][] = $uv;
-        }
+            //Order by rate
+            $uvs = $commentRepository->uvsOrderedByRate(0, true, 0, $category);
 
-        return $this->render('UvwebUvBundle:Uv:all_ordered_by_rate.html.twig', array('order' => $order, 'categoryName' => strtoupper($category), 'groupedUvs' => $groupedUvs));
+            $groupedUvs = array();
+            foreach($uvs as $uv)
+            {
+                $groupedUvs[ceil($uv['globalRate'])][] = $uv;
+            }
+
+            return $this->render('UvwebUvBundle:Uv:all_ordered_by_rate.html.twig', array('order' => $order, 'categoryName' => strtoupper($category), 'groupedUvs' => $groupedUvs));
+        }
     }
 
     public function appDetailAction($uvname)

@@ -15,8 +15,8 @@ class UserEditType extends UserType
 
         //Removing the useless fields
         $builder
-                ->remove('firstsemester')
-                ->remove('firstyear')
+                ->remove('firstSemester')
+                ->remove('firstYear')
                 ->remove('origindetails');
     }
     

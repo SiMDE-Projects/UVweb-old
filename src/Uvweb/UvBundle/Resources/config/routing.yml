@@ -9,7 +9,7 @@ uvweb_uv_list_category:
     defaults:  { _controller: UvwebUvBundle:Detail:listCategory, order: 'name' }
     requirements:
         category: "gb|gi|gm|gp|gsm|gsu|tsh|tc"
-        order: "name|rate"
+        order: "name|rate|dynamic"
 
 uvweb_uv_nameslike:
     path: /uv/like
@@ -58,6 +58,10 @@ uvweb_uv_appfeed:
     defaults:  { _controller: UvwebUvBundle:Home:appNewsfeed }
 
 #Profile paths
+uvweb_user_add:
+    pattern: /user/register
+    defaults: { _controller: UvwebUvBundle:Profile:addUser }
+
 uvweb_uv_profile:
     pattern: /user/{userid}
     defaults: { _controller: UvwebUvBundle:Profile:display }
@@ -72,9 +76,9 @@ uvweb_migration:
     pattern: /migration
     defaults: { _controller: UvwebUvBundle:Profile:migration }
 
-uvweb_user_add:
-    pattern: /user/register
-    defaults: { _controller: UvwebUvBundle:Profile:addUser }
+uvweb_forgottenaccount:
+    pattern: /forgottenaccount
+    defaults: { _controller: UvwebUvBundle:Profile:forgottenAccount }
 
 uvweb_user_edit:
     pattern: /user/edit/{userid}

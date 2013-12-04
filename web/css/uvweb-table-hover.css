@@ -1,0 +1,7 @@
+table tbody tr:hover {
+	cursor: pointer;
+}
+
+table tbody tr.active {
+    background-color: #d6e9c6 !important;
+}

@@ -1,5 +1,7 @@
 {% extends "UvwebUvBundle::layout.html.twig" %}
 
+{% form_theme edit_user_form 'UvwebUvBundle:Form:bootstrap_row.html.twig' %}
+
 {% block title %}
     Édition du profil - {{ parent() }}
 {% endblock %}
@@ -13,9 +15,14 @@
     <div class="row-fluid">
         <div class="well">
                 {{ form_errors(edit_user_form) }}
-            <form method="post" {{ form_enctype(edit_user_form) }}>
+            <form class="form-horizontal" method="post" {{ form_enctype(edit_user_form) }}>
                 {{ form_widget(edit_user_form) }}
-                <input type="submit" class="btn btn-primary" />
+                <div class="control-group">
+                  <div class="controls">
+                    <button type="submit" class="btn btn-success">Valider</button>
+                  </div>
+                </div>
+                {{ form_rest(edit_user_form) }}
             </form>
         </div>
     </div>

@@ -7,9 +7,11 @@ use Uvweb\UvBundle\Entity\User;
 use Uvweb\UvBundle\Form\UserType;
 use Uvweb\UvBundle\Form\UserEditType;
 use Uvweb\UvBundle\Form\MigrationType;
+use Uvweb\UvBundle\Form\ForgottenAccountType;
 use \SimpleXMLElement;
 use \Httpful\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Util\SecureRandom;
 
 class ProfileController extends BaseController
 {
@@ -231,7 +233,7 @@ class ProfileController extends BaseController
 
                     //Insertion failed: invite the user to try again, displaying the errors
                     return $this->render('UvwebUvBundle:Profile:user_edit.html.twig', array(
-                        'edit_user_form' => $this->createForm(new UserEditType, $user)->createView()
+                        'edit_user_form' => $form->createView()
                     ));
                 }
 
@@ -287,6 +289,81 @@ class ProfileController extends BaseController
         }
 
         return $this->render('UvwebUvBundle:Profile:migration.html.twig', array('form_migration' => $form->createView()));
+    }
+
+    //Sends an email to a user who has forgotten his UVweb 1 password, so that he can register on UVweb 2.0
+    public function forgottenAccountAction()
+    {
+        if($this->getUser() !== null)
+            return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
+
+        $manager = $this->getDoctrine()->getManager();
+        $userRepository = $manager->getRepository("UvwebUvBundle:User");
+
+        $form = $this->createForm(new ForgottenAccountType);
+
+        $request = $this->getRequest();
+
+        if ($request->isMethod('POST'))
+        {
+            $form->bind($request);
+
+            if ($form->isValid())
+            {
+                $formData = $form->getData();
+                $user = $userRepository->findOneByEmail($formData['email']);
+
+                if($user === null)
+                    $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("L'adresse email indiquée ne correspond à aucun utilisateur.");
+                else
+                {
+                    if($user->getPassword() !== null)
+                    {
+                        //UVweb 1 user
+
+                        //Creating a new password for the user and inserting it in the DB
+                        $generator = new SecureRandom();
+                        $newPassword = bin2hex($generator->nextBytes(12));
+
+                        $user->setPassword(md5($newPassword));
+
+                        try
+                        {
+                            $manager->persist($user);
+                            $manager->flush();
+                        }
+                        catch(\Exception $e)
+                        {
+                            $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de la requête.");
+
+                            //Update failed: invite the user to try again, displaying the errors
+                            return $this->render('UvwebUvBundle:Profile:user_edit.html.twig', array(
+                                'form_forgotten_account' => $form->createView()
+                            ));
+                        }
+
+                        $mailer = $this->get('mailer');
+
+                        $message = \Swift_Message::newInstance()
+                            ->setSubject('Identifiants oubliés')
+                            ->setFrom('a@gmail.com')
+                            ->setTo($user->getEmail())
+                            ->setBody($this->renderView('UvwebUvBundle:Mail:password.txt.twig', array('login' => $user->getLogin(), 'password' => $newPassword)));
+
+                        $mailer->send($message);
+
+                        $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Un mail vient d'être envoyé à l'adresse indiquée !", 'success');
+
+                        return $this->redirect($this->generateUrl('uvweb_migration'));
+                    }
+                    else
+                        $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("L'adresse email indiquée ne correspond à aucun utilisateur.");
+                }
+
+            }
+        }
+
+        return $this->render('UvwebUvBundle:Profile:forgotten_account.html.twig', array('form_forgotten_account' => $form->createView()));
     }
 
     /* ====== Private functions                                                                         ======= */

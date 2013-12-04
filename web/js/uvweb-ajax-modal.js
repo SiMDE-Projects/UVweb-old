@@ -33,19 +33,21 @@ var ajaxForm = function() {
         dataType: 'json',
 
         success: function(data) {
-          //Graphically removing the the row supposed to be deleted from DB
-          $target.remove();
+          //Graphically removing the the row supposed to be deleted from DB if successfully deleted
+
+          if(data.status === 'success') {
+            $target.remove();
+            $('#comment-list').trigger('comment-removed');
+          }
 
           //Displaying the received message (confirmation message if everything went fine) to the user
           $('#ajax-message').html(data.messageHTML);
-          $('#comment-list').trigger('comment-removed');
 
           $parent.modal('hide');
           ajaxModal();
         },
         error: function(xhr) {
-          console.debug(xhr);
-          alert('Error: ' + xhr.responseText);
+          
         }
     });
     e.preventDefault();

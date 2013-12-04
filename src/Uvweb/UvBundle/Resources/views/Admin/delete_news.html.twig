@@ -3,7 +3,7 @@
   <h3>Supprimer une news</h3>
 </div>
 
-<form data-async data-target="#news-list #news-{{ news.id }}" method="POST" action="{{ path('uvweb_admin_delete_news', { 'newsid': news.id }) }}">
+<form class="modal-form" data-async data-target="#news-list #news-{{ news.id }}" method="POST" action="{{ path('uvweb_admin_delete_news', { 'newsid': news.id }) }}">
 
   <div class="modal-body">
       <p>Supprimer la news suivante ?</p>

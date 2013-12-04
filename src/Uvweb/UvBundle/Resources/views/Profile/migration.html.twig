@@ -8,7 +8,7 @@ Migration - {{ parent() }}
 <div class="row-fluid">
   <div class="span12">
       <div class="page-header">
-        <h1>Migration de compte <small>Retrouver ton compte UVWeb pour l'utiliser sur UVWeb 2.0</small></h1>
+        <h1>Migration de compte <small>Retrouver ton compte UVweb pour l'utiliser sur UVweb 2.0</small></h1>
       </div>
   </div>
 </div>
@@ -17,9 +17,9 @@ Migration - {{ parent() }}
   <div class="span12">
     <div class="well">
       <p>
-        Si tu as créé un compte sur le précédent service UVWeb, tu peux entrer tes identifiants ici.
+        Si tu as créé un compte sur le précédent service UVweb, tu peux entrer tes identifiants ici.
         <br/>
-        Si ton compte est retrouvé tu seras redirigé vers le CAS que tu devras ensuite utiliser pour te connecter les prochaines fois (plus besoin de mot de passe UVWeb).
+        Si ton compte est retrouvé tu seras redirigé vers le CAS que tu devras ensuite utiliser pour te connecter les prochaines fois (plus besoin de mot de passe UVweb).
       </p>
       <br/>
       {{ form_errors(form_migration) }}
@@ -49,5 +49,6 @@ Migration - {{ parent() }}
   </div>
 </div>
 
+<div class="alert alert-warning">J'ai oublié mes identifiants : <a href="{{ path('uvweb_forgottenaccount') }}">les récupérer</a>.</div>
       
 {% endblock %}

@@ -24,11 +24,11 @@ class UserType extends AbstractType
                 ->add('email', 'email', array(
                     'label' => 'Email',
                 ))
-                ->add('firstsemester', 'choice', array(
+                ->add('firstSemester', 'choice', array(
                     'choices' => array('Automne' => 'Automne', 'Printemps' => 'Printemps'),
                     'label' => 'Semestre d\'entrée'
                 ))
-                ->add('firstyear', 'choice', array('choices' => $lastYears, 'label' => 'Année d\'entrée'))
+                ->add('firstYear', 'choice', array('choices' => $lastYears, 'label' => 'Année d\'entrée'))
                 ->add('origin', 'text', array(
                     'label' => 'Cursus d\'origine : prépa, IUT...',
                     'required' => true
@@ -42,7 +42,45 @@ class UserType extends AbstractType
                     'label' => 'Branche'
                 ))
                 ->add('filiere', 'choice', array(
-                    'choices' => array('' => 'Aucune', 'ICSI' => 'ICSI', 'BB' => 'BB'),
+                    'choices' => array('' => 'Aucune',
+                                       'MPI' => 'MPI',         //MPI
+                                       'GB' => array(    //GB
+                                           'BB' => 'BB',    
+                                           'BM' => 'BM',
+                                           'CIB' => 'CIB',
+                                           'IAA' => 'IAA'
+                                           ),
+                                       'GI' => array(  //GI
+                                           'ADEL' => 'ADEL',
+                                           'FDD' => 'FDD',
+                                           'ICSI' => 'ICSI',
+                                           'SRI' => 'SRI',
+                                           'STRIE' => 'STRIE'
+                                           ),
+                                       'GM' => array(    //GM
+                                           'AVI' => 'AVI', 
+                                           'FQI' => 'FQI',
+                                           'IDI' => 'IDI',
+                                           'MARS' => 'MARS',
+                                           'MIT' => 'MIT'
+                                           ),
+                                       'GP' => array(   //GP
+                                           'AI' => 'AI',
+                                           'CPI' => 'CPI',
+                                           'QSE' => 'QSE',
+                                           'TE' => 'TE'
+                                           ),
+                                       'GSM' => array(    //GSM
+                                           'CMI' => 'CMI',  
+                                           'MOPS' => 'MOPS',
+                                           'PIL' => 'PIL'
+                                           ),
+                                       'GSU' => array(    //GSU
+                                       'AIE' => 'AIE', 
+                                       'SR' => 'SR',
+                                       'STI' => 'STI'
+                                       )
+                                ),
                     'label' => 'Filière',
                     'required' => false
                 ));

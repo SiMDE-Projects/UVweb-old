@@ -19,14 +19,6 @@ class MigrationType extends AbstractType
             ))
         ;
     }
-/*
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'data_class' => 'Uvweb\UvBundle\Entity\News'
-        ));
-    }
-    */
 
     public function getName()
     {
@@ -34,4 +26,4 @@ class MigrationType extends AbstractType
     }
 }
 
- ?>
+?>

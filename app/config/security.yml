@@ -21,6 +21,8 @@ security:
         - { path: ^/post, roles: ROLE_USER }
         - { path: ^/user/edit, roles: ROLE_USER }
         - { path: ^/migration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/forgottenaccount, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/user/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
     firewalls:
         dev:
