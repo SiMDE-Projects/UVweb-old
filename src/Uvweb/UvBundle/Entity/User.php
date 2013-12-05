@@ -18,6 +18,7 @@ class User
     public function __construct()
     {
         $this->isadmin = 0;
+        $this->displayAvatar = false;
     }
 
     /**
@@ -129,7 +130,12 @@ class User
 
     private $avatar;
 
-
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="avatar_visible", type="boolean", nullable=false)
+     */
+    private $displayAvatar;
 
     /**
      * Get id
@@ -500,5 +506,28 @@ class User
     public function __toString()
     {
         return $this->identity;
+    }
+
+    /**
+     * Set displayAvatar
+     *
+     * @param boolean $displayAvatar
+     * @return User
+     */
+    public function setDisplayAvatar($displayAvatar)
+    {
+        $this->displayAvatar = $displayAvatar;
+
+        return $this;
+    }
+
+    /**
+     * Get displayAvatar
+     *
+     * @return boolean 
+     */
+    public function getDisplayAvatar()
+    {
+        return $this->displayAvatar;
     }
 }

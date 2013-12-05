@@ -36,7 +36,7 @@ class CommentType extends AbstractType
                     'Utile' => 'Utile', 'Pas très utile' => 'Pas très utile', 'Très peu utile' => 'Très peu utile', 'Inutile' => 'Inutile'),
                 'label' => 'Utilité'
             ))
-            ->add('workamount', 'choice', array(
+            ->add('workAmount', 'choice', array(
                 'choices' => array('Symbolique' => 'Symbolique', 'Faible' => 'Faible',
                     'Moyenne' => 'Moyenne', 'Importante' => 'Importante', 'Très importante' => 'Très importante'),
                 'label' => 'Quantité de travail'

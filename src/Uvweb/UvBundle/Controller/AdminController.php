@@ -63,14 +63,14 @@ class AdminController extends BaseController
             catch(\Exception $e)
             {
                 //Validation failed: notification for user
-
-                //Getting the view for the confirmation message to display
-                $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
-                                'message' => array(
-                                    'type' => 'error', 
-                                    'content' => "Une erreur s'est produite lors de la validation de l'avis."
-                                    )
-                                )))));
+                $response =  new Response(json_encode(array(
+                                'status' => 'error',
+                                'messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                                            'message' => array(
+                                                'type' => 'error', 
+                                                'content' => "Une erreur s'est produite lors de la validation de l'avis."
+                                )
+                            )))));
 
                 //We are sending json
                 $response->headers->set('Content-Type', 'application/json');
@@ -87,12 +87,14 @@ class AdminController extends BaseController
             }
 
             //Getting the view for the confirmation message to display
-            $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
-                            'message' => array(
-                                'type' => 'success', 
-                                'content' => 'Avis de ' . $comment->getAuthor()->getIdentity() . ' sur ' . $comment->getUv()->getName() . ' validé avec succès.'
-                                )
-                            )))));
+            $response =  new Response(json_encode(array(
+                            'status' => 'success', 
+                            'messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                                        'message' => array(
+                                            'type' => 'success', 
+                                            'content' => 'Avis de ' . $comment->getAuthor()->getIdentity() . ' sur ' . $comment->getUv()->getName() . ' validé avec succès.'
+                            )
+                        )))));
 
             //We are sending json
             $response->headers->set('Content-Type', 'application/json');
@@ -322,14 +324,15 @@ class AdminController extends BaseController
             catch(\Exception $e)
             {
                 //Deletion failed: notification for user
-
-                //Getting the view for the confirmation message to display
-                $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
-                                'message' => array(
-                                    'type' => 'error', 
-                                    'content' => "Une erreur s'est produite lors de la suppression de la news."
-                                    )
-                                )))));
+                $response =  new Response(json_encode(array(
+                                'status' => 'error',
+                                'messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                                            'status' => 'error',
+                                            'message' => array(
+                                                'type' => 'error', 
+                                                'content' => "Une erreur s'est produite lors de la suppression de la news."
+                                )
+                            )))));
 
                 //We are sending json
                 $response->headers->set('Content-Type', 'application/json');
@@ -346,12 +349,15 @@ class AdminController extends BaseController
             }
 
             //Getting the view for the confirmation message to display
-            $response =  new Response(json_encode(array('messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
-                            'message' => array(
-                                'type' => 'success', 
-                                'content' => 'News "' . $news->getTitle() . '" supprimée avec succès.'
-                                )
-                            )))));
+            $response =  new Response(json_encode(array(
+                            'status' => 'success',
+                            'messageHTML' => $this->renderView('UvwebUvBundle:Common:message-info.html.twig', array(
+                                        'status' => 'success',
+                                        'message' => array(
+                                            'type' => 'success', 
+                                            'content' => 'News "' . $news->getTitle() . '" supprimée avec succès.'
+                            )
+                        )))));
 
             //We are sending json
             $response->headers->set('Content-Type', 'application/json');

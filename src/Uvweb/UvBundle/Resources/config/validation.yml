@@ -28,6 +28,9 @@ Uvweb\UvBundle\Entity\User:
         branch:
             - NotBlank:
                 message: Un cursus est requis.
+        displayAvatar:
+            - NotBlank:
+                message: Un choix est requis.
 
 Uvweb\UvBundle\Entity\News:
     properties:
@@ -44,3 +47,24 @@ Uvweb\UvBundle\Entity\Comment:
         comment:
             - NotBlank:
                 message: Un commentaire est requis.
+        interest:
+            - NotBlank:
+                message: L'intérêt est requis.
+        passed:
+            - NotBlank:
+                message: L'obtention est requise.
+        utility:
+            - NotBlank:
+                message: L'utilité est requise.
+        globalRate:
+            - NotBlank:
+                message: Une note est requise.
+        workAmount:
+            - NotBlank:
+                message: La quantité de travail est requise.
+        pedagogy:
+            - NotBlank:
+                message: L'avis sur la pédagogie est requis.
+        semester:
+            - NotBlank:
+                message: Un semestre d'obtention est requis.

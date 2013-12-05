@@ -14,11 +14,14 @@
 
 {% block body %}
     <div class="page-header">
-        <h1>Bienvenue sur UVweb, <strong>{{ login }}</strong></h1>
+        <h1>Bienvenue sur UVweb, {{ login }}.</h1>
     </div>
-    <p>
+    <div class="alert alert-success">
         Ton compte UTC a été retrouvé avec succès. Inscris-toi rapidement sur UVweb pour poster des avis !
-    </p>
+    </div>
+    <div class="alert alert-info">
+        Si tu souhaites lier un avatar à l'adresse email que tu utilises sur UVweb, il te faut utiliser le service <a href="http://fr.gravatar.com" target="_blank">Gravatar</a> en y créant un compte.
+    </div>
     <div class="well">
             {{ form_errors(add_user_form) }}
         <form class="form-horizontal" method="post" {{ form_enctype(add_user_form) }}>

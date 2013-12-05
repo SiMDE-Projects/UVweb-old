@@ -25,9 +25,9 @@
       <div class="media">
 
           {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.login == user.login %}
-              <a href="http://fr.gravatar.com"  target="_blank" class="media-object img-polaroid pull-left"><img src="{{ gravatar(user.email, 120) }}"></a>
+              <a href="http://fr.gravatar.com"  target="_blank" class="media-object img-polaroid pull-left"><img src="{% if user.displayAvatar == true %}{{ gravatar(user.email, 120) }}{% else %}{{ gravatar('', 120) }}{% endif %}"></a>
           {% else %}
-              <img class="media-object img-polaroid pull-left" src="{{ gravatar(user.email, 120) }}">
+              <img class="media-object img-polaroid pull-left" src="{% if user.displayAvatar == true %}{{ gravatar(user.email, 120) }}{% else %}{{ gravatar('', 120) }}{% endif %}">
           {% endif %}
 
           <div class="media-body">

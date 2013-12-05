@@ -83,6 +83,12 @@ class UserType extends AbstractType
                                 ),
                     'label' => 'Filière',
                     'required' => false
+                ))
+                ->add('displayAvatar', 'choice', array(
+                    'choices' => array(true => 'Oui', false => 'Non'),
+                    'label'     => "Utiliser l'avatar lié à l'email ?",
+                    'required'  => true,
+                    'expanded' => true,
                 ));
     }
 
