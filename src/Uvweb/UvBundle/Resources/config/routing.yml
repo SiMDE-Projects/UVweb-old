@@ -57,6 +57,10 @@ uvweb_uv_appfeed:
     path: /uv/app/newsfeed
     defaults:  { _controller: UvwebUvBundle:Home:appNewsfeed }
 
+uvweb_uv_about:
+    pattern:   /about
+    defaults:  { _controller: UvwebUvBundle:Home:about }
+
 #Profile paths
 uvweb_user_add:
     pattern: /user/register
@@ -120,8 +124,15 @@ uvweb_admin_delete_news:
     requirements:
         newsid: \d+
 
-#Authentication paths
+#App paths
+uvweb_up_appuvlist:
+    pattern:   /uv/app/{category}/{order}
+    defaults:  { _controller: UvwebUvBundle:WebService:uvList, order: 'name' }
+    requirements:
+        category: "gb|gi|gm|gp|gsm|gsu|tsh|tc|all"
+        order: "name|rate"
 
+#Authentication paths
 sf_login:
     pattern: /sflogin
 

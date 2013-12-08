@@ -42,9 +42,18 @@
             <span class="icon-bar"></span>
           </a>
              
-          <a class="brand" href="{{ path('uvweb_uv_homepage') }}"><img src="{{ asset('img/uvweb_logo.png') }}"></a>
+          <a style="padding-top: 10px; padding-bottom: 10px;" class="brand" href="{{ path('uvweb_uv_homepage') }}"><img src="{{ asset('img/uvweb_logo.png') }}"></a>
+            <form id="search-uv-form" class="form-search navbar-search" method="GET" action="{{ path('uvweb_uv_detail') }}">
+              <div class="input-append">
+                <input style="width: 115px;" name="uvname" autocomplete="off" id="search-uv-name" class="search-query span2" type="text" placeholder="Rechercher une UV">
+                <button type="submit" class="btn btn-primary">
+                  <i class="icon-search icon-white"></i>
+                </button>
+              </div>
+            </form>
           <div class="nav-collapse collapse navbar-responsive-collapse">
             <ul class="nav pull-right">
+              <li class="{% if about is defined and about == true %}active{% endif %}"><a href="{{ path('uvweb_uv_about') }}">À Propos</a></li>
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                   UVs
@@ -66,7 +75,7 @@
                   <li><a href="{{ path('uvweb_uv_list', { 'order': 'rate' }) }}">Notes Étudiants</a></li>
                 </ul>
               </li>
-              <li style="height: 49px;" class="divider-vertical"></li>
+              <li class="divider-vertical"></li>
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                   <i class="icon-user icon-white"></i> 
@@ -88,7 +97,7 @@
 
                     <li><a href="{{ path('uvweb_logout') }}"><i class="icon-off"></i> Déconnexion</a></li>
                   {% else %}
-                    <li class="nav-header">Pas de compte UVWeb</li>
+                    <li class="nav-header">Connexion UVweb 2.0</li>
                     <li><a href="{{  path('uvweb_login') }}">Connexion (CAS UTC)</a></li>
                     <li class="nav-header">Inscrit sur UVWeb 1</li>
                     <li><a href="{{  path('uvweb_migration') }}">Retrouver mon compte</a></li>
@@ -97,14 +106,7 @@
               </li>
             </ul>
 
-            <form id="search-uv-form" class="form-search navbar-search pull-right" method="GET" action="{{ path('uvweb_uv_detail') }}" style="margin-right: 15px;">
-              <div class="input-append">
-                <input style="width: 120px;" name="uvname" autocomplete="off" id="search-uv-name" class="search-query span2" type="text" placeholder="Rechercher une UV">
-                <button type="submit" class="btn btn-primary">
-                  <i class="icon-search icon-white"></i>
-                </button>
-              </div>
-            </form>
+
           </div>
         </div>
       </div>
@@ -126,7 +128,16 @@
         <hr>
 
         <footer>
-          <p>&copy; <a href="http://masciulli.fr">Alexandre Masciulli</a> - <a href="http://thomaskeunebroek.fr">Thomas Keunebroek</a> - <a href="#">Maxime</a> 2013</p>
+          <div class="row-fluid">
+            <div class="span6">
+              <p>&copy; <a href="http://masciulli.fr">Alexandre Masciulli</a> - <a href="http://thomaskeunebroek.fr">Thomas Keunebroek</a> - <a href="#">Maxime</a> 2013</p>
+            </div>
+            <div class="span6">
+              <div class="pull-right">
+                <a href="{{ path('uvweb_uv_about') }}">À Propos</a>
+              </div>
+            </div>
+          </div>
         </footer>
       </div>
     </div>

@@ -13,12 +13,8 @@ class HomeController extends BaseController
         parent::__construct();
     }
 
-	public function indexAction() {
-        /** those lines allow redirection after submitting search bar form */
-        if( $redirect = $this->initSearchBar()) {
-            return $redirect;
-        }
-
+	public function indexAction() 
+    {
 		$manager = $this->getDoctrine()->getManager();
 		$commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
         $newsRepository = $manager->getRepository('UvwebUvBundle:News');
@@ -39,7 +35,6 @@ class HomeController extends BaseController
             'news' => $news,
             'bestUvs' => $bestUvs,
             'worstUvs' => $worstUvs,
-            'searchbar' => $this->searchBarForm->createView()
         ));
 	}
 
@@ -98,6 +93,11 @@ class HomeController extends BaseController
         }
 
         return new Response(json_encode($uvNames));
+    }
+
+    public function aboutAction()
+    {
+        return $this->render('UvwebUvBundle:Common:about.html.twig', array('about' => true));
     }
 }
 ?>

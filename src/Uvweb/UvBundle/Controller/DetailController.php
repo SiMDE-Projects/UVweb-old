@@ -314,7 +314,6 @@ class DetailController extends BaseController
     public function listCategoryAction($category, $order)
     {
         $manager = $this->getDoctrine()->getManager();
-        $categoryRepository = $manager->getRepository('UvwebUvBundle:Category');
         $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
 
         if($order === 'name' || $order === 'dynamic')
@@ -334,7 +333,6 @@ class DetailController extends BaseController
             if($order === 'dynamic') //Dynamic: pass the UV names to the appropriate view
                 return $this->render('UvwebUvBundle:Uv:all_ordered_category_ajax.html.twig', array('order' => $order, 'categoryName' => strtoupper($category), 'groupedUvs' => $groupedUvs));
             
-            //Order by name
             return $this->render('UvwebUvBundle:Uv:all_ordered_category.html.twig', array('order' => $order, 'categoryName' => strtoupper($category), 'groupedUvs' => $groupedUvs));
         }
         else if($order === 'rate')

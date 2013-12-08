@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityRepository;
  */
 class CommentRepository extends EntityRepository
 {
-	public function averageRate(Uv $uv) {
-
+	public function averageRate(Uv $uv) 
+	{
 		$qb = $this->createQueryBuilder('c');
 
 		$qb->select('AVG(c.globalRate) as globalRate')
@@ -36,7 +36,7 @@ class CommentRepository extends EntityRepository
 		return $comment !== null;
 	}
 
-	private function prepareUvListQuery()
+	private function prepareUvListQuery($limit = 0, $category = '', $webService)
 	{
 		$qb = $this->createQueryBuilder('c');
 
@@ -48,17 +48,16 @@ class CommentRepository extends EntityRepository
 		    ->andWhere('u.archived = :archived')->setParameter('archived', 0)
 		    ->groupBy('name');
 
-		return $qb;
-	}
+		//Called for web service
+		if($webService)
+		{
+			$qb->addSelect('u.title as title');
+		}
 
-	public function uvsOrderedByRate($limit = 0, $best = true, $minCountComments = 0, $category = '')
-	{
-		$qb = $this->prepareUvListQuery();
-
-		if(!empty($category))
+		if(!empty($category) && $category !== 'all')
 		{
 			if($category !== 'tsh')
-			{	
+			{
 				$qb->join('u.categories', 'cat')
 				   ->andWhere('cat.category = :categorie')->setParameter('categorie', $category);
 			}
@@ -70,46 +69,47 @@ class CommentRepository extends EntityRepository
 			}
 		}
 
+        if($limit > 0)
+        	$qb->setMaxResults($limit);
+
+		return $qb;
+	}
+
+	public function uvsOrderedByRate($limit = 0, $best = true, $minCountComments = 0, $category = '', $webService = false)
+	{
+		$qb = $this->prepareUvListQuery($limit, $category, $webService);
+
 		if($minCountComments > 0)
 		    $qb->having('commentCount > :minCount')->setParameter('minCount', $minCountComments);
 
+		//Order by rate first
 		if($best)
             $qb->orderBy('globalRate', 'DESC');
         else
             $qb->orderBy('globalRate', 'ASC');
 
+        //Then by name
         $qb->addOrderBy('name');
 
-        if($limit > 0)
-        	$qb->setMaxResults($limit);
+        //If web service call: return an array, as it will be encoded as Json
+        if($webService)
+        	return $qb->getQuery()->getScalarResult();
 
+        //Else return array of objects
 		return $qb->getQuery()->getResult();
 	}
 
-	public function uvsOrderedByName($limit = 0, $category = '')
+	public function uvsOrderedByName($limit = 0, $category = '', $webService = false)
 	{
-		$qb = $this->prepareUvListQuery();
-
-		if(!empty($category))
-		{
-			if($category !== 'tsh')
-			{
-				$qb->join('u.categories', 'cat')
-				   ->andWhere('cat.category = :categorie')->setParameter('categorie', $category);
-			}
-			else
-			{
-				//TSH
-				$qb->join('u.categories', 'cat')
-				   ->andWhere('cat.category in (:tsh)')->setParameter('tsh', array('EC', 'ME', 'CT'));
-			}
-		}
+		$qb = $this->prepareUvListQuery($limit, $category, $webService);
 
         $qb->addOrderBy('name');
 
-        if($limit > 0)
-        	$qb->setMaxResults($limit);
+        //If web service call: return an array, as it will be encoded as Json
+        if($webService)
+        	return $qb->getQuery()->getScalarResult();
 
+        //Else return array of objects
 		return $qb->getQuery()->getResult();
 	}
 }
