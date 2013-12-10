@@ -7,3 +7,11 @@
 </h2>
 
 {% endblock %}
+
+{% block editButton %}
+
+{% if app.user is not null and is_granted('ROLE_USER') and app.user.id == user.id %}
+	<a href={{ path('uvweb_uv_editcomment', { commentid: comment.id }) }} class="pull-right btn btn-mini btn-success"><i class="icon-white icon-pencil"></i> Éditer</a>
+{% endif %}
+
+{% endblock %}

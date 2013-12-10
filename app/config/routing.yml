@@ -1,4 +1,3 @@
 uvweb_uv:
     resource: "@UvwebUvBundle/Resources/config/routing.yml"
     prefix:   /
-

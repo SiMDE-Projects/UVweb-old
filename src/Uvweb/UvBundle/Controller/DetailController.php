@@ -95,8 +95,8 @@ class DetailController extends BaseController
         return $this->render('UvwebUvBundle:Uv:detail.html.twig', $viewParameters);
     }
 
-    public function postAction($uvname) {
-
+    public function postAction($uvname) 
+    {
         //Is the user registered ?
         $session = $this->getRequest()->getSession();
         $currentUser = $this->getUser();
@@ -132,6 +132,7 @@ class DetailController extends BaseController
         $this->createFormBuilder($comment);
 
         $request = $this->getRequest();
+        
         if($request->isMethod('POST')) 
         {
             $form->bind($request);

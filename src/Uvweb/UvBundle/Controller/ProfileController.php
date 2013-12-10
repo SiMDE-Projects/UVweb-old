@@ -8,6 +8,7 @@ use Uvweb\UvBundle\Form\UserType;
 use Uvweb\UvBundle\Form\UserEditType;
 use Uvweb\UvBundle\Form\MigrationType;
 use Uvweb\UvBundle\Form\ForgottenAccountType;
+use Uvweb\UvBundle\Form\CommentType;
 use \SimpleXMLElement;
 use \Httpful\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -22,29 +23,33 @@ class ProfileController extends BaseController
 
     public function displayAction($userid)
     {
-        /** those lines allow redirection after submitting search bar form */
-        if ($redirect = $this->initSearchBar()) 
-        {
-            return $redirect;
-        }
-
         $manager = $this->getDoctrine()->getManager();
         $userRepository = $manager->getRepository("UvwebUvBundle:User");
         $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
 
         $user = $userRepository->find($userid);
-        if ($user == null) throw $this->createNotFoundException("Cet utilisateur n'existe pas ou plus");
+        if ($user === null) throw $this->createNotFoundException("Cet utilisateur n'existe pas ou plus");
 
         $comments = $commentRepository->findBy(
             array('author' => $user, 'moderated' => true),
-            array('date' => 'desc'),
-            20,
-            0);
+            array('id' => 'desc')
+        );
+
+        $currentUser = $this->getUser();
+        $notValidatedComments = array(); //Array that might contain the current user not validated comments
+
+        if($currentUser !== null && $currentUser->getId() == $userid)
+        {
+            $notValidatedComments = $commentRepository->findBy(
+                array('author' => $user, 'moderated' => false),
+                array('id' => 'desc')
+            );
+        }
 
         return $this->render("UvwebUvBundle:Profile:profile.html.twig", array(
-            'searchbar' => $this->searchBarForm->createView(),
             'user' => $user,
             'comments' => $comments,
+            'notValidatedComments' => $notValidatedComments,
             'userView' => true
         ));
     }
@@ -364,6 +369,73 @@ class ProfileController extends BaseController
         }
 
         return $this->render('UvwebUvBundle:Profile:forgotten_account.html.twig', array('form_forgotten_account' => $form->createView()));
+    }
+
+    public function editCommentAction($commentid)
+    {
+        $currentUser = $this->getUser();
+
+        $manager = $this->getDoctrine()->getManager();
+
+        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+        $userRepository = $manager->getRepository("UvwebUvBundle:User");
+
+        $comment = $commentRepository->find($commentid);
+
+        if($comment->getAuthor()->getId() !== $currentUser->getId())  //Not the author of the comment: not allowed to edit it
+            return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
+
+        //Commented UV
+        $uv = $comment->getUv();
+
+        if ($uv->getArchived())
+        {
+            $this->get('uvweb_uv.fbmanager')->addFlashMessage("Cette UV est archivée, il est impossible de modifier un commentaire sur celle-ci.");
+
+            return $this->redirect($this->generateUrl('uvweb_uv_profile', array('userid' => $currentUser->getId())));
+        }
+
+        $form = $this->createForm(new CommentType($uv), $comment);
+        $this->createFormBuilder($comment);
+
+        $request = $this->getRequest();
+
+        if($request->isMethod('POST'))
+        {
+            $form->bind($request);
+
+            if($form->isValid()) 
+            {
+                $comment->setDate(new \DateTime());
+                $comment->setModerated(false);
+
+                try
+                {
+                    $manager->persist($comment);
+                    $manager->flush();
+                }
+                catch(\Exception $e)
+                {
+                    $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de la modification de l'avis.");
+
+                    //Update failed: invite the user to try again, displaying the errors
+                    return $this->render('UvwebUvBundle:Uv:post.html.twig', array(
+                        'uv' => $uv,
+                        'add_comment_form' => $form->createView()
+                    ));
+                }
+
+                $this->get('uvweb_uv.fbmanager')->addFlashMessage("Avis modifié avec succès ! Il doit maintenant être validé par un modérateur pour être visible par tout le monde.", 'success');
+
+                return $this->redirect($this->generateUrl('uvweb_uv_profile', array('userid' => $currentUser->getId())));
+            }
+        }
+
+        return $this->render('UvwebUvBundle:Uv:post.html.twig', array(
+            'uv' => $uv,
+            'add_comment_form' => $form->createView()
+        ));
     }
 
     /* ====== Private functions                                                                         ======= */

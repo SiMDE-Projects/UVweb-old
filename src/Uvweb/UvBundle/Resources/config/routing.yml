@@ -15,10 +15,6 @@ uvweb_uv_nameslike:
     path: /uv/like
     defaults: { _controller: UvwebUvBundle:Home:getUvNamesLike }
 
-uvweb_uv_uvtitlefetcher:
-    path: /uv/titlefetcher
-    defaults:  { _controller: UvwebUvBundle:Detail:uvTitle }
-
 uvweb_uv_detail:
     path: /uv/{uvname}
     defaults:  { _controller: UvwebUvBundle:Detail:detail, uvname: '' }
@@ -27,38 +23,18 @@ uvweb_uv_newpost:
     path: /post/{uvname}
     defaults:  { _controller: UvwebUvBundle:Detail:post }
 
-uvweb_uv_uvnametoid:
-    path: /uv/uvnametoid
-    defaults:  { _controller: UvwebUvBundle:Detail:uvNametoUvId }
-
-uvweb_uv_pollsemestertoyear:
-    path: /uv/pollsemestertoyear
-    defaults:  { _controller: UvwebUvBundle:Detail:pollSemesterToYear }
-
-uvweb_uv_search:
-    path: /uv/search/{searchtext}
-    defaults:  { _controller: UvwebUvBundle:Detail:search }
-
-uvweb_uv_applist:
-    path: /uv/app/list
-    defaults:  { _controller: UvwebUvBundle:Detail:appList }
-
-uvweb_uv_appdetail:
-    path: /uv/app/{uvname}
-    defaults:  { _controller: UvwebUvBundle:Detail:appDetail }
+uvweb_uv_editcomment:
+    path: /user/edit/comment/{commentid}
+    defaults:  { _controller: UvwebUvBundle:Profile:editComment }
     requirements:
-        uvname:  ^[a-zA-Z]{2}+[0-9]{2}$
+        commentid: \d+
 
 uvweb_uv_homepage:
-    pattern:  /
+    path:  /
     defaults: { _controller: UvwebUvBundle:Home:index }
 
-uvweb_uv_appfeed:
-    path: /uv/app/newsfeed
-    defaults:  { _controller: UvwebUvBundle:Home:appNewsfeed }
-
 uvweb_uv_about:
-    pattern:   /about
+    path:   /about
     defaults:  { _controller: UvwebUvBundle:Home:about }
 
 #Profile paths
@@ -89,7 +65,6 @@ uvweb_user_edit:
     defaults: { _controller: UvwebUvBundle:Profile:editUser }
     requirements:
         userid: \d+
-
 
 #Admin paths
 uvweb_admin_home:
@@ -123,14 +98,6 @@ uvweb_admin_delete_news:
     defaults:  { _controller: UvwebUvBundle:Admin:deleteNews }
     requirements:
         newsid: \d+
-
-#App paths
-uvweb_up_appuvlist:
-    pattern:   /uv/app/{category}/{order}
-    defaults:  { _controller: UvwebUvBundle:WebService:uvList, order: 'name' }
-    requirements:
-        category: "gb|gi|gm|gp|gsm|gsu|tsh|tc|all"
-        order: "name|rate"
 
 #Authentication paths
 sf_login:

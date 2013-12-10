@@ -8,6 +8,7 @@
 	  		</div>
 			<div class="span4 date text-right">
 				<h4>Le {{ comment.date|date('d/m/Y') }}</h4>
+				{% block editButton %}{% endblock %}
 			</div>
 		</div>
 		<div style="margin-top: 15px;" class="row-fluid">
@@ -29,6 +30,8 @@
 				</dl>
 			</div>
 		</div>
+
+	
 		
 		{% if not loop.last %}
 			<hr>

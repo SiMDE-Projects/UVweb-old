@@ -41,6 +41,33 @@
           </div>
       </div>
 
+      {% if is_granted('ROLE_USER') and app.user.id == user.id %}
+
+        {% if notValidatedComments|length == 0 %}
+          <div class="row-fluid">
+            <div class="span12 well">
+              Aucun commentaire en attente de validation.
+            </div>
+          </div>
+        {% else %}
+          <div class="page-header">
+              <div class="row-fluid">
+                  <h3>
+                    {% if notValidatedComments|length > 1 %}
+                      {{ notValidatedComments|length }} Commentaires
+                    {% else %}
+                      1 Commentaire
+                    {% endif %} en attente de validation
+                  </h3>
+              </div>
+          </div>
+          {% for notValComment in notValidatedComments %}
+              {% include 'UvwebUvBundle:Profile:review_user_profile_row.html.twig' with {'comment': notValComment, 'userid': user.id } %}
+          {% endfor %}
+        {% endif %}
+
+      {% endif %}
+
       {% if comments %}
 
           <div class="page-header">
@@ -50,7 +77,7 @@
           </div>
 
           {% for comment in comments %}
-              {% include 'UvwebUvBundle:Profile:review_user_profile_row.html.twig' with {'comment': comment} %}
+              {% include 'UvwebUvBundle:Profile:review_user_profile_row.html.twig' with {'comment': comment, 'userid': user.id } %}
           {% endfor %}
 
       {% else %}
@@ -59,7 +86,7 @@
           <div class="row-fluid">
             <div class="span12 well">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') and app.user.login == user.login %}
-                    <p>Tu n'as pas encore posté d'avis sur UVweb</p>
+                    <p>Aucun commentaire validé sur ton compte UVweb.</p>
                 {% else %}
                     <p>{{ user.identity }} n'a pas encore posté d'avis sur UVweb.</p>
                 {% endif %}

@@ -35,38 +35,9 @@
 <script type="text/javascript" language="javascript">
 
 $(function(){
+	
+	initDynamicList();
 
-	var uvLink = '';
-	var $uvContainer = $('#uv-container');
-	var $active; //To save the "active" tr
-
-	$('table tbody tr[uv-name]').on('click', function(){
-		//Getting the link of the clicked uv
-		uvLink = $('td .uv-link', $(this)).attr('href');
-		$.ajax({
-			url: uvLink,
-			type: 'POST',
-			dataType: 'json',
-			success: function(result) {
-				if(result.status !== 'error') {
-					$uvContainer.html(result.html);
-				}
-			}
-		});
-
-		if(typeof $active !== 'undefined' && $active !== $(this))
-			$active.removeClass('active');
-
-		$(this).addClass('active');
-		$active = $(this);
-	});
-
-	//Scrolling button to top of the page
-	$("#scroll-top-page").click(function() {
-	    $('html, body').animate({
-	        scrollTop: 0
-	    }, 100);
-	});
 });
 
 </script>

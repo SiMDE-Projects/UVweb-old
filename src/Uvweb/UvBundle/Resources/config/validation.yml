@@ -47,6 +47,9 @@ Uvweb\UvBundle\Entity\Comment:
         comment:
             - NotBlank:
                 message: Un commentaire est requis.
+            - Length:
+                max: 10000
+                maxMessage: La limite de caractères a été dépassée (10 000 maximum).
         interest:
             - NotBlank:
                 message: L'intérêt est requis.

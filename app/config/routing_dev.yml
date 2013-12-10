@@ -12,3 +12,7 @@ _configurator:
 
 _main:
     resource: routing.yml
+
+uvweb_uv_dev:
+    resource: "@UvwebUvBundle/Resources/config/routing_dev.yml"
+    prefix:   /
