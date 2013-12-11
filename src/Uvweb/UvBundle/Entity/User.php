@@ -246,7 +246,8 @@ class User
      */
     public function getUtcLogin()
     {
-        return split("@", $this->email)[0];
+        $split = split("@", $this->email);
+        return $split[0];
     }
 
     /**
