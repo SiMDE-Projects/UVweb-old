@@ -28,10 +28,12 @@ class BaseController extends Controller
 
         $request = $this->getRequest();
 
+        $data = $this->searchBarForm->getData();
+
         if ($request->getMethod() == 'POST') {
             $this->searchBarForm->bind($request);
             if ($this->searchBarForm->isValid()) {
-                return $this->redirect($this->generateUrl('uvweb_uv_detail', array('uvname' => $this->searchBarForm->getData()['statement'])));
+                return $this->redirect($this->generateUrl('uvweb_uv_detail', array('uvname' => $data['statement'])));
             }
         }
     }
