@@ -151,7 +151,7 @@ class AdminController extends BaseController
 
                 $message = \Swift_Message::newInstance()
                     ->setSubject('Commentaire refusé')
-                    ->setFrom('a@gmail.com')
+                    ->setFrom('uvweb@assos.utc.fr')
                     ->setTo($author->getEmail())
                     ->setBody($this->renderView('UvwebUvBundle:Mail:refused_comment.txt.twig', array(
                                         'userIdentity' => $author->getIdentity(),

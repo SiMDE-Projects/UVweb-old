@@ -351,7 +351,7 @@ class ProfileController extends BaseController
 
                         $message = \Swift_Message::newInstance()
                             ->setSubject('Identifiants oubliés')
-                            ->setFrom('a@gmail.com')
+                            ->setFrom('uvweb@assos.utc.fr')
                             ->setTo($user->getEmail())
                             ->setBody($this->renderView('UvwebUvBundle:Mail:password.txt.twig', array('login' => $user->getLogin(), 'password' => $newPassword)));
 
