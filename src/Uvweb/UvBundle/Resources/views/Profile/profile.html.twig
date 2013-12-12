@@ -44,7 +44,7 @@
       {% if is_granted('ROLE_USER') and app.user.id == user.id %}
 
         {% if notValidatedComments|length == 0 %}
-          <div class="row-fluid">
+          <div style="margin-top: 10px;" class="row-fluid">
             <div class="span12 well">
               Aucun commentaire en attente de validation.
             </div>
