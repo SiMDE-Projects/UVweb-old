@@ -20,11 +20,6 @@ class DetailController extends BaseController
 
     public function detailAction($uvname = '')
     {
-        /** those lines allow redirection after submitting search bar form */
-        if ($redirect = $this->initSearchBar()) {
-            return $redirect;
-        }
-
         $ajaxRequest = $this->getRequest()->isXmlHttpRequest(); //Can be called from the dynamic list view
 
         //Parameter from symfony route
@@ -58,16 +53,6 @@ class DetailController extends BaseController
             0
         );
 
-        foreach ($comments as $comment) {
-            try {
-                $author = $comment->getAuthor()->getLogin();
-            } catch (EntityNotFoundException $e) {
-                $userRepository = $manager->getRepository("UvwebUvBundle:User");
-                $author = $userRepository->find(2543);
-                $comment->setAuthor($author);
-            }
-        }
-
         $polls = $pollRepository->findBy(
             array('uvName' => $uvname),
             array('year' => 'desc', 'season' => 'asc'),
@@ -88,9 +73,6 @@ class DetailController extends BaseController
         {
             return new Response(json_encode(array('status' => 'success', 'html' => $this->renderView('UvwebUvBundle:Uv:detail_body.html.twig', $viewParameters))));
         }
-
-        $viewParameters['searchbar'] = $this->searchBarForm->createView();
-
 
         return $this->render('UvwebUvBundle:Uv:detail.html.twig', $viewParameters);
     }
