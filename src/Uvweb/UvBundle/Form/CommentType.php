@@ -17,6 +17,40 @@ class CommentType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        //Array of semesters
+        $semesters = array();
+        $currentMonth = date('m');
+        $currentSemester = 'A';
+
+        if($currentMonth > 1 && $currentMonth < 9) //Spring semester
+            $currentSemester = 'P';
+
+        $year = date('Y') % 100; //Starting with current year
+
+        for($i = 0; $i < 5; $i++)
+        {
+            if($currentSemester == 'A')
+            {
+                if($i % 2 == 0 && !empty($semesters)) //2 Semesters were added (we make sure not to do $year-- if array is still empty)
+                    $year--;
+
+                if($i % 2 == 0)
+                    $semesters['A' . $year] = 'A' . $year;
+                else
+                    $semesters['P' . $year] = 'P' . $year;
+            }
+            else
+            {
+                if($i % 2 == 1 && !empty($semesters)) //2 Semesters were added, but starting on spring
+                    $year--;
+
+                if($i % 2 == 1)
+                    $semesters['A' . $year] = 'A' . $year;
+                else
+                    $semesters['P' . $year] = 'P' . $year;
+            }
+        }
+
         $builder
             ->add('comment', 'textarea', array(
                 'label' => 'Ton commentaire'
@@ -46,7 +80,7 @@ class CommentType extends AbstractType
                 'label' => 'As-tu obtenu '. $this->uv->getName() . ' ?'
             ))
             ->add('semester', 'choice', array(
-                'choices' => array('P13' => 'P13', 'A12' => 'A12', 'P12' => 'P12'),
+                'choices' => $semesters,
                 'label' => 'Semestre au cours duquel tu l\'as effectuée '
             ))
             ->add('globalRate', 'choice', array(
