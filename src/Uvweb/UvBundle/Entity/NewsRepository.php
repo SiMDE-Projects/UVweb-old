@@ -15,7 +15,7 @@ class NewsRepository extends EntityRepository
     public function findLastNews()
     {
         $queryBuilder = $this->createQueryBuilder('n');
-        $queryBuilder->where('n.date >= :date')->setParameter('date', new \Datetime(date('Y').'-01-01')); //We don't have to retrieve the very old news...
+        $queryBuilder->where('n.date >= :sixMonthsAgo')->setParameter('sixMonthsAgo', new \DateTime('-6 month')); //We don't have to retrieve the very old news: getting the news from the last six months
         $queryBuilder->setMaxResults(20);
         $queryBuilder->orderBy('n.id', 'desc'); //Order by id: with autoincrement last news is the highest id number
         
