@@ -16,9 +16,15 @@ Uvweb\UvBundle\Entity\User:
         identity:
             - NotBlank: 
                 message: Un pseudo est requis.
+            - Length:
+                max: 32
+                maxMessage: Le pseudo ne doit pas faire plus de 32 caractères.
         origin:
             - NotBlank:
                 message: Un cursus d'origine est requis.
+            - Length:
+                max: 20
+                maxMessage: Le cursus d'origine ne doit pas faire plus de 20 caractères.
         firstSemester:
             - NotBlank:
                 message: Un semestre d'entrée est requis.
@@ -37,10 +43,15 @@ Uvweb\UvBundle\Entity\News:
         title:
             - NotBlank:
                 message: Un titre est requis.
-
+            - Length:
+                max: 100
+                maxMessage: Le titre de la news ne doit pas excéder 100 caractères.
         text:
             - NotBlank:
                 message: Un contenu est requis.
+            - Length:
+                max: 1000
+                maxMessage: Le contenu de la news ne doit pas excéder 1000 caractères.
 
 Uvweb\UvBundle\Entity\Comment:
     properties:
