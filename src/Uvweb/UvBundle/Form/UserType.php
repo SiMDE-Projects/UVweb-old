@@ -86,7 +86,7 @@ class UserType extends AbstractType
                 ))
                 ->add('displayAvatar', 'choice', array(
                     'choices' => array(true => 'Oui', false => 'Non'),
-                    'label'     => "Utiliser l'avatar lié à l'email ?",
+                    'label'     => "Utiliser l'avatar lié à l'email ? (Le \"Gravatar\")",
                     'required'  => true,
                     'expanded' => true,
                 ));

@@ -1,5 +1,5 @@
 #Web Service paths
-uvweb_up_appuvlist:
+uvweb_uv_appuvlist:
     pattern:   /uv/app/{category}/{order}
     defaults:  { _controller: UvwebUvBundle:WebService:uvList, order: 'name' }
     requirements:
