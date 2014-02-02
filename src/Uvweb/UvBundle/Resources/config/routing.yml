@@ -105,11 +105,3 @@ sf_login:
 
 uvweb_logout:
     pattern: /logout
-
-
-
-
-
-uvweb_uv_setuvdefinitions:
-    path: /setuvdefinitions
-    defaults:  { _controller: UvwebUvBundle:Home:setUvDefinitions }

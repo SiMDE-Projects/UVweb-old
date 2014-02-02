@@ -36,3 +36,10 @@ uvweb_uv_pollsemestertoyear:
 uvweb_uv_search:
     path: /uv/search/{searchtext}
     defaults:  { _controller: UvwebUvBundle:Detail:search }
+
+
+
+#Setting uv definitions
+uvweb_uv_setuvdefinitions:
+    path: /setuvdefinitions
+    defaults:  { _controller: UvwebUvBundle:Home:setUvDefinitions }
