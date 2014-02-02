@@ -99,5 +99,38 @@ class HomeController extends BaseController
     {
         return $this->render('UvwebUvBundle:Common:about.html.twig', array('about' => true));
     }
+
+    public function setuvdefinitionsAction()
+    {
+        // Include the library
+        include_once('uvtitlefetcher/simple_html_dom.php');
+        
+        $manager = $this->getDoctrine()->getManager();
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+
+        // Retrieve the DOM from a given URL
+        $html = file_get_html('../uvs.html');
+
+        $uvsHTML = $html->find('tr');
+
+        foreach($uvsHTML as $uvHTML)
+        {
+            $uv = $uvRepository->findOneBy(array('name' => $uvHTML->children(0)->innertext, 'title' => ''));
+
+            if($uv !== null)
+            {
+                echo $uvHTML->children(4)->innertext . ' ' . $uvHTML->children(0)->innertext . '<br/>';
+
+                $uv->setTitle(html_entity_decode($uvHTML->children(4)->innertext));
+
+                $manager->persist($uv);
+            }
+        }
+
+        $manager->flush();
+
+        return new Response('Done');
+    }
 }
+
 ?>

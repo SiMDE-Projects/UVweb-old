@@ -23,6 +23,7 @@ security:
         - { path: ^/migration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/forgottenaccount, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/user/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/setuvdefinitions, roles: ROLE_ADMIN }
 
     firewalls:
         dev:
