@@ -27,6 +27,7 @@ class DetailController extends BaseController
         {
             //If is empty: is there a get parameter?
             $uvname = $this->getRequest()->query->get('uvname');
+
             if(empty($uvname))
             {
                 $this->get('uvweb_uv.fbmanager')->addFlashMessage("Vous devez entrer un nom d'UV.");
@@ -44,7 +45,16 @@ class DetailController extends BaseController
         $pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
 
         $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0));
-        if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
+
+        if ($uv === null)
+        {
+            $this->get('uvweb_uv.fbmanager')->addFlashMessage("Non d'UV invalide : cette UV n'existe pas ou n'existe plus.");
+
+            if(!$ajaxRequest)
+                return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
+            else
+                return new Response(json_encode(array('status' => 'error')));
+        }
 
         $comments = $commentRepository->findBy(
             array('uv' => $uv, 'moderated' => true),
