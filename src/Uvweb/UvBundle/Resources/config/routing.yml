@@ -1,14 +1,23 @@
+#Setting uv definitions
+uvweb_uv_setuvdefinitions:
+    path: /setuvdefinitions
+    defaults:  { _controller: UvwebUvBundle:Home:setUvDefinitions }
+
 uvweb_uv_list:
     path: /uv/all/{order}
     defaults:  { _controller: UvwebUvBundle:Detail:listAll, order: 'name' }
     requirements:
         order: "name|rate"
 
+uvweb_uv_catalog:
+    path: /uv/catalog
+    defaults:  { _controller: UvwebUvBundle:Detail:catalog}
+
 uvweb_uv_list_category:
     path: /uv/{category}/{order}
     defaults:  { _controller: UvwebUvBundle:Detail:listCategory, order: 'name' }
     requirements:
-        category: "gb|gi|gm|gp|gsm|gsu|tsh|tc"
+        category: "gb|gi|gm|gp|gsm|gsu|tsh|tc|master|doctorat"
         order: "name|rate|dynamic"
 
 uvweb_uv_nameslike:
@@ -105,3 +114,10 @@ sf_login:
 
 uvweb_logout:
     pattern: /logout
+
+#Web Service paths
+uvweb_uv_recentactivity:
+    path: /app/recentactivity
+    defaults:  { _controller: UvwebUvBundle:WebService:recentActivity }
+    requirements:
+        _method: GET
