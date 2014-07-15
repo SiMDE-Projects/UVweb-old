@@ -33,4 +33,102 @@ class UvRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    private function prepareUvListQuery($limit = 0, $category = '', $webService, $uvWithoutComment)
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        $qb->select('AVG(c.globalRate) AS globalRate')
+            ->addSelect('COUNT(c.globalRate) AS commentCount')
+            ->addSelect('u.name as name');
+
+        if(!$uvWithoutComment) //Need UVs with comments
+        {
+            $qb->leftjoin('u.comments', 'c')
+               ->andWhere('c.moderated = :moderated')->setParameter('moderated', true);
+        }
+        else //Uvs can have no comment
+        {
+            $qb->leftjoin('u.comments', 'c', \Doctrine\ORM\Query\Expr\Join::WITH, 'c.moderated = :moderated')
+               ->setParameter('moderated', true);
+        }
+        
+        $qb->andWhere('u.archived = :archived')->setParameter('archived', 0)
+            ->groupBy('name');
+
+        //Called for web service
+        if($webService)
+        {
+            $qb->addSelect('u.title as title');
+        }
+
+        //Do we only want uv with comments?
+        if($uvWithoutComment)
+        {
+            $qb->orWhere('c.moderated  is null');
+        }
+
+        if(!empty($category) && $category !== 'all')
+        {
+            if($category === 'master')
+                $category = 'MASTER';
+            elseif($category === 'doctorat')
+                $category = 'DOCT';
+
+            if($category !== 'tsh')
+            {
+                $qb->join('u.categories', 'cat')
+                   ->andWhere('cat.category = :categorie')->setParameter('categorie', $category);
+            }
+            else
+            {
+                //TSH
+                $qb->join('u.categories', 'cat')
+                   ->andWhere('cat.category in (:tsh)')->setParameter('tsh', array('EC', 'ME', 'CT', 'TSH'));
+            }
+        }
+
+        if($limit > 0)
+            $qb->setMaxResults($limit);
+
+        return $qb;
+    }
+
+    public function uvsOrderedByRate($limit = 0, $best = true, $minCountComments = 0, $category = '', $webService = false, $uvWithoutComment = true)
+    {
+        $qb = $this->prepareUvListQuery($limit, $category, $webService, $uvWithoutComment);
+
+        if($minCountComments > 0)
+            $qb->having('commentCount > :minCount')->setParameter('minCount', $minCountComments);
+
+        //Order by rate first
+        if($best)
+            $qb->orderBy('globalRate', 'DESC');
+        else
+            $qb->orderBy('globalRate', 'ASC');
+
+        //Then by name
+        $qb->addOrderBy('name');
+
+        //If web service call: return an array, as it will be encoded as Json
+        if($webService)
+            return $qb->getQuery()->getScalarResult();
+
+        //Else return array of objects
+        return $qb->getQuery()->getResult();
+    }
+
+    public function uvsOrderedByName($limit = 0, $category = '', $webService = false, $uvWithoutComment = true)
+    {
+        $qb = $this->prepareUvListQuery($limit, $category, $webService, $uvWithoutComment);
+
+        $qb->addOrderBy('name');
+
+        //If web service call: return an array, as it will be encoded as Json
+        if($webService)
+            return $qb->getQuery()->getScalarResult();
+
+        //Else return array of objects
+        return $qb->getQuery()->getResult();
+    }
 }

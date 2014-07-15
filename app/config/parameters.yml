@@ -2,7 +2,7 @@ parameters:
     database_driver:   pdo_mysql
     database_host:     127.0.0.1
     database_port:     ~
-    database_name:     uvweb
+    database_name:     uvweb_test_doctorat
     database_user:     root
     database_password: ~
 

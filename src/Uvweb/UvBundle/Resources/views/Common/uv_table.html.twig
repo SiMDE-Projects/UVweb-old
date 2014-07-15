@@ -19,7 +19,11 @@
 					{% if uv.globalRate > 7 %}
 						<td class="text-success">{{ uv.globalRate | number_format(2, ',', '.') }}</td>
 					{% elseif uv.globalRate < 5 %}
-						<td class="text-error">{{ uv.globalRate | number_format(2, ',', '.') }}</td>
+						{% if uv.globalRate == 0 and uv.commentCount == 0 %}
+							<td> - </td>
+						{% else %}
+							<td class="text-error">{{ uv.globalRate | number_format(2, ',', '.') }}</td>
+						{% endif %}
 					{% else %}
 						<td>{{ uv.globalRate | number_format(2, ',', '.') }}</td>
 					{% endif %}

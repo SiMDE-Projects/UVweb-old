@@ -2,9 +2,12 @@
  
 namespace Uvweb\UvBundle\Controller;
 
+use CG\Tests\Generator\Fixture\Entity;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Uvweb\UvBundle\Entity\Comment;
+use Uvweb\UvBundle\Form\CommentRestType;
 
 class WebServiceController extends BaseController
 {
@@ -50,10 +53,8 @@ class WebServiceController extends BaseController
         return new Response(json_encode($groupedUvs));
     }
 
-    public function uvDetailsAction()
+    public function uvDetailsAction($uvname)
     {
-        $uvname = $this->getRequest()->request->get('uvname');
-
         if(empty($uvname))
         {
             return new Response(json_encode(array('status' => 'error')));
@@ -136,6 +137,123 @@ class WebServiceController extends BaseController
             $comment['comment'] = strip_tags($comment['comment']);
 
         return new Response(json_encode(array('status' => 'success', 'comments' => $comments)));
+    }
+
+    public function postCommentAction($uvname)
+    {
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
+
+        $currentUser = $this->getUser();
+
+        $manager = $this->getDoctrine()->getManager();
+
+        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+        $userRepository = $manager->getRepository("UvwebUvBundle:User");
+
+        $author = $userRepository->find($currentUser->getId());
+        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0));
+
+        if ($uv == null)
+        {
+            $response->setContent(json_encode("Cette UV n'existe pas ou plus."));
+            $response->setStatusCode(404);
+            return $response;
+        }
+
+        //Has the user already commented this UV in the past?
+        if($commentRepository->userAlreadyCommentedUv($author, $uv))
+        {
+            $response->setContent(json_encode("UV déjà commentée."));
+            $response->setStatusCode(500);
+            return $response;
+        }
+
+        $comment = new Comment();
+        $comment->setUv($uv);
+
+        $form = $this->createForm(new CommentRestType($uv, $this->get('uvweb_comment.commenthelper')), $comment);
+        $this->createFormBuilder($comment);
+
+        $request = $this->getRequest();
+
+        $requestData = json_decode($request->getContent(), true);
+
+        //Did not work with $form->bind($requestData)...
+        $form->bind(array(
+                'comment' => $requestData['comment'],
+                'pedagogy' => $requestData['pedagogy'],
+                'workAmount' => $requestData['workAmount'],
+                'semester' => $requestData['semester'],
+                'interest' => $requestData['interest'],
+                'globalRate' => $requestData['globalRate'],
+                'passed' =>  $requestData['passed'],
+                'utility' => $requestData['utility']
+            ));
+
+        if($form->isValid())
+        {
+            $comment->setDate(new \DateTime());
+            $comment->setModerated(false);
+            $comment->setAuthor($author);
+
+            try
+            {
+                $manager->persist($comment);
+                $manager->flush();
+            }
+            catch(\Exception $e)
+            {
+                $response->setContent(json_encode("Erreur lors de l'insertion.\n" . $e->getMessage()));
+                $response->setStatusCode(500);
+                return $response;
+            }
+        }
+        else
+        {
+            $response->setContent(json_encode(array("Erreur lors de la validation du formulaire.")));
+            $response->setStatusCode(500);
+            return $response;
+        }
+
+        return new Response(json_encode('Commentaire ajouté avec succès.'));
+    }
+
+    public function userAllowedToCommentAction($uvname)
+    {
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
+
+        $currentUser = $this->getUser();
+
+        $manager = $this->getDoctrine()->getManager();
+
+        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+        $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+        $userRepository = $manager->getRepository("UvwebUvBundle:User");
+
+        $author = $userRepository->find($currentUser->getId());
+        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0));
+
+        if ($uv == null)
+        {
+            $response->setContent(json_encode("Cette UV n'existe pas ou plus."));
+            $response->setStatusCode(404);
+            return $response;
+        }
+
+        //Has the user already commented this UV in the past?
+        if($commentRepository->userAlreadyCommentedUv($author, $uv))
+        {
+            $response->setContent(json_encode(array("alreadyCommented" =>true)));
+            return $response;
+        }
+
+        //UV exists and was not commented by the user
+        $response->setContent(json_encode(array("alreadyCommented" => false)));
+
+        return $response;
     }
 }
 ?>

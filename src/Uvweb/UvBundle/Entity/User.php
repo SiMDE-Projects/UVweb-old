@@ -5,6 +5,7 @@ namespace Uvweb\UvBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User
@@ -13,13 +14,79 @@ use Symfony\Component\Validator\ExecutionContextInterface;
  * @ORM\Entity(repositoryClass="Uvweb\UvBundle\Entity\UserRepository")
  */
 
-class User
+class User implements UserInterface, \Serializable
 {
     public function __construct()
     {
         $this->isadmin = 0;
         $this->displayAvatar = false;
+        $this->isActive = true;
+        $this->salt = md5(uniqid(null, true));
     }
+
+    /**
+     */
+    private $salt;
+
+    /**
+     */
+    private $isActive;
+
+    /**
+     * @inheritDoc
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUsername()
+    {
+        return $this->identity;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRoles()
+    {
+        if($this->getIsAdmin())
+            return array('ROLE_ADMIN');
+        else
+            return array('ROLE_USER');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function eraseCredentials()
+    {
+    }
+
+   /**
+     * @see \Serializable::serialize()
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+        ));
+    }
+
+    /**
+     * @see \Serializable::unserialize()
+     */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+        ) = unserialize($serialized);
+    }
+
+
 
     /**
      * @var integer
@@ -38,11 +105,20 @@ class User
     private $login;
 
     /**
+     * This is the password used for the api (mobile apps)
+     * @var string
+     *
+     * @ORM\Column(name="app_password", type="string", length=128, nullable=true)
+     */
+    private $password;
+
+    /**
+     * This is the password of UVweb 1 for people who had an account
      * @var string
      *
      * @ORM\Column(name="mdp", type="string", length=32, nullable=true)
      */
-    private $password;
+    private $uvwebOriginalPassword;
 
     /**
      * @var string
@@ -530,5 +606,28 @@ class User
     public function getDisplayAvatar()
     {
         return $this->displayAvatar;
+    }
+
+    /**
+     * Set uvwebOriginalPassword
+     *
+     * @param string $uvwebOriginalPassword
+     * @return User
+     */
+    public function setUvwebOriginalPassword($uvwebOriginalPassword)
+    {
+        $this->uvwebOriginalPassword = $uvwebOriginalPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get uvwebOriginalPassword
+     *
+     * @return string 
+     */
+    public function getUvwebOriginalPassword()
+    {
+        return $this->uvwebOriginalPassword;
     }
 }

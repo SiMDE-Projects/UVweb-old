@@ -16,6 +16,8 @@
 	        <li {% if categoryName is defined and categoryName == 'GSM' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'gsm', 'order': 'name'}) }}">GSM</a></li>
 	        <li {% if categoryName is defined and categoryName == 'GSU' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'gsu', 'order': 'name'}) }}">GSU</a></li>
 	        <li {% if categoryName is defined and categoryName == 'TC' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'tc', 'order': 'name'}) }}">TC</a></li>
+	        <li {% if categoryName is defined and categoryName == 'MASTER' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'master', 'order': 'name'}) }}">Master</a></li>
+	        <li {% if categoryName is defined and categoryName == 'DOCTORAT' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'doctorat', 'order': 'name'}) }}">Doctorat</a></li>
 	        <li {% if categoryName is defined and categoryName == 'TSH' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list_category', { 'category': 'tsh', 'order': 'name'}) }}">TSH</a></li>
 	        <li {% if categoryName is not defined and order == 'name' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list', { 'order': 'name' }) }}">Toutes - Alphabet</a></li>
 	        <li  {% if categoryName is not defined and order == 'rate' %}class="active"{% endif %}><a href="{{ path('uvweb_uv_list', { 'order': 'rate' }) }}">Toutes - Notes</a></li>

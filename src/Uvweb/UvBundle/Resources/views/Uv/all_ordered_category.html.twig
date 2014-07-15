@@ -1,12 +1,12 @@
 {% extends "UvwebUvBundle:Uv:all_list_layout.html.twig" %}
 
 {% block title %}
-	Toutes UVs {{ categoryName }} (Ordre Alphabétique) - {{ parent() }}
+	Toutes UVs {% if categoryName is defined %}{{ categoryName }}{% endif %} (Ordre Alphabétique) - {{ parent() }}
 {% endblock %}
 
 
 {% block pageHeader %}		
-	<h2>{{ categoryName }} : Toutes les UVs <small>Ordre Alphabétique</small></h2>
+	<h2>{% if categoryName is defined %}{{ categoryName }} : {% endif %}Toutes les UVs <small>Ordre Alphabétique</small></h2>
 {% endblock %}
 
 {% block column1 %}

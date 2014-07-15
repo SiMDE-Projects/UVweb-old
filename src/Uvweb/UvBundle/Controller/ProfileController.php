@@ -4,6 +4,7 @@ namespace Uvweb\UvBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Uvweb\UvBundle\Entity\User;
+use Uvweb\UvBundle\Form\UserAppPasswordType;
 use Uvweb\UvBundle\Form\UserType;
 use Uvweb\UvBundle\Form\UserEditType;
 use Uvweb\UvBundle\Form\MigrationType;
@@ -161,7 +162,7 @@ class ProfileController extends BaseController
                 }
 
                 $user->setLogin($session->get('newUserLogin'));
-                $user->setPassword(null);
+                $user->setUvwebOriginalPassword(null);
                 $user->setLast(new \Datetime());
 
                 $user->setFirstSemester($user->getFirstSemester());
@@ -217,41 +218,90 @@ class ProfileController extends BaseController
         $user = $userRepository->findOneById($this->getUser()->getId());
 
         //Generate form from Symfony2 forms
-        $form = $this->createForm(new UserEditType, $user);
+        $userForm = $this->createForm(new UserEditType, $user);
+        $userAppPasswordForm = $this->createForm(new UserAppPasswordType());
 
         $request = $this->getRequest();
 
         if ($request->isMethod('POST')) 
         {
-            $form->bind($request);
-
-            if ($form->isValid()) 
+            //Have to check if password or user form was submitted
+            if($request->request->has($userForm->getName()))
             {
-                try
+                $userForm->bind($request);
+
+                if ($userForm->isValid())
                 {
-                    $manager->persist($user);
-                    $manager->flush();
+                    try
+                    {
+                        $manager->persist($user);
+                        $manager->flush();
+                    }
+                    catch(\Exception $e)
+                    {
+                        $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de la modification du compte.");
+
+                        //Insertion failed: invite the user to try again, displaying the errors
+                        return $this->render('UvwebUvBundle:Profile:user_edit.html.twig', array(
+                                'edit_user_form' => $userForm->createView(),
+                                'user_app_password_form' => $userAppPasswordForm->createView()
+                            ));
+                    }
+
+                    //Correctly updated: change the current user in session, and display a confirmation message to the user
+                    $this->grantUserRole($user);
+                    $this->get('uvweb_uv.fbmanager')->addFlashMessage('Profil mis à jour avec succès !', 'success');
+
+                    return $this->redirect($this->generateUrl('uvweb_uv_profile', array('userid' => $this->getUser()->getId())));
                 }
-                catch(\Exception $e)
+            }
+            else
+            {
+                //User wants to change his password
+                $userAppPasswordForm->bind($request);
+
+                if ($userAppPasswordForm->isValid())
                 {
-                    $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite la modification du compte.");
+                    $formData = $userAppPasswordForm->getData();
 
-                    //Insertion failed: invite the user to try again, displaying the errors
-                    return $this->render('UvwebUvBundle:Profile:user_edit.html.twig', array(
-                        'edit_user_form' => $form->createView()
-                    ));
+                    if($formData['password'] == $formData['password_confirmation'] && strlen($formData['password']) >= 8)
+                    {
+                        //New password is ok
+                        $newPassword = hash('sha512', $formData['password']);
+                        $user->setPassword($newPassword);
+
+                        try
+                        {
+                            $manager->persist($user);
+                            $manager->flush();
+                        }
+                        catch(\Exception $e)
+                        {
+                            $this->get('uvweb_uv.fbmanager')->addFlashMessage("Une erreur s'est produite lors de la modification du mot de passe.");
+
+                            //Insertion failed: invite the user to try again, displaying the errors
+                            return $this->render('UvwebUvBundle:Profile:user_edit.html.twig', array(
+                                    'edit_user_form' => $userForm->createView(),
+                                    'user_app_password_form' => $userAppPasswordForm->createView()
+                                ));
+                        }
+
+                        $this->grantUserRole($user);
+                        $this->get('uvweb_uv.fbmanager')->addFlashMessage('Mot de passe pour les applications mobiles modifié avec succès.', 'success');
+                    }
+                    else
+                    {
+                        $this->get('uvweb_uv.fbmanager')->addFlashMessage('Mots de passe entrés différents ou inférieurs à 8 caractères.', 'error');
+                    }
+
+                    return $this->redirect($this->generateUrl('uvweb_user_edit', array('userid' => $this->getUser()->getId())));
                 }
-
-                //Correctly updated: change the current user in session, and display a confirmation message to the user
-                $this->grantUserRole($user);
-                $this->get('uvweb_uv.fbmanager')->addFlashMessage('Profil mis à jour avec succès !', 'success');
-
-                return $this->redirect($this->generateUrl('uvweb_uv_profile', array('userid' => $this->getUser()->getId())));
             }
         }
 
         return $this->render('UvwebUvBundle:Profile:user_edit.html.twig', array(
-            'edit_user_form' => $form->createView()
+            'edit_user_form' => $userForm->createView(),
+            'user_app_password_form' => $userAppPasswordForm->createView()
         ));
     }
 
@@ -272,7 +322,7 @@ class ProfileController extends BaseController
         {
             $form->bind($request);
 
-            if ($form->isValid()) 
+            if ($form->isValid())
             {
                 $formData = $form->getData();
                 $user = $userRepository->findOneByLogin($formData['login']);
@@ -281,7 +331,7 @@ class ProfileController extends BaseController
                     $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("Les identifiants transmis ne correspondent à aucun utilisateur.");
                 else
                 {
-                    if($user->getPassword() === md5($formData['password']))
+                    if($user->getUvwebOriginalPassword() === md5($formData['password']))
                     {
                         $this->getRequest()->getSession()->set('previousUVWebUser', $user->getLogin()); //Will be used to register the new user
                         return $this->redirect($this->generateUrl('uvweb_login'));
@@ -322,7 +372,7 @@ class ProfileController extends BaseController
                     $this->container->get('uvweb_uv.fbmanager')->addFlashMessage("L'adresse email indiquée ne correspond à aucun utilisateur.");
                 else
                 {
-                    if($user->getPassword() !== null)
+                    if($user->getUvwebOriginalPassword() !== null)
                     {
                         //UVweb 1 user
 
@@ -330,7 +380,7 @@ class ProfileController extends BaseController
                         $generator = new SecureRandom();
                         $newPassword = bin2hex($generator->nextBytes(12));
 
-                        $user->setPassword(md5($newPassword));
+                        $user->setUvwebOriginalPassword(md5($newPassword));
 
                         try
                         {

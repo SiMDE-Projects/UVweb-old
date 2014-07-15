@@ -33,7 +33,7 @@ class Comment
      */
     private $interest;
     /**
-     * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\Uv")
+     * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\Uv", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
     private $uv;

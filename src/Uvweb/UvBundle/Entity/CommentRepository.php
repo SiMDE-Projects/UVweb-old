@@ -21,7 +21,6 @@ class CommentRepository extends EntityRepository
 		   ->andWhere('c.uv = :uv')->setParameter('uv', $uv);
 
 		return $qb->getQuery()->getSingleScalarResult();
-
 	}
 
 	public function userAlreadyCommentedUv(User $user, Uv $uv)

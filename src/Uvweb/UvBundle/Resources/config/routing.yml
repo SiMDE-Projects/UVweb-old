@@ -9,10 +9,6 @@ uvweb_uv_list:
     requirements:
         order: "name|rate"
 
-uvweb_uv_catalog:
-    path: /uv/catalog
-    defaults:  { _controller: UvwebUvBundle:Detail:catalog}
-
 uvweb_uv_list_category:
     path: /uv/{category}/{order}
     defaults:  { _controller: UvwebUvBundle:Detail:listCategory, order: 'name' }
@@ -119,5 +115,31 @@ uvweb_logout:
 uvweb_uv_recentactivity:
     path: /app/recentactivity
     defaults:  { _controller: UvwebUvBundle:WebService:recentActivity }
+    requirements:
+        _method: GET
+
+uvweb_uv_appuvlist:
+    path:   /uv/app/{category}/{order}
+    defaults:  { _controller: UvwebUvBundle:WebService:uvList, order: 'name' }
+    requirements:
+        category: "gb|gi|gm|gp|gsm|gsu|tsh|tc|all"
+        order: "name|rate"
+        _method: GET
+
+uvweb_uv_app_post:
+    path:   /uv/app/comment/{uvname}
+    defaults:  { _controller: UvwebUvBundle:WebService:postComment }
+    requirements:
+        _method: PUT
+
+uvweb_uv_app_can_comment:
+    path:    /uv/app/comment/cancomment/{uvname}
+    defaults:  { _controller: UvwebUvBundle:WebService:userAllowedToComment }
+    requirements:
+        _method: GET
+
+uvweb_uv_appdetails:
+    path: /uv/app/details/{uvname}
+    defaults:  { _controller: UvwebUvBundle:WebService:uvDetails }
     requirements:
         _method: GET

@@ -120,7 +120,7 @@ class DetailController extends BaseController
         $comment = new Comment();
         $comment->setUv($uv);
 
-        $form = $this->createForm(new CommentType($uv), $comment);
+        $form = $this->createForm(new CommentType($uv, $this->get('uvweb_comment.commenthelper')), $comment);
         $this->createFormBuilder($comment);
 
         $request = $this->getRequest();
@@ -273,12 +273,12 @@ class DetailController extends BaseController
     public function listAllAction($order)
     {
         $manager = $this->getDoctrine()->getManager();
-        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+        $uvRepository = $manager->getRepository('UvwebUvBundle:Uv');
 
         if($order === 'name')
         { 
             //Order by name
-            $uvs = $commentRepository->uvsOrderedByName();
+            $uvs = $uvRepository->uvsOrderedByName();
             
             $groupedUvs = array(); //Will contain an array of type ['letter'] => array(UV1, UV2) with UV1, UV2 like 'letter%'
             $sub = '';
@@ -289,11 +289,11 @@ class DetailController extends BaseController
                 $groupedUvs[$sub][] = $uv;
             }
 
-            return $this->render('UvwebUvBundle:Uv:all_ordered.html.twig', array('order' => $order, 'groupedUvs' => $groupedUvs));
+            return $this->render('UvwebUvBundle:Uv:all_ordered_category.html.twig', array('order' => $order, 'groupedUvs' => $groupedUvs));
         }
 
         //Order by rate
-        $uvs = $commentRepository->uvsOrderedByRate();
+        $uvs = $uvRepository->uvsOrderedByRate();
 
         $groupedUvs = array();
         foreach($uvs as $uv)
@@ -307,12 +307,14 @@ class DetailController extends BaseController
     public function listCategoryAction($category, $order)
     {
         $manager = $this->getDoctrine()->getManager();
-        $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+        $uvRepository = $manager->getRepository('UvwebUvBundle:Uv');
 
         if($order === 'name' || $order === 'dynamic')
         {
             //Order by name
-            $uvs = $commentRepository->uvsOrderedByName(0, $category);
+            $uvWithoutComment = ($order !== 'dynamic');
+
+            $uvs = $uvRepository->uvsOrderedByName(0, $category, false, $uvWithoutComment);
 
             $groupedUvs = array(); //Will contain an array of type ['letter'] => array(UV1, UV2) with UV1, UV2 like 'letter%'
             $sub = '';
@@ -331,7 +333,7 @@ class DetailController extends BaseController
         else if($order === 'rate')
         {
             //Order by rate
-            $uvs = $commentRepository->uvsOrderedByRate(0, true, 0, $category);
+            $uvs = $uvRepository->uvsOrderedByRate(0, true, 0, $category);
 
             $groupedUvs = array();
             foreach($uvs as $uv)
@@ -341,6 +343,11 @@ class DetailController extends BaseController
 
             return $this->render('UvwebUvBundle:Uv:all_ordered_by_rate.html.twig', array('order' => $order, 'categoryName' => strtoupper($category), 'groupedUvs' => $groupedUvs));
         }
+    }
+
+    public function catalogAction()
+    {
+        return $this->render('UvwebUvBundle:Uv:catalog.html.twig');
     }
 
     public function appDetailAction($uvname)

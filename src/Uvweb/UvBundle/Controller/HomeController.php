@@ -5,6 +5,7 @@ namespace Uvweb\UvBundle\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Uvweb\UvBundle\Entity\Uv;
 
 class HomeController extends BaseController
 {
@@ -100,31 +101,163 @@ class HomeController extends BaseController
         return $this->render('UvwebUvBundle:Common:about.html.twig', array('about' => true));
     }
 
+    public function aboutIosAction($part)
+    {
+        return $this->render('UvwebUvBundle:Common:about_ios/about_ios.html.twig', array('part' => $part));
+    }
+
     public function setuvdefinitionsAction()
     {
-        // Include the library
-        include_once('uvtitlefetcher/simple_html_dom.php');
-        
         $manager = $this->getDoctrine()->getManager();
         $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
+        $categoryRepository = $manager->getRepository("UvwebUvBundle:Category");
 
-        // Retrieve the DOM from a given URL
-        $html = file_get_html('../uvs.html');
+        $categories = array(
+            'GI' => $categoryRepository->findOneByCategory('GI'),
+            'GM' => $categoryRepository->findOneByCategory('GM'),
+            'GSM' => $categoryRepository->findOneByCategory('GSM'),
+            'GB' => $categoryRepository->findOneByCategory('GB'),
+            'TSH' => $categoryRepository->findOneByCategory('TSH'),
+            'GSU' => $categoryRepository->findOneByCategory('GSU'),
+            'GP' => $categoryRepository->findOneByCategory('GP'),
+            'TC' => $categoryRepository->findOneByCategory('TC'),
+            'MASTER' => $categoryRepository->findOneByCategory('MASTER'),
+            'DOCT' => $categoryRepository->findOneByCategory('DOCT')
+            );
 
-        $uvsHTML = $html->find('tr');
+        $uvsJSON = json_decode(file_get_contents('../uvs.json'), true);
 
-        foreach($uvsHTML as $uvHTML)
+        foreach($uvsJSON as $uvName => $uvContent)
         {
-            $uv = $uvRepository->findOneBy(array('name' => $uvHTML->children(0)->innertext, 'title' => ''));
+            $uv = $uvRepository->findOneByName($uvName);
 
             if($uv !== null)
             {
-                echo $uvHTML->children(4)->innertext . ' ' . $uvHTML->children(0)->innertext . '<br/>';
+                $uv->setMaxStudent($uvsJSON[$uvName]['places']);
+                $uv->setTitle($uvsJSON[$uvName]['nom']);
+                $uv->setCredits($uvsJSON[$uvName]['ects']);
+                $uv->setCourseHours($uvsJSON[$uvName]['cours']);
+                $uv->setTdHours($uvsJSON[$uvName]['td']);
 
-                $uv->setTitle(html_entity_decode($uvHTML->children(4)->innertext));
+                if($uvsJSON[$uvName]['tp'] === 'oui')
+                    $uv->setTp(true);
+                else
+                    $uv->setTp(false);
+
+
+                if($uvsJSON[$uvName]['final'] === 'oui')
+                    $uv->setFinal(true);
+                else
+                    $uv->setFinal(false);
+
+                $uv->setTeacher($uvsJSON[$uvName]['resp']);
+
+                if($uvsJSON[$uvName]['cat'] !== 'TSH')
+                {
+                    $cat = $uvsJSON[$uvName]['branches'];
+
+                    foreach($cat as $c => $cname)
+                    {
+                        if($c === 'MASTER')
+                        {
+                            $categories[$c]->addUv($uv);
+                        }
+
+                        if($c === 'DOCT')
+                        {
+                            $categories[$c]->addUv($uv);
+                        }
+                    }
+                }
+
+                $semestreArray = $uvsJSON[$uvName]['semestre'];
+                if(count($semestreArray) === 2)
+                {
+                    $uv->setSemester('AP');
+                }
+                elseif($semestreArray[0] === 'automne')
+                {
+                    $uv->setSemester('A');
+                }
+                else
+                {
+                    $uv->setSemester('P');
+                }
+
+                echo $uvName . ' NOT NULL <br/>';
 
                 $manager->persist($uv);
+
+                $manager->flush();
             }
+            else
+            {
+                $newUv = new Uv();
+
+                $newUv->setArchived(false);
+                $newUv->setName($uvName);
+                $newUv->setMaxStudent($uvsJSON[$uvName]['places']);
+                $newUv->setTitle($uvsJSON[$uvName]['nom']);
+                $newUv->setCredits($uvsJSON[$uvName]['ects']);
+                $newUv->setCourseHours($uvsJSON[$uvName]['cours']);
+                $newUv->setTdHours($uvsJSON[$uvName]['td']);
+
+                if($uvsJSON[$uvName]['tp'] === 'oui')
+                    $newUv->setTp(true);
+                else
+                    $newUv->setTp(false);
+
+
+                if($uvsJSON[$uvName]['final'] === 'oui')
+                    $newUv->setFinal(true);
+                else
+                    $newUv->setFinal(false);
+
+                $newUv->setTeacher($uvsJSON[$uvName]['resp']);
+
+                if($uvsJSON[$uvName]['cat'] === 'TSH')
+                {
+                        $categories['TSH']->addUv($newUv);
+                }
+                else
+                {
+                    $cat = $uvsJSON[$uvName]['branches'];
+
+                    foreach($cat as $c => $cname)
+                    {
+                        if(array_key_exists($c, $categories))
+                        {
+                            $categories[$c]->addUv($newUv);
+                        }
+                    }
+                }
+
+                $semestreArray = $uvsJSON[$uvName]['semestre'];
+                
+                if(count($semestreArray) === 2)
+                {
+                    $newUv->setSemester('AP');
+                }
+                elseif($semestreArray[0] === 'automne')
+                {
+                    $newUv->setSemester('A');
+                }
+                else
+                {
+                    $newUv->setSemester('P');
+                }
+
+                echo $uvName . ' <br/>';
+
+                $manager->persist($newUv);
+
+                $manager->flush();
+            }
+        }
+
+        foreach($categories as $category => $catObject)
+        {
+            $manager->persist($catObject);
         }
 
         $manager->flush();

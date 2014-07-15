@@ -1,6 +1,7 @@
 {% extends "UvwebUvBundle::layout.html.twig" %}
 
 {% form_theme edit_user_form 'UvwebUvBundle:Form:bootstrap_row.html.twig' %}
+{% form_theme user_app_password_form 'UvwebUvBundle:Form:bootstrap_row.html.twig' %}
 
 {% block title %}
     Édition du profil - {{ parent() }}
@@ -17,17 +18,45 @@
     </div>
 
     <div class="row-fluid">
-        <div class="well">
+        <div class="span6">
+            <div class="well">
                 {{ form_errors(edit_user_form) }}
-            <form class="form-horizontal" method="post" {{ form_enctype(edit_user_form) }}>
-                {{ form_widget(edit_user_form) }}
-                <div class="control-group">
-                  <div class="controls">
-                    <button type="submit" class="btn btn-success">Valider</button>
-                  </div>
-                </div>
-                {{ form_rest(edit_user_form) }}
-            </form>
+                <form class="form-horizontal" method="post" {{ form_enctype(edit_user_form) }}>
+                    {{ form_widget(edit_user_form) }}
+                    <div class="control-group">
+                      <div class="controls">
+                        <button type="submit" class="btn btn-success">Valider</button>
+                      </div>
+                    </div>
+                    {{ form_rest(edit_user_form) }}
+                </form>
+            </div>
+        </div>
+
+        <div class="span6">
+            <p>
+                {% if app.user.password is not null %}
+                    <h5 class="text-success">Tu as un mot de passe enregistré pour les applications mobiles.</h5>
+                {% else %}
+                    <h5 class="text-error">Tu n'as pas de mot de passe enregistré pour les applications mobiles.</h5>
+                {% endif %}
+                Choisis un mot de passe pour les applications mobiles (iOS et Android) afin de pouvoir poster des commentaires depuis des terminaux mobiles.
+                <br>
+                <br>
+                <strong>8 caractères minimum.</strong>
+            </p>
+            <div class="well">
+                {{ form_errors(user_app_password_form) }}
+                <form class="form-horizontal" method="post" {{ form_enctype(user_app_password_form) }}>
+                    {{ form_widget(user_app_password_form) }}
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn btn-success">Valider</button>
+                        </div>
+                    </div>
+                    {{ form_rest(user_app_password_form) }}
+                </form>
+            </div>
         </div>
     </div>
 

@@ -1,5 +1,6 @@
 <div id="news-{{ newsitem.id }}" class="well well-small">
   <div class="row-fluid">
+
 	<div class="span9">
 	  <h4>{{ newsitem.title }}</h4>
 	</div>
@@ -7,9 +8,13 @@
 	<div class="span3">
 	  <h6>Le {{ newsitem.date|date('d/m/Y') }}</h6>
 	</div>
+  </div>
 
-	<p>{{ newsitem.text|nl2br }}</p>
+  <div class="row-fluid">
+    <div class="span12">
+	  <p>{{ newsitem.text|nl2br }}</p>
 
-	{% block news_footer %}{% endblock %}
+	  {% block news_footer %}{% endblock %}
+    </div>
   </div>
 </div>

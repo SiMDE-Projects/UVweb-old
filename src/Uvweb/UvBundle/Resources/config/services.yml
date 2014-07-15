@@ -10,3 +10,5 @@ services:
         class: Uvweb\UvBundle\Services\FlashbagManager\UvwebFlashbagManager
         arguments: [@session]
         scope: request
+    uvweb_comment.commenthelper:
+        class: Uvweb\UvBundle\Services\CommentManager\CommentDataHelper

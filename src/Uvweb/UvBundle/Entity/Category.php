@@ -29,7 +29,7 @@ class Category
     /**
      * @var string
      *
-     * @ORM\Column(name="categorie", type="string", length=3, nullable=false)
+     * @ORM\Column(name="categorie", type="string", length=6, nullable=false)
      */
     private $category;
 

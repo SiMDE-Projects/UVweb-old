@@ -8,13 +8,14 @@
             </p>
 		</div>
 		<div class="span4 text-right">
+			{% if uv.teacher %}<h3><small>Enseignant : </small>{{ uv.teacher }}</h3>{% endif %}
 			{% if polls|length == 0 %}
-				<h2><small>Pas de sondage pour cette UV.</h2>
+				<h3><small>Pas de sondage pour cette UV.</small></h3>
 			{% endif %}
 			<ul class="unstyled">
 				{% for poll in polls %}
 					{% if loop.first %}
-						<h2><small>Taux de réussite : </small> {{ poll.semester }} : {{ poll.successRate  | number_format(1, ',', ' ')}}%</h2>
+						<h3><small>Taux de réussite : </small> {{ poll.semester }} : {{ poll.successRate  | number_format(1, ',', ' ')}}%</h3>
 					{% else %}
 						<li>{{ poll.semester }} : {{poll.successRate| number_format(1, ',', ' ')}}%</li>
 					{% endif %}
