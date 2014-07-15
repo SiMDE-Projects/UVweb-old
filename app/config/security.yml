@@ -31,7 +31,7 @@ security:
         - { path: ^/forgottenaccount, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/user/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/setuvdefinitions, roles: ROLE_ADMIN }
-        - { path: ^/uv/app/comment, roles: ROLE_USER, methods: [POST] }
+        - { path: ^/uv/app/comment, roles: ROLE_USER, methods: [PUT] }
         - { path: ^/uv/app/comment/cancomment, roles: ROLE_USER }
 
     firewalls:

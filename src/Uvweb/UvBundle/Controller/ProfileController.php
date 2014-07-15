@@ -446,7 +446,7 @@ class ProfileController extends BaseController
             return $this->redirect($this->generateUrl('uvweb_uv_profile', array('userid' => $currentUser->getId())));
         }
 
-        $form = $this->createForm(new CommentType($uv), $comment);
+        $form = $this->createForm(new CommentType($uv, $this->get('uvweb_comment.commenthelper')), $comment);
         $this->createFormBuilder($comment);
 
         $request = $this->getRequest();
