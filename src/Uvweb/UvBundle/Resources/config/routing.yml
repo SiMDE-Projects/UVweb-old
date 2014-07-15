@@ -1,8 +1,3 @@
-#Setting uv definitions
-uvweb_uv_setuvdefinitions:
-    path: /setuvdefinitions
-    defaults:  { _controller: UvwebUvBundle:Home:setUvDefinitions }
-
 uvweb_uv_list:
     path: /uv/all/{order}
     defaults:  { _controller: UvwebUvBundle:Detail:listAll, order: 'name' }

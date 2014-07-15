@@ -25,6 +25,11 @@ uvweb_uv_catalog:
     path: /uv/catalog
     defaults:  { _controller: UvwebUvBundle:Detail:catalog}
 
+#Setting uv definitions
+uvweb_uv_setuvdefinitions:
+    path: /setuvdefinitions
+    defaults:  { _controller: UvwebUvBundle:Home:setUvDefinitions }
+
 #Old paths
 uvweb_uv_uvnametoid:
     path: /uv/uvnametoid
