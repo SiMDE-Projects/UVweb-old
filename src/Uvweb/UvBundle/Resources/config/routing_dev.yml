@@ -13,13 +13,6 @@ uvweb_uv_appfeed:
     path: /uv/app/newsfeed
     defaults:  { _controller: UvwebUvBundle:Home:appNewsfeed }
 
-#About iOS paths
-uvweb_uv_about_ios:
-    path: /ios/{part}
-    defaults:  { _controller: UvwebUvBundle:Home:aboutIos, part: 'introduction' }
-    requirements:
-        part: "introduction|demonstration|about"
-
 #In progress
 uvweb_uv_catalog:
     path: /uv/catalog

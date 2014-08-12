@@ -99,6 +99,13 @@ uvweb_admin_delete_news:
     requirements:
         newsid: \d+
 
+#About iOS paths
+uvweb_uv_about_ios:
+    path: /ios/{part}
+    defaults:  { _controller: UvwebUvBundle:Home:aboutIos, part: 'introduction' }
+    requirements:
+        part: "introduction|demonstration|about|comment"
+
 #Authentication paths
 sf_login:
     pattern: /sflogin

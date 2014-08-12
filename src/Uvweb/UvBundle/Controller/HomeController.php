@@ -103,7 +103,7 @@ class HomeController extends BaseController
 
     public function aboutIosAction($part)
     {
-        return $this->render('UvwebUvBundle:Common:about_ios/about_ios.html.twig', array('part' => $part));
+        return $this->render('UvwebUvBundle:Common:about_ios/about_ios.html.twig', array('part' => $part, 'about_ios' => true));
     }
 
     public function setuvdefinitionsAction()
