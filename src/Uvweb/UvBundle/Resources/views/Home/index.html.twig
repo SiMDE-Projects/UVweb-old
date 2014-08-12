@@ -16,6 +16,27 @@ Accueil - {{ parent() }}
       </div>
 
       <div class="row-fluid">
+          <div class="span12">
+              <div class="alert alert-info">
+                  <div class="row-fluid">
+                      <div class="span10">
+                          L'application UVweb iOS est désormais dispoible sur l'App Store !
+                          <br/>
+                          Elle permet de retrouver les commentaires du site et de commenter depuis les appareils iOS.
+                          <br/>
+                          Toutes les infos et une démonstration sont disponibles sur le site <a href="{{ path('uvweb_uv_about_ios') }}">ici</a>.
+                      </div>
+                      <div class="span2">
+                          <a href="https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=905079212&mt=8">
+                              <img class="pull-right" src="{{ asset('img/ios_app/ios_icon.png') }}"  alt="Icône iOS" height="60" width="60" style="border-radius: 22.544%;"/>
+                          </a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="row-fluid">
         <div class="span3">
           {% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'tableType': 'success', 'uvs': bestUvs, 'title': 'Mieux Notées' } %}
         </div>
