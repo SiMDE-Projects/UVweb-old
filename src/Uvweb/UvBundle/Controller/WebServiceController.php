@@ -86,14 +86,17 @@ class WebServiceController extends BaseController
                     ->createQueryBuilder('c')
                     ->join('c.uv', 'u')
                     ->join('c.author', 'us')
-                    ->select('c.id, c.globalRate, c.semester, c.passed, c.comment, us.identity as identity')
+                    ->select('c.id, c.globalRate, c.date, c.semester, c.passed, c.comment, us.identity as identity')
                     ->where('u.name = :uvname')->setParameter('uvname', $uvname)
                     ->andWhere('c.moderated = :moderated')->setParameter('moderated', true)
                     ->getQuery()
                     ->getArrayResult();
 
         foreach($comments as &$comment)
+        {
             $comment['comment'] = strip_tags($comment['comment']);
+            $comment['date'] = $comment['date']->format('d/m/Y');
+        }
 
         $averageRate = $commentRepository->averageRate($uvRepository->findOneByName($uvname));
 
@@ -123,7 +126,7 @@ class WebServiceController extends BaseController
 
         $comments = $commentRepository
                     ->createQueryBuilder('c')
-                    ->select('c.id, c.globalRate, c.semester, c.passed, c.comment, us.identity as identity, u.name as name, u.title as title')
+                    ->select('c.id, c.globalRate, c.semester, c.passed, c.comment, c.date, us.identity as identity, u.name as name, u.title as title')
                     ->join('c.uv', 'u')
                     ->join('c.author', 'us')
                     ->where('c.moderated = :moderated')->setParameter('moderated', true)
@@ -134,7 +137,10 @@ class WebServiceController extends BaseController
                     ->getArrayResult();
 
         foreach($comments as &$comment)
+        {
             $comment['comment'] = strip_tags($comment['comment']);
+            $comment['date'] = $comment['date']->format('d/m/Y');
+        }
 
         return new Response(json_encode(array('status' => 'success', 'comments' => $comments)));
     }
