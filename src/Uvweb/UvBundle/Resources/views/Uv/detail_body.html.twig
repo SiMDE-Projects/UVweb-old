@@ -8,8 +8,37 @@
             </p>
 		</div>
 		<div class="span4 text-right">
-			{% if uv.teacher %}<h3><small>Enseignant : </small>{{ uv.teacher }}</h3>{% endif %}
-			{% if polls|length == 0 %}
+                <h5>
+                    {% if uv.final is defined %}
+                    <small>
+                        Final :
+                        {% if uv.final == true %}
+                            Oui
+                        {% else  %}
+                            Non
+                        {% endif %}
+                            |
+                    </small>
+                    {% endif %}
+                    {% if uv.tp is defined %}
+                        <small>
+                            TP :
+                            {% if uv.tp == true %}
+                                Oui
+                            {% else  %}
+                                Non
+                            {% endif %}
+                        </small>
+                    {% endif %}
+                </h5>
+            {% if uv.credits %}
+                <h5>
+                    <small>
+                        Crédits : {{ uv.credits }}
+                    </small>
+                </h5>
+            {% endif %}
+            {% if polls|length == 0 %}
 				<h3><small>Pas de sondage pour cette UV.</small></h3>
 			{% endif %}
 			<ul class="unstyled">
