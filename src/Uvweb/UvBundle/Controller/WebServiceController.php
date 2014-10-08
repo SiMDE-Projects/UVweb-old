@@ -69,6 +69,7 @@ class WebServiceController extends BaseController
 
         $uv = $uvRepository
             ->createQueryBuilder('u')
+            ->select('u.id, u.name, u.title, u.tp, u.final')
             ->where('u.name = :uvname')
             ->setParameter('uvname', $uvname)
             ->getQuery()
