@@ -22,17 +22,19 @@ security:
 
 
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/logout, roles: ROLE_USER }
-        - { path: ^/sflogin, roles: ROLE_USER }
-        - { path: ^/post, roles: ROLE_USER }
-        - { path: ^/user/edit, roles: ROLE_USER }
-        - { path: ^/migration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/forgottenaccount, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/user/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/setuvdefinitions, roles: ROLE_ADMIN }
+        - { path: ^/app/recentactivity, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/uv/app/comment, roles: ROLE_USER, methods: [PUT] }
         - { path: ^/uv/app/comment/cancomment, roles: ROLE_USER }
+        - { path: ^/uv/app, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/forgottenaccount, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/migration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/setuvdefinitions, roles: ROLE_ADMIN }
+        - { path: ^/logout, roles: ROLE_USER }
+        - { path: ^/sflogin, roles: ROLE_USER }
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/user/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: ROLE_USER }
 
     firewalls:
         dev:

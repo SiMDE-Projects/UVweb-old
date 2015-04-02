@@ -16,40 +16,19 @@ Accueil - {{ parent() }}
       </div>
 
       <div class="row-fluid">
-          <div class="span12">
-              <div class="alert alert-info">
-                  <div class="row-fluid">
-                      <div class="span10">
-                          L'application UVweb iOS est désormais disponible sur l'App Store !
-                          <br/>
-                          Elle permet de retrouver les commentaires du site et de commenter depuis les appareils iOS.
-                          <br/>
-                          Toutes les infos et une démonstration sont disponibles sur le site <a href="{{ path('uvweb_uv_about_ios') }}">ici</a>.
-                      </div>
-                      <div class="span2">
-                          <a href="https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=905079212&mt=8">
-                              <img class="pull-right" src="{{ asset('img/ios_app/ios_icon.png') }}"  alt="Icône iOS" height="60" width="60" style="border-radius: 22.544%;"/>
-                          </a>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-      <div class="row-fluid">
         <div class="span3">
           {% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'tableType': 'success', 'uvs': bestUvs, 'title': 'Mieux Notées' } %}
         </div>
         <div class="span6">
           <div class="well">
             <p>
-              Si tu souhaites poster des avis sur certaines des UVs que tu as choisies afin de conseiller les autres, c'est très facile !
-              </br>
-              </br>
-              Connecte toi au <a href="{{  path('uvweb_login') }}">CAS</a>, tu seras ensuite redirigé sur UVweb.
-              </br>
-              </br>
-              Inscris toi rapidement, aucune info sensible n'est requise.
+              Retrouvez UVweb pour Android et iOS sur les stores de vos mobiles !
+            </p>
+            <p>
+              <a href="https://play.google.com/store/apps/details?id=fr.utc.assos.uvweb">Version Android</a>
+            </p>
+            <p>
+              <a href="https://itunes.apple.com/fr/app/uvweb/id905079212?mt=8">Version iOS</a>
             </p>
           </div>
         </div>

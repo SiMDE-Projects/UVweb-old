@@ -23,6 +23,9 @@
         Si tu souhaites lier un avatar à l'adresse email que tu utilises sur UVweb, il te faut utiliser le service <a href="http://fr.gravatar.com" target="_blank">Gravatar</a> en y créant un compte.
     </div>
     <div class="well">
+        Si tu avais un compte sur l'ancienne version et que tu souhaites le récupérer, utilise la <a href="{{ path('uvweb_migration') }}">procédure de récupération de compte</a>.
+    </div>
+    <div class="well">
             {{ form_errors(add_user_form) }}
         <form class="form-horizontal" method="post" {{ form_enctype(add_user_form) }}>
             {{ form_widget(add_user_form) }}
