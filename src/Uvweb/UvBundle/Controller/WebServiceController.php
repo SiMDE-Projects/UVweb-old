@@ -17,25 +17,32 @@ class WebServiceController extends BaseController
     }
 
     /**
-     * Retourne un tableau contenant la liste des UVs en JSON
+     * Return an array of UVs in JSON.
+     * groupedByLetter: true: return array of type [A] => array of UVs starting by A, [B] => array of UVs starting by B. false : simple array of UVs
      */
-    public function uvListAction($category, $order)
+    public function uvListAction($category, $order, $groupedByLetter)
     {
         $manager = $this->getDoctrine()->getManager();
         $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
+
+        $uvArray = array();
 
         if($order === 'name')
         {
             //Order by name
             $uvs = $commentRepository->uvsOrderedByName(0, $category, true);
 
-            $groupedUvs = array(); //Will contain an array of type ['letter'] => array(UV1, UV2) with UV1, UV2 like 'letter%'
             $sub = '';
 
-            foreach($uvs as $uv) 
+            if($groupedByLetter === 'false')
+            {
+                return new Response(json_encode($uvs));
+            }
+
+            foreach($uvs as $uv)
             {
                 $sub = substr($uv['name'], 0, 1);
-                $groupedUvs[$sub][] = $uv;
+                $uvArray[$sub][] = $uv;
             }
         }
         else if($order === 'rate')
@@ -43,14 +50,18 @@ class WebServiceController extends BaseController
             //Order by rate
             $uvs = $commentRepository->uvsOrderedByRate(0, true, 0, $category, true);
 
-            $groupedUvs = array();
+            if($groupedByLetter === false)
+            {
+                return new Response(json_encode($uvs));
+            }
+
             foreach($uvs as $uv)
             {
-                $groupedUvs[ceil($uv['globalRate'])][] = $uv;
+                $uvArray[ceil($uv['globalRate'])][] = $uv;
             }
         }
 
-        return new Response(json_encode($groupedUvs));
+        return new Response(json_encode($uvArray));
     }
 
     public function uvDetailsAction($uvname)

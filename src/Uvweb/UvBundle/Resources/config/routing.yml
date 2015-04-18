@@ -121,11 +121,12 @@ uvweb_uv_recentactivity:
         _method: GET
 
 uvweb_uv_appuvlist:
-    path:   /uv/app/{category}/{order}
-    defaults:  { _controller: UvwebUvBundle:WebService:uvList, order: 'name' }
+    path:   /uv/app/{category}/{order}/{groupedByLetter}
+    defaults:  { _controller: UvwebUvBundle:WebService:uvList, order: 'name', groupedByLetter: true }
     requirements:
         category: "gb|gi|gm|gp|gsm|gsu|tsh|tc|all"
         order: "name|rate"
+        groupedByLetter: true|false
         _method: GET
 
 uvweb_uv_app_post:
