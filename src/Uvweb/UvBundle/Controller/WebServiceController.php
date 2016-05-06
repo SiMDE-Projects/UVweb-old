@@ -61,7 +61,10 @@ class WebServiceController extends BaseController
             }
         }
 
-        return new Response(json_encode($uvArray));
+        $response = new Response(json_encode($uvArray));
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
+
+        return $response;
     }
 
     public function uvDetailsAction($uvname)
@@ -129,7 +132,10 @@ class WebServiceController extends BaseController
             'polls' => $polls
         );
 
-        return new Response(json_encode(array('status' => 'success', 'details' => $details)));
+        $response = new Response(json_encode(array('status' => 'success', 'details' => $details)));
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
+
+        return $response;
     }
 
     public function recentActivityAction()
@@ -154,13 +160,16 @@ class WebServiceController extends BaseController
             $comment['date'] = $comment['date']->format('d/m/Y');
         }
 
-        return new Response(json_encode(array('status' => 'success', 'comments' => $comments)));
+        $response = new Response(json_encode(array('status' => 'success', 'comments' => $comments)));
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
+
+        return $response;
     }
 
     public function postCommentAction($uvname)
     {
         $response = new Response();
-        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
 
         $currentUser = $this->getUser();
 
@@ -241,7 +250,7 @@ class WebServiceController extends BaseController
     public function userAllowedToCommentAction($uvname)
     {
         $response = new Response();
-        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
 
         $currentUser = $this->getUser();
 
