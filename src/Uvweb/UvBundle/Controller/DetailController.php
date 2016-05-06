@@ -348,6 +348,7 @@ class DetailController extends BaseController
     public function catalogAction()
     {
         return $this->render('UvwebUvBundle:Uv:catalog.html.twig');
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
     }
 
     public function appDetailAction($uvname)
@@ -384,6 +385,7 @@ class DetailController extends BaseController
 
         $response = new Response();
         $response->setContent($serializer->serialize($comments, 'json'));
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
 
         return $response;
     }
@@ -409,6 +411,7 @@ class DetailController extends BaseController
 
         $response = new Response();
         $response->setContent($serializer->serialize($uvs, 'json'));
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
         return $response;
     }
 }
