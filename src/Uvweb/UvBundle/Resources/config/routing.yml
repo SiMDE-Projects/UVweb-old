@@ -17,11 +17,11 @@ uvweb_uv_nameslike:
 
 uvweb_uv_detail:
     path: /uv/{uvname}
-    defaults:  { _controller: UvwebUvBundle:Detail:detail, uvname: '' }
+    defaults:  { _controller: UvwebUvBundle:Detail:detail, uvname: '', uniId: null }
 
 uvweb_uv_newpost:
     path: /post/{uvname}
-    defaults:  { _controller: UvwebUvBundle:Detail:post }
+    defaults:  { _controller: UvwebUvBundle:Detail:post, uniId: null }
 
 uvweb_uv_editcomment:
     path: /user/edit/comment/{commentid}
@@ -112,6 +112,57 @@ sf_login:
 
 uvweb_logout:
     pattern: /logout
+
+## Foreign Universities
+
+#Foreign universities listing
+uvweb_unis_list:
+    path: /unis/
+    defaults:  { _controller: UvwebUvBundle:Unis:unisList }
+    requirements:
+        _method: GET
+
+uvweb_unis_add:
+    path: /unis/add
+    defaults:  { _controller: UvwebUvBundle:Unis:create }
+
+#Foreign classes listing
+#   By university:
+uvweb_foreignclasses_list:
+    path: /unis/details/{uniId}/{category}/{order}
+    defaults:  { _controller: UvwebUvBundle:Unis:listCategory, order: 'name', category: 'all' }
+    requirements:
+        _method: GET
+        category: "gb|gi|gm|gp|gsm|gsu|tsh|tc|master|doctorat|all"
+        order: "name|rate|dynamic"
+
+uvweb_foreignclass_details:
+    path: /unis/{uniId}/class/{uvname}
+    defaults:  { _controller: UvwebUvBundle:Detail:detail }
+
+uvweb_foreignclass_add:
+    path: /unis/{uniId}/addClass
+    defaults:  { _controller: UvwebUvBundle:Unis:addClass }
+
+uvweb_foreignclass_review:
+    path: /post/unis/{uniId}/class/{uvname}
+    defaults:  { _controller: UvwebUvBundle:Detail:post }
+
+uvweb_validate_university:
+    path: /admin/unis/validate/{uniId}
+    defaults:  { _controller: UvwebUvBundle:Unis:validateUni }
+
+uvweb_refuse_university:
+    path: /admin/unis/validate/{uniId}
+    defaults:  { _controller: UvwebUvBundle:Unis:refuseUni }
+
+uvweb_validate_class:
+    path: /admin/class/validate/{classId}
+    defaults:  { _controller: UvwebUvBundle:Unis:validateClass }
+
+uvweb_refuse_class:
+    path: /admin/class/refuse/{classId}
+    defaults:  { _controller: UvwebUvBundle:Unis:refuseClass }
 
 #Web Service paths
 uvweb_uv_recentactivity:

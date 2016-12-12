@@ -1,0 +1,33 @@
+<div id="uni-{{ uni.id }}"  class="uni-row well well-small">
+  <div class="row-fluid">
+
+    <div class="span3">
+      <a href="{{ path('uvweb_uv_profile', { 'userid' : uni.addedBy.id }) }}" class="thumbnail">
+        <img src="{% if uni.addedBy.displayAvatar == true %}{{ gravatar(uni.addedBy.email, 80) }}{% else %}{{ gravatar('', 80) }}{% endif %}" alt="{% if uni.addedBy.identity is not empty %}{{ uni.addedBy.identity }}{% else %}{{ uni.addedBy.login }}{% endif %}'s gravatar"/>
+      </a>
+    </div>
+
+    <div class="span9">
+      <div class="row-fluid">
+        <div class="span12">
+          <h4>
+            <a href="{{ path('uvweb_uv_profile', { 'userid' : uni.addedBy.id }) }}">
+              {% if uni.addedBy.identity is not empty %}
+                {{ uni.addedBy.identity }}
+              {% else %}
+                {{ uni.addedBy.login }}
+              {% endif %}
+            </a>
+             a proposé une nouvelle université
+          </h4>
+        </div>
+      </div>
+      <p>
+        <a href="{{uni.website}}">{{ uni.name }}</a> - située à {{uni.locationCity}}, {{uni.locationCountry}}
+      </p>
+    </div>
+
+  {% block comment_footer %}{% endblock %}
+
+  </div>
+</div>

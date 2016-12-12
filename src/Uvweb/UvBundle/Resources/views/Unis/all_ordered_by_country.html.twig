@@ -1,0 +1,21 @@
+{% extends "UvwebUvBundle:Unis:all_uv_list_layout.html.twig" %}
+
+{% block pageHeader %}
+  <h2>Universités étrangères<a href="{{ path('uvweb_unis_add') }}" class="pull-right btn btn-primary"><i class="icon-plus icon-white"></i> Ajouter</a></h2>
+{% endblock %}
+
+{% block column1 %}
+  {% for country, universities in countries %}
+    {% if loop.index % 2 == 1 %}
+      {% include 'UvwebUvBundle:Common:uni_table.html.twig' with { 'universities': universities, 'country': country } %}
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+
+{% block column2 %}
+  {% for country, universities in countries %}
+    {% if loop.index % 2 == 0 %}
+      {% include 'UvwebUvBundle:Common:uni_table.html.twig' with { 'universities': universities, 'country': country } %}
+    {% endif %}
+  {% endfor %}
+{% endblock %}

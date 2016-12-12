@@ -90,10 +90,10 @@ class HomeController extends BaseController
 
         //Keeping only the uv names
         foreach ($uvs as $uv) {
-            $uvNames[] = $uv['name'];
+            $uvNames[] = array('name' => $uv['name'], 'uni' => $uv['uni'], 'uniId' => $uv['uniId']);
         }
 
-        return new Response(json_encode($uvNames));
+        return new Response(json_encode($uvNames), 200, array('Content-Type' => 'application/json; charset=utf-8'));
     }
 
     public function aboutAction()

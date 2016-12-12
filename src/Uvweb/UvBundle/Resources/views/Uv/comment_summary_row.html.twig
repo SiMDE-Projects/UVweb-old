@@ -18,7 +18,12 @@
                 {{ comment.author.login }}
               {% endif %}
             </a>
-             a posté un nouveau commentaire sur <a href="{{ path('uvweb_uv_detail', { 'uvname': comment.uv.name}) }}">{{ comment.uv.name }}</a>
+             a posté un nouveau commentaire sur 
+             {% if comment.uv.uni != null %}
+              <a href="{{ path('uvweb_foreignclass_details', { 'uvname': comment.uv.name, 'uniId': comment.uv.uni.id }) }}">{{ comment.uv.name }}</a> <small>({{comment.uv.uni.name}})</small>
+             {% else %}
+              <a href="{{ path('uvweb_uv_detail', { 'uvname': comment.uv.name}) }}">{{ comment.uv.name }}</a>
+             {% endif %}
           </h4>
         </div>
         <div class="span3">

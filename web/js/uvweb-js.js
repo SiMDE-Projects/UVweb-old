@@ -1,4 +1,4 @@
-var initSearchBar = function(urlUVNameLike, urlUvDetail) {
+var initSearchBar = function(urlUVNameLike, urlForeignUVNameLike, urlUvDetail) {
   //Function used to show UV names to the user when he is typing
   $('#search-uv-name').typeahead({
     //Fetching the matching UV names
@@ -12,13 +12,23 @@ var initSearchBar = function(urlUVNameLike, urlUvDetail) {
         },
         dataType: 'json',
         success: function (result) {
-                  return process(result);
+					console.log(result);
+                  return process(result.map(function(r) {
+										if (r.uni) {
+											return r.name + " <small>" + r.uni + "<span style=\"display:none;\">" + r.uniId + "</span></small>";
+										} else return r.name;
+									}));
         }
       });
     },
     //On click on a tab, the user is redirected to the UV
     updater: function (item) {
-      document.location = urlUvDetail + '/' +encodeURIComponent(item);
+			if (item.match(/>(\d+)<\/span>/) && item.match(/\s<small>/)) {
+				var id = item.match(/>(\d+)<\/span>/)[1]
+				document.location = urlForeignUVNameLike + id + '/class/' + item.match(/(.*)\s<small>/)[1];
+			} else {
+      	document.location = urlUvDetail + '/' +encodeURIComponent(item);
+			}
       return item;
     }
   });

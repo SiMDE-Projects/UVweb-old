@@ -3,16 +3,21 @@
 {% form_theme add_comment_form 'UvwebUvBundle:Form:bootstrap_row.html.twig' %}
 
 {% block title %}
-    Ton avis sur {{ uv.name }} - {{ parent() }}
+    Ton avis sur {{ uv.name }} {% if uni is defined and uni != null %}<small>enseignée à {{ uni.name }}</small>{% endif %} - {{ parent() }}
 {% endblock %}
 
 {% block body %}
     <div class="page-header">
-        <h1><small>Ton avis sur </small>{{ uv.lettercode }}<span class="uvnumbercode">{{ uv.numbercode }}</span></h1>
+        <h1><small>Ton avis sur </small>{{ uv.lettercode }}<span class="uvnumbercode">{{ uv.numbercode }}</span> {% if uni is defined and uni != null %}<small>enseignée à <strong>{{ uni.name }}</strong></small>{% endif %}</h1>
     </div>
     <p>
         Ton avis sera soumis à modération une fois posté. Il est possible d'éditer un avis après soumission, peu importe qu'il ait déjà été validé par un modérateur ou non.
     </p>
+    {% if uni is defined and uni != null %}
+    <p>
+        <em>Tu t'apprêtes à donner ton avis sur une UV enseignée dans une université étrangère. En écrivant ton avis, n'oublie pas de prendre en compte et de préciser dans la mesure du possible les différences pédagogiques et les différences de fonctionnement de l'université. Il peut être pertinent, par exemple, de préciser si ton avis peut rapidement devenir obsolète parce que la vitesse d'évolution des UVs est plus rapide qu'à l'UTC.</em>
+    </p>
+    {% endif %}
     <p class="text-error">
         <em>N'oublie pas que les propos injurieux sont proscrits sur UVweb.</em>
     </p>

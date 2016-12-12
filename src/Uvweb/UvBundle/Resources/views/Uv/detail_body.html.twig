@@ -1,10 +1,14 @@
 <div class="page-header">
 	<div class="row-fluid">
 		<div class="span8">
-			<h1 class="uvname">{{ uv.letterCode | upper }}<span class="uvnumbercode">{{ uv.numberCode }}</span> <small>{{ uv.title | capitalize }}</small></h1>
+			<h1 class="uvname">{{ uv.letterCode | upper }}<span class="uvnumbercode">{{ uv.numberCode }}</span> <small>{{ uv.title | capitalize }} {% if uni != null %} - enseignée à <strong>{{uni.name}}</strong>{% endif %}</small></h1>
 			<h2><small>Note moyenne : </small>{{ averageRate | number_format(2, ',', ' ') }}/10</h2>
             <p>
-                <a class="btn btn-primary btn-large" href="{{ path('uvweb_uv_newpost', { 'uvname':uv.name }) }}">Donne ton avis sur {{ uv.name }}</a>
+                {% if uni == null %}
+                    <a class="btn btn-primary btn-large" href="{{ path('uvweb_uv_newpost', { 'uvname':uv.name }) }}">Donne ton avis sur {{ uv.name }}</a>
+                {% else %}
+                    <a class="btn btn-primary btn-large" href="{{ path('uvweb_foreignclass_review', { 'uvname':uv.name, 'uniId': uni.id }) }}">Donne ton avis sur {{ uv.name }}</a>
+                {% endif %}
             </p>
 		</div>
 		<div class="span4 text-right">

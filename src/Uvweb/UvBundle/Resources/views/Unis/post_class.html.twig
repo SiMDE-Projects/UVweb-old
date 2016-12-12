@@ -1,0 +1,31 @@
+{% extends "UvwebUvBundle::layout.html.twig" %}
+
+{% form_theme add_uv_form 'UvwebUvBundle:Form:bootstrap_row.html.twig' %}
+
+{% block title %}
+    Ajouter une université étrangère - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <h1>Ajouter un cours de <strong>{{ uni.name }}</strong></h1>
+    </div>
+    <p>
+        Remplis ce formulaire pour ajouter une université étrangère qui n'est pas encore enregistrée dans UVWeb.
+    </p>
+    <ul>
+        <li>Le nombre de crédits doit correspondre au nombre de crédits ECTS validés par équivalence.</li>
+    </ul>
+    <div class="well">
+        {{ form_errors(add_uv_form) }}
+        <form class="form-horizontal" method="post" {{ form_enctype(add_uv_form) }}>
+            {{ form_widget(add_uv_form) }}
+            <div class="control-group">
+              <div class="controls">
+                <button type="submit" class="btn btn-success">Valider</button>
+              </div>
+            </div>
+            {{ form_rest(add_uv_form) }}
+        </form>
+    </div>
+{% endblock %}

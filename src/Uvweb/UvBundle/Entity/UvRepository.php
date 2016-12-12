@@ -15,9 +15,13 @@ class UvRepository extends EntityRepository
 	public function getUvNamesLike($uvLike, $limit = 0)
 	{
         $qb = $this->createQueryBuilder('u');
-        $qb->select('u.name');
+        $qb->select('u.name AS name');
+        $qb->leftJoin('u.uni', 'n');
+        $qb->addSelect('n.name AS uni');
+        $qb->addSelect('n.id AS uniId');
         $qb->where($qb->expr()->like('u.name', $qb->expr()->literal($uvLike . '%')));
         $qb->andWhere('u.archived = :archived')->setParameter('archived', 0);
+        $qb->andWhere('u.approved = 1');
         $qb->orderBy('u.name');
 
         if($limit)
@@ -26,15 +30,29 @@ class UvRepository extends EntityRepository
         return $qb->getQuery()->getScalarResult();
 	}
 
+  public function getToBeApproved($withoutAddedBy = false)
+  {
+    $qb = $this->createQueryBuilder('u');
+    $qb->where('u.approved = 0');
+    if (!$withoutAddedBy)
+    {
+      $qb->andWhere('u.addedBy is not null');
+    }
+    $qb->orderBy('u.id', 'DESC');
+
+    return $qb->getQuery()->getResult();
+  }
+
     public function getAllOrdered()
     {
         $qb = $this->createQueryBuilder('u')
+                ->where('u.approved = 1')
                 ->orderBy('u.name');
 
         return $qb->getQuery()->getResult();
     }
 
-    private function prepareUvListQuery($limit = 0, $category = '', $webService, $uvWithoutComment)
+    private function prepareUvListQuery($limit = 0, $category = '', $webService, $uvWithoutComment, $uniId = null)
     {
         $qb = $this->createQueryBuilder('u');
 
@@ -68,6 +86,14 @@ class UvRepository extends EntityRepository
             $qb->orWhere('c.moderated  is null');
         }
 
+        if (is_null($uniId))
+        {
+            $qb->andWhere('u.uni is null');
+        } else {
+            $qb->join('u.uni', 'n');
+            $qb->andWhere('n.id = :id')->setParameter('id', strval($uniId));
+        }
+
         if(!empty($category) && $category !== 'all')
         {
             if($category === 'master')
@@ -90,13 +116,15 @@ class UvRepository extends EntityRepository
 
         if($limit > 0)
             $qb->setMaxResults($limit);
+            
+        $qb->andWhere('u.approved = 1');
 
         return $qb;
     }
 
-    public function uvsOrderedByRate($limit = 0, $best = true, $minCountComments = 0, $category = '', $webService = false, $uvWithoutComment = true)
+    public function uvsOrderedByRate($limit = 0, $best = true, $minCountComments = 0, $category = '', $webService = false, $uvWithoutComment = true, $uniId = null)
     {
-        $qb = $this->prepareUvListQuery($limit, $category, $webService, $uvWithoutComment);
+        $qb = $this->prepareUvListQuery($limit, $category, $webService, $uvWithoutComment, $uniId);
 
         if($minCountComments > 0)
             $qb->having('commentCount > :minCount')->setParameter('minCount', $minCountComments);
@@ -118,9 +146,9 @@ class UvRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function uvsOrderedByName($limit = 0, $category = '', $webService = false, $uvWithoutComment = true)
+    public function uvsOrderedByName($limit = 0, $category = '', $webService = false, $uvWithoutComment = true, $uniId = null)
     {
-        $qb = $this->prepareUvListQuery($limit, $category, $webService, $uvWithoutComment);
+        $qb = $this->prepareUvListQuery($limit, $category, $webService, $uvWithoutComment, $uniId);
 
         $qb->addOrderBy('name');
 

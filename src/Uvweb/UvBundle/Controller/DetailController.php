@@ -18,7 +18,7 @@ class DetailController extends BaseController
         parent::__construct();
     }
 
-    public function detailAction($uvname = '')
+    public function detailAction($uvname = '', $uniId = null)
     {
         $ajaxRequest = $this->getRequest()->isXmlHttpRequest(); //Can be called from the dynamic list view
 
@@ -43,8 +43,9 @@ class DetailController extends BaseController
         $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
         $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
         $pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
-
-        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0));
+        
+        $uni = is_null($uniId) ? null : $this->getDoctrine()->getManager()->getRepository('UvwebUvBundle:University')->find($uniId);
+        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0, 'uni' => $uni));
 
         if ($uv === null)
         {
@@ -77,6 +78,7 @@ class DetailController extends BaseController
             'comments' => $comments,
             'polls' => $polls,
             'averageRate' => $averageRate,
+            'uni' => $uni,
         );
 
         if($ajaxRequest)
@@ -87,7 +89,7 @@ class DetailController extends BaseController
         return $this->render('UvwebUvBundle:Uv:detail.html.twig', $viewParameters);
     }
 
-    public function postAction($uvname) 
+    public function postAction($uvname, $uniId = null) 
     {
         //Is the user registered ?
         $session = $this->getRequest()->getSession();
@@ -103,7 +105,16 @@ class DetailController extends BaseController
         $userRepository = $manager->getRepository("UvwebUvBundle:User");
 
         $author = $userRepository->find($currentUser->getId());
-        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0));
+
+        // University
+        if (is_null($uniId)) $uni = null;
+        else {
+            $uni = $manager->getRepository('UvwebUvBundle:University')->find($uniId);
+
+            if (is_null($uni)) throw $this->createNotFoundException("Cette université n'existe pas ou plus");
+        }
+
+        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0, 'uni' => $uni));
 
         if ($uv == null) throw $this->createNotFoundException("Cette UV n'existe pas ou plus");
 
@@ -112,9 +123,16 @@ class DetailController extends BaseController
         {
             $this->container->get('uvweb_uv.fbmanager')->addFlashMessage('Tu as déjà donné ton avis sur cette UV.');
 
-            return $this->redirect($this->generateUrl('uvweb_uv_detail', array(
-                'uvname' => $uv->getName()
-            )));
+            if (is_null($uni))
+            {
+                return $this->redirect($this->generateUrl('uvweb_uv_detail', array(
+                    'uvname' => $uv->getName()
+                )));
+            } else {
+                return $this->redirect($this->generateUrl('uvweb_foreignclass_details', array(
+                    'uvname' => $uv->getName(), 'uniId' => $uni->getId()
+                )));
+            }
         }
 
         $comment = new Comment();
@@ -147,18 +165,21 @@ class DetailController extends BaseController
                     //Insertion failed: invite the user to try again, displaying the errors
                     return $this->render('UvwebUvBundle:Uv:post.html.twig', array(
                         'uv' => $uv,
+                        'uni' => $uni,
                         'add_comment_form' => $form->createView()
                     ));
                 }
 
                 return $this->render('UvwebUvBundle:Uv:posted.html.twig', array(
-                    'uv' => $uv
+                    'uv' => $uv,
+                    'uni' => $uni
                 ));
             }
         }
 
         return $this->render('UvwebUvBundle:Uv:post.html.twig', array(
             'uv' => $uv,
+            'uni' => $uni,
             'add_comment_form' => $form->createView()
         ));
     }
