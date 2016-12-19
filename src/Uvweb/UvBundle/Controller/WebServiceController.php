@@ -85,6 +85,7 @@ class WebServiceController extends BaseController
             ->createQueryBuilder('u')
             ->select('u.id, u.name, u.title, u.tp, u.final')
             ->where('u.name = :uvname')
+            ->andWhere('u.uni = NULL')
             ->setParameter('uvname', $uvname)
             ->getQuery()
             ->getArrayResult();
@@ -145,7 +146,7 @@ class WebServiceController extends BaseController
         $comments = $commentRepository
                     ->createQueryBuilder('c')
                     ->select('c.id, c.globalRate, c.semester, c.passed, c.comment, c.date, us.identity as identity, u.name as name, u.title as title')
-                    ->join('c.uv', 'u')
+                    ->join('c.uv', 'u', 'WITH', 'u.uni = NULL')
                     ->join('c.author', 'us')
                     ->where('c.moderated = :moderated')->setParameter('moderated', true)
                     ->setMaxResults(30)
@@ -180,7 +181,7 @@ class WebServiceController extends BaseController
         $userRepository = $manager->getRepository("UvwebUvBundle:User");
 
         $author = $userRepository->find($currentUser->getId());
-        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0));
+        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0, 'uni' => null));
 
         if ($uv == null)
         {
@@ -261,7 +262,7 @@ class WebServiceController extends BaseController
         $userRepository = $manager->getRepository("UvwebUvBundle:User");
 
         $author = $userRepository->find($currentUser->getId());
-        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0));
+        $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0, 'uni' => null));
 
         if ($uv == null)
         {

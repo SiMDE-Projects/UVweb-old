@@ -80,6 +80,17 @@
                   <li><a href="{{ path('uvweb_uv_list', { 'order': 'rate' }) }}">Notes Étudiants</a></li>
                 </ul>
               </li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  UVs à l'étranger
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="nav-header">Universités</li>
+                  <li><a href="{{ path('uvweb_unis_list') }}">Parcourir</a></li>
+                  <li><a href="{{ path('uvweb_unis_add') }}">Ajouter</a></li>
+                </ul>
+              </li>
               <li class="divider-vertical"></li>
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -155,7 +166,7 @@
 <script type="text/javascript" language="javascript">
 $(function() {
 
-  initSearchBar('{{ path('uvweb_uv_nameslike') }}', '{{ path('uvweb_uv_detail') }}');
+  initSearchBar('{{ path('uvweb_uv_nameslike') }}', '/unis/', '{{ path('uvweb_uv_detail') }}');
 
 });
 </script>

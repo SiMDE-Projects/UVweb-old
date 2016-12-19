@@ -11,7 +11,11 @@
 	<tbody>
 		{% for uv in uvs %}
 			<tr uv-name="{{ uv.name }}">
-				<td><a class="uv-link" href="{{ path('uvweb_uv_detail' , { 'uvname': uv.name }) }}">{{ uv.name }}</a></td>
+				{% if uniId is defined %}
+					<td><a class="uv-link" href="{{ path('uvweb_foreignclass_details' , { 'uvname': uv.name, 'uniId': uniId }) }}">{{ uv.name }}</a></td>
+				{% else %}
+					<td><a class="uv-link" href="{{ path('uvweb_uv_detail' , { 'uvname': uv.name }) }}">{{ uv.name }}</a></td>
+				{% endif %}
 				{% if noCommentCount is not defined %}
 					<td>{{ uv.commentCount }}</td>
 				{% endif %}

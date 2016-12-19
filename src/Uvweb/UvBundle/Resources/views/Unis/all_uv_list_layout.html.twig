@@ -1,0 +1,26 @@
+{% extends "UvwebUvBundle::layout.html.twig" %}
+
+{% block title %}
+	Universités étrangères - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+	<div class="page-header text-center">
+		<div class="row-fluid">
+			<div class="offset2 span8">
+				{% block pageHeader %}{% endblock %}
+			</div>
+		</div>
+	</div>
+
+	<div id="list-container" class="row-fluid">
+		{% block mainRow %}
+			<div class="span6">
+				{% block column1 %}{% endblock %}
+			</div>
+			<div class="span6">
+				{% block column2 %}{% endblock %}
+			</div>
+		{% endblock %}
+	</div>
+{% endblock %}

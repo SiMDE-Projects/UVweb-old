@@ -118,6 +118,25 @@ class Uv
     private $comments;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\University", inversedBy="classes")
+     */
+    private $uni;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="approved", type="boolean", options={"default": false})
+     */
+    private $approved;
+
+    /**
+     * @var integer
+     * @ORM\ManyToOne(targetEntity="Uvweb\UvBundle\Entity\User")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $addedBy;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -491,5 +510,74 @@ class Uv
     public function getTp()
     {
         return $this->tp;
+    }
+
+    /**
+     * Set tp
+     *
+     * @param \Uvweb\UvBundle\Entity\University $tp
+     * @return Uv
+     */
+    public function setUni($uni)
+    {
+        $this->uni = $uni;
+
+        return $this;
+    }
+
+    /**
+     * Get tp
+     *
+     * @return \Uvweb\UvBundle\Entity\University 
+     */
+    public function getUni()
+    {
+        return $this->uni;
+    }
+
+    /**
+     * Set approved
+     *
+     * @param \Uvweb\UvBundle\Entity\User $app
+     * @return University
+     */
+    public function setAddedBy($addedBy)
+    {
+        $this->addedBy = $addedBy;
+
+        return $this;
+    }
+
+    /**
+     * Get addedBy
+     *
+     * @return \Uvweb\UvBundle\Entity\User 
+     */
+    public function getAddedBy()
+    {
+        return $this->addedBy;
+    }
+
+    /**
+     * Set approved
+     *
+     * @param boolean $app
+     * @return Uv
+     */
+    public function setApproved($app)
+    {
+        $this->approved = $app;
+
+        return $this;
+    }
+
+    /**
+     * Get approved
+     *
+     * @return boolean 
+     */
+    public function getApproved()
+    {
+        return $this->approved;
     }
 }

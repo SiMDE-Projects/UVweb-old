@@ -13,12 +13,21 @@
     </div>
     <div class="row-fluid">
         <div class="span12">
-            <p>
-                Ton avis sur <a href="{{ path('uvweb_uv_detail', { 'uvname':uv.name }) }}">{{ uv.name | upper }}</a> sera publié après validation.
-            </p>
-            <p>
-                <a class="btn" href="{{ path('uvweb_uv_detail', { 'uvname':uv.name }) }}">Retour à {{ uv.name | upper }}</a>
-            </p>
+            {% if uni == null %}
+                <p>
+                    Ton avis sur <a href="{{ path('uvweb_uv_detail', { 'uvname':uv.name }) }}">{{ uv.name | upper }}</a> sera publié après validation.
+                </p>
+                <p>
+                    <a class="btn" href="{{ path('uvweb_uv_detail', { 'uvname':uv.name }) }}">Retour à {{ uv.name | upper }}</a>
+                </p>
+            {% else %}
+                <p>
+                    Ton avis sur <a href="{{ path('uvweb_foreignclass_details', { 'uvname':uv.name, 'uniId': uni.id }) }}">{{ uv.name | upper }}</a> sera publié après validation.
+                </p>
+                <p>
+                    <a class="btn" href="{{ path('uvweb_foreignclass_details', { 'uvname':uv.name, 'uniId': uni.id }) }}">Retour à {{ uv.name | upper }}</a>
+                </p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

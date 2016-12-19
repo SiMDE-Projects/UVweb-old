@@ -19,17 +19,25 @@ class AdminController extends BaseController
         $manager = $this->getDoctrine()->getManager();
         $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
         $newsRepository = $manager->getRepository('UvwebUvBundle:News');
+        $uniRepository = $manager->getRepository('UvwebUvBundle:University');
+        $uvRepository = $manager->getRepository('UvwebUvBundle:Uv');
 
         $comments = $commentRepository->findBy(
             array('moderated' => false),
             array('id' => 'desc')
         );
 
+        $universities = $uniRepository->getToBeApproved();
+
+        $uvs = $uvRepository->getToBeApproved();
+
         $news = $newsRepository->findLastNews();
 
         return $this->render('UvwebUvBundle:Admin:home.html.twig', array(
             'comments' => $comments,
             'news' => $news,
+            'universities' => $universities,
+            'uvs' => $uvs,
             'adminView' => true
         ));
     }

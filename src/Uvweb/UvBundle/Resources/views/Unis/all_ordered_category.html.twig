@@ -1,0 +1,44 @@
+{% extends "UvwebUvBundle:Unis:all_list_layout.html.twig" %}
+
+{% block title %}
+	Toutes UVs {% if categoryName is defined %}{{ categoryName }}{% endif %} (Ordre Alphabétique) - {{ parent() }}
+{% endblock %}
+
+
+{% block pageHeader %}		
+	<h2>{{ uni.name }} - {% if categoryName is defined and categoryName != '' %}{{ categoryName }} : {% endif %}Toutes les UVs <small>Ordre Alphabétique</small>
+		<a href="{{ path('uvweb_foreignclass_add', { 'uniId': uni.id }) }}" class="pull-right btn btn-primary"><i class="icon-plus icon-white"></i> Ajouter cours</a>
+	</h2>
+{% endblock %}
+
+{% block column1 %}
+	{% for letter, uvs in groupedUvs %}
+		{% if loop.index % 4  == 1 %}
+			{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'highlightRates': true, 'tableType': '', 'uvs': uvs, 'title': letter, 'uniId': uni.id } %}
+		{% endif %}
+	{% endfor %}
+{% endblock %}
+
+{% block column2 %}
+	{% for letter, uvs in groupedUvs %}
+		{% if loop.index % 4  == 2 %}
+			{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'highlightRates': true, 'tableType': '', 'uvs': uvs, 'title': letter, 'uniId': uni.id } %}
+		{% endif %}
+	{% endfor %}
+{% endblock %}
+
+{% block column3 %}
+	{% for letter, uvs in groupedUvs %}
+		{% if loop.index % 4  == 3 %}
+			{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'highlightRates': true, 'tableType': '', 'uvs': uvs, 'title': letter, 'uniId': uni.id } %}
+		{% endif %}
+	{% endfor %}
+{% endblock %}
+
+{% block column4 %}
+	{% for letter, uvs in groupedUvs %}
+		{% if loop.index % 4  == 0 %}
+			{% include 'UvwebUvBundle:Common:uv_table.html.twig' with { 'highlightRates': true, 'tableType': '', 'uvs': uvs, 'title': letter, 'uniId': uni.id } %}
+		{% endif %}
+	{% endfor %}
+{% endblock %}
