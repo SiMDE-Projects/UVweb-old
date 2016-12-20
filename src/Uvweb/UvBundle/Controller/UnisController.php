@@ -100,7 +100,8 @@ class UnisController extends BaseController
             {
                 try
                 {
-                    $uni->setAddedBy($userRepository->findOneById($this->getUser()->getId()));
+                    $uni->setAddedBy($manager->getRepository('UvwebUvBundle:User')->findOneById($this->getUser()->getId()));
+                    $uni->setApproved(false);
 
                     $manager->persist($uni);
                     $manager->flush();
