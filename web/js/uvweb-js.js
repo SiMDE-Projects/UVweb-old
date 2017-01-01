@@ -25,7 +25,7 @@ var initSearchBar = function(urlUVNameLike, urlForeignUVNameLike, urlUvDetail) {
     updater: function (item) {
 			if (item.match(/>(\d+)<\/span>/) && item.match(/\s<small>/)) {
 				var id = item.match(/>(\d+)<\/span>/)[1]
-				document.location = urlForeignUVNameLike + id + '/class/' + item.match(/(.*)\s<small>/)[1];
+				document.location = urlForeignUVNameLike.replace(/uniId/, id).replace(/uvname/, item.match(/(.*)\s<small>/)[1]);
 			} else {
       	document.location = urlUvDetail + '/' +encodeURIComponent(item);
 			}

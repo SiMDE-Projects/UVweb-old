@@ -146,7 +146,7 @@ class WebServiceController extends BaseController
         $comments = $commentRepository
                     ->createQueryBuilder('c')
                     ->select('c.id, c.globalRate, c.semester, c.passed, c.comment, c.date, us.identity as identity, u.name as name, u.title as title')
-                    ->join('c.uv', 'u', 'WITH', 'u.uni = NULL')
+                    ->join('c.uv', 'u', 'WITH', 'u.uni IS NULL')
                     ->join('c.author', 'us')
                     ->where('c.moderated = :moderated')->setParameter('moderated', true)
                     ->setMaxResults(30)
