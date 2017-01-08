@@ -166,7 +166,7 @@
 <script type="text/javascript" language="javascript">
 $(function() {
 
-  initSearchBar('{{ path('uvweb_uv_nameslike') }}', '/unis/', '{{ path('uvweb_uv_detail') }}');
+  initSearchBar('{{ path('uvweb_uv_nameslike') }}', '{{ path('uvweb_foreignclass_details', { 'uvname': 'uvname', 'uniId': 'uniId' }) }}', '{{ path('uvweb_uv_detail') }}');
 
 });
 </script>
