@@ -85,7 +85,7 @@ class WebServiceController extends BaseController
             ->createQueryBuilder('u')
             ->select('u.id, u.name, u.title, u.tp, u.final')
             ->where('u.name = :uvname')
-            ->andWhere('u.uni = NULL')
+            ->andWhere('u.uni IS NULL')
             ->setParameter('uvname', $uvname)
             ->getQuery()
             ->getArrayResult();
