@@ -43,7 +43,7 @@ class DetailController extends BaseController
         $uvRepository = $manager->getRepository("UvwebUvBundle:Uv");
         $commentRepository = $manager->getRepository('UvwebUvBundle:Comment');
         $pollRepository = $manager->getRepository('UvwebUvBundle:Poll');
-        
+
         $uni = is_null($uniId) ? null : $this->getDoctrine()->getManager()->getRepository('UvwebUvBundle:University')->find($uniId);
         $uv = $uvRepository->findOneBy(array('name' => $uvname, 'archived' => 0, 'uni' => $uni));
 
@@ -71,13 +71,15 @@ class DetailController extends BaseController
             0
         );
 
-        $averageRate = $commentRepository->averageRate($uv);
+        $averageRate      = $commentRepository->averageRate($uv);
+        $averageCriterias = $commentRepository->averageCriterias($uv);
 
         $viewParameters = array(
             'uv' => $uv,
             'comments' => $comments,
             'polls' => $polls,
             'averageRate' => $averageRate,
+            'averageCriterias' => $averageCriterias,
             'uni' => $uni,
         );
 
