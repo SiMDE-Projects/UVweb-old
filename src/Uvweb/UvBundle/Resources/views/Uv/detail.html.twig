@@ -20,6 +20,37 @@
 }
 {% endblock %}
 
+{% block js %}
+	{{ parent() }}
+	<script src="{{ asset('js/morris.min.js') }}" type="text/javascript"></script>
+	<script src="{{ asset('js/raphael-min.js') }}" type="text/javascript"></script>
+	<script>
+		(function () {
+
+		{% for criteria, rates in averageCriterias %}
+			Morris.Donut({
+			element: '{{ criteria }}',
+			data: [
+			{% for rate in rates %}
+				{label: '{{ rate.label }}', value: {{ rate.value }} },
+			{% endfor %}
+			],
+			colors: ['#4EA28E', '#94CCBF', '#73BCAB'],
+			formatter: function (y) {
+			return y > 0 ? (y + " avis") : "Aucun avis"
+			}
+			});
+		{% endfor %}
+
+		})();
+	</script>
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('css/morris.css') }}" type="text/css" />
+{% endblock %}
+
 {% block body %}
 
 	{% include 'UvwebUvBundle:Uv:detail_body.html.twig' with { 'averageRate': averageRate, 'polls': polls, 'comments': comments, 'uv': uv, 'uni': uni } %}
