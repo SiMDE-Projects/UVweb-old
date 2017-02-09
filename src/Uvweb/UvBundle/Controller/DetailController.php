@@ -49,7 +49,7 @@ class DetailController extends BaseController
 
         if ($uv === null)
         {
-            $this->get('uvweb_uv.fbmanager')->addFlashMessage("Non d'UV invalide : cette UV n'existe pas ou n'existe plus.");
+            $this->get('uvweb_uv.fbmanager')->addFlashMessage("Nom d'UV invalide : cette UV n'existe pas ou n'existe plus.");
 
             if(!$ajaxRequest)
                 return $this->redirect($this->generateUrl('uvweb_uv_homepage'));
