@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class CommentRepository extends EntityRepository
 {
-	public function averageRate(Uv $uv) 
+	public function averageRate(Uv $uv)
 	{
 		$qb = $this->createQueryBuilder('c');
 
@@ -23,10 +23,33 @@ class CommentRepository extends EntityRepository
 		return $qb->getQuery()->getSingleScalarResult();
 	}
 
+    private function averageCriteria(Uv $uv, $criteria)
+    {
+        $qb = $this->createQueryBuilder('c');
+        $qb
+            ->select('COUNT(c) as value')
+            ->addSelect("c.$criteria as label")
+            ->where('c.moderated = :moderated')->setParameter('moderated', true)
+            ->groupBy("c.$criteria")
+            ->andWhere('c.uv = :uv')->setParameter('uv', $uv);
+
+        return $qb->getQuery()->getScalarResult();
+	}
+
+    public function averageCriterias(Uv $uv)
+    {
+        return [
+            'pedagody' => $this->averageCriteria($uv, 'pedagogy'),
+            'utility'  => $this->averageCriteria($uv, 'utility'),
+            'interest'  => $this->averageCriteria($uv, 'interest'),
+            'workAmount'  => $this->averageCriteria($uv, 'workAmount'),
+        ];
+	}
+
 	public function userAlreadyCommentedUv(User $user, Uv $uv)
 	{
 		$qb = $this->createQueryBuilder('c');
-		
+
 		$qb->where('c.author = :author')->setParameter('author', $user->getId())
 		   ->andWhere('c.uv = :uv')->setParameter('uv', $uv->getId());
 
