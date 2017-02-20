@@ -25,23 +25,23 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 	<script>
+
 		(function () {
+			var averageCriterias = {{ averageCriterias|json_encode|raw }};
+			var addDonut = function(element, criteria, rates) {
+				Morris.Donut({
+					element: element,
+					data: rates,
+					colors: ['#4EA28E', '#94CCBF', '#73BCAB'],
+					formatter: function (y) {
+						return y > 0 ? (y + " avis") : "Aucun avis"
+					}
+				});
+			};
 
-		{% for criteria, rates in averageCriterias %}
-			Morris.Donut({
-			element: '{{ criteria }}',
-			data: [
-			{% for rate in rates %}
-				{label: '{{ rate.label }}', value: {{ rate.value }} },
-			{% endfor %}
-			],
-			colors: ['#4EA28E', '#94CCBF', '#73BCAB'],
-			formatter: function (y) {
-			return y > 0 ? (y + " avis") : "Aucun avis"
-			}
-			});
-		{% endfor %}
-
+            $.each(averageCriterias, function (criteria, rates) {
+				addDonut(criteria, criteria, rates);
+            });
 		})();
 	</script>
 {% endblock %}
