@@ -2,16 +2,9 @@
 	<div class="row-fluid">
 		<div class="span8">
 			<h1 class="uvname">{{ uv.letterCode | upper }}<span class="uvnumbercode">{{ uv.numberCode }}</span> <small>{{ uv.title | capitalize }} {% if uni != null %} - enseignée à <strong>{{uni.name}}</strong>{% endif %}</small></h1>
-			<h2><small>Note moyenne : </small>{{ averageRate | number_format(2, ',', ' ') }}/10</h2>
-            <p>
-                {% if uni == null %}
-                    <a class="btn btn-primary btn-large" href="{{ path('uvweb_uv_newpost', { 'uvname':uv.name }) }}">Donne ton avis sur {{ uv.name }}</a>
-                {% else %}
-                    <a class="btn btn-primary btn-large" href="{{ path('uvweb_foreignclass_review', { 'uvname':uv.name, 'uniId': uni.id }) }}">Donne ton avis sur {{ uv.name }}</a>
-                {% endif %}
-            </p>
+			<h2><small>Note moyenne : </small>{{ averageRate | number_format(2, ',', ' ') }}<small>/10</h2>
 		</div>
-		<div class="span4 text-right">
+        <div class="span4 text-right">
                 <h5>
                     {% if uv.final is defined %}
                     <small>
@@ -56,6 +49,39 @@
 			</ul>
 		</div>
 	</div>
+    <div class="row-fluid">
+        <div class="span12">
+            {% if comments is not empty %}
+            <div class="graphs-criterias">
+                {% spaceless %}
+                    <div class="graph-block">
+                        <div id="utility" class="graph"></div>
+                        <h4>Utilité</h4>
+                    </div>
+                    <div class="graph-block">
+                        <div id="pedagody" class="graph"></div>
+                        <h4>Pédagogie</h4>
+                    </div>
+                    <div class="graph-block">
+                        <div id="interest" class="graph"></div>
+                        <h4>Intérêt</h4>
+                    </div>
+                    <div class="graph-block">
+                        <div id="workAmount" class="graph"></div>
+                        <h4>Charge de travail</h4>
+                    </div>
+                {% endspaceless %}
+            </div>
+            {% endif %}
+            <p>
+                {% if uni == null %}
+                    <a class="btn btn-primary btn-large" href="{{ path('uvweb_uv_newpost', { 'uvname':uv.name }) }}">Donne ton avis sur {{ uv.name }}</a>
+                {% else %}
+                    <a class="btn btn-primary btn-large" href="{{ path('uvweb_foreignclass_review', { 'uvname':uv.name, 'uniId': uni.id }) }}">Donne ton avis sur {{ uv.name }}</a>
+                {% endif %}
+            </p>
+        </div>
+    </div>
 </div>
 
 {% for comment in comments %}

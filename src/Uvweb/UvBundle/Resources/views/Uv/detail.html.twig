@@ -20,6 +20,37 @@
 }
 {% endblock %}
 
+{% block js %}
+	{{ parent() }}
+	<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+	<script>
+
+		(function () {
+			var averageCriterias = {{ averageCriterias|json_encode|raw }};
+			var addDonut = function(element, criteria, rates) {
+				Morris.Donut({
+					element: element,
+					data: rates,
+					colors: ['#4EA28E', '#94CCBF', '#73BCAB'],
+					formatter: function (y) {
+						return y > 0 ? (y + " avis") : "Aucun avis"
+					}
+				});
+			};
+
+            $.each(averageCriterias, function (criteria, rates) {
+				addDonut(criteria, criteria, rates);
+            });
+		})();
+	</script>
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+{% endblock %}
+
 {% block body %}
 
 	{% include 'UvwebUvBundle:Uv:detail_body.html.twig' with { 'averageRate': averageRate, 'polls': polls, 'comments': comments, 'uv': uv, 'uni': uni } %}
