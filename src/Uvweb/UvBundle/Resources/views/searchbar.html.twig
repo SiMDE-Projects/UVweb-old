@@ -1,8 +1,0 @@
-{% block form_row %}
-    {% spaceless %}
-        <div>
-            {{ form_errors(form) }}
-            {{ form_widget(form, { 'attr': {'class': 'search-query', 'placeholder' : 'Rechercher une UV'} }) }}
-        </div>
-    {% endspaceless %}
-{% endblock form_row %}
